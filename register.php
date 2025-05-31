@@ -12,9 +12,9 @@
       <h1 class="navbar-brand">Arsintra</h1>
 
       <ul class="nav-links">
-        <li><a href="/signin" class="btn-login">Daftar</a></li>
-        <li class="nav-item">
-          <a href="/login">Masuk</a>
+        <li class="nav-item btn-login"> <a href="#">Daftar</a>
+        </li>
+        <li class="nav-item"> <a href="/arsintra/index.php">Masuk</a>
         </li>
       </ul>
 
@@ -51,8 +51,7 @@
 
         <div class="button-group">
           <a href="#" class="btn btn-primary">Selanjutnya</a>
-          <a href="/signin" class="btn btn-secondary">Sudah Punya Akun</a>
-        
+          <a href="/arsintra/index.php" class="btn btn-secondary">Sudah Punya Akun</a>
         </div>
       </div>
     </div>
