@@ -1,3 +1,33 @@
+<?php
+session_start();
+
+// If user is already logged in, redirect to dashboard
+if (isset($_SESSION['user_id'])) {
+    header('Location: dashboard.php');
+    exit();
+}
+
+// Handle registration form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+    
+    // Simple validation
+    if (empty($email) || empty($password) || empty($confirm_password)) {
+        $error = 'Semua field harus diisi!';
+    } elseif ($password !== $confirm_password) {
+        $error = 'Konfirmasi kata sandi tidak cocok!';
+    } elseif (strlen($password) < 6) {
+        $error = 'Kata sandi minimal 6 karakter!';
+    } else {
+        // In a real application, you would save to database
+        // For now, we'll just redirect to login
+        $success = 'Akun berhasil dibuat! Silakan masuk.';
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -14,7 +44,7 @@
       <ul class="nav-links">
         <li class="nav-item btn-login"> <a href="#">Daftar</a>
         </li>
-        <li class="nav-item"> <a href="/arsintra/index.php">Masuk</a>
+        <li class="nav-item"> <a href="index.php">Masuk</a>
         </li>
       </ul>
 
@@ -31,7 +61,19 @@
           <h1 class="heading-bold">Buat Akunmu!</h1>
         </div>
 
-        <form class="form">
+        <?php if (isset($error)): ?>
+        <div class="error-message">
+          <?php echo htmlspecialchars($error); ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (isset($success)): ?>
+        <div class="success-message">
+          <?php echo htmlspecialchars($success); ?>
+        </div>
+        <?php endif; ?>
+
+        <form class="form" method="POST">
           <div class="form-group">
             <label for="email">Email<span class="required">*</span></label><br />
             <input type="email" placeholder="Masukkan Email" name="email" required />
@@ -43,16 +85,15 @@
           </div>
 
           <div class="form-group">
-            <label for="password">Konfirmasi Kata Sandi<span class="required">*</span></label><br />
-            <input type="password" placeholder="Masukkan kata sandi" name="password" required />
+            <label for="confirm_password">Konfirmasi Kata Sandi<span class="required">*</span></label><br />
+            <input type="password" placeholder="Masukkan kata sandi" name="confirm_password" required />
           </div>
 
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary">Selanjutnya</button>
+            <a href="index.php" class="btn btn-secondary">Sudah Punya Akun</a>
+          </div>
         </form>
-
-        <div class="button-group">
-          <a href="#" class="btn btn-primary">Selanjutnya</a>
-          <a href="/arsintra/index.php" class="btn btn-secondary">Sudah Punya Akun</a>
-        </div>
       </div>
     </div>
   </section>

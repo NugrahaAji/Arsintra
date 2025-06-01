@@ -1,3 +1,12 @@
+/*
+  Combined CSS file for Arsintra
+  Contains styles for:
+  - Login/Registration pages
+  - Dashboard
+  - Responsive adjustments
+*/
+
+/* Base Styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -5,11 +14,13 @@
   font-family: Arial, sans-serif;
 }
 
-body, html {
+body,
+html {
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden; /* Mencegah scroll horizontal di level body */
 }
 
+/* Login/Register Page Styles */
 .full-screen-section {
   height: 100vh;
   position: relative;
@@ -71,7 +82,7 @@ label {
 }
 
 .required {
-  color: #DA0700;
+  color: #da0700;
 }
 
 input[type="email"],
@@ -91,7 +102,7 @@ input[type="password"] {
   justify-content: flex-end;
   font-size: 13px;
   text-decoration: underline;
-  color: #DA0700;
+  color: #da0700;
   margin-top: -10px;
 }
 
@@ -111,10 +122,12 @@ input[type="password"] {
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-primary {
-  background-color: #DA0700;
+  background-color: #da0700;
   color: white;
   font-weight: 700;
 }
@@ -138,6 +151,26 @@ input[type="password"] {
   height: 20px;
 }
 
+/* Error and Success Messages */
+.error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 20px 0;
+  border: 1px solid #fcc;
+}
+
+.success-message {
+  background-color: #efe;
+  color: #363;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 20px 0;
+  border: 1px solid #cfc;
+}
+
+/* Navbar */
 .navbar {
   width: 100%;
   height: 80px;
@@ -191,7 +224,7 @@ input[type="password"] {
 }
 
 .btn-login {
-  background-color: #DA0700;
+  background-color: #da0700;
   border-radius: 999px;
   display: flex;
   align-items: center;
@@ -224,4 +257,309 @@ input[type="password"] {
 
 .nav-links.active {
   display: flex;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  background-color: #ffffff;
+  /* Mencegah container meluap dari viewport */
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0; /* Mencegah sidebar menyusut jika konten utama terlalu lebar */
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+}
+
+.sidebar-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.sidebar-nav {
+  margin-top: 1.5rem;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  color: #4b5563;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.sidebar-item:hover {
+  background-color: #f9fafb;
+}
+
+.sidebar-item.active {
+  background-color: #fff5f5;
+  color: #e03131;
+  font-weight: 500;
+  border-right: 2px solid #e03131;
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Mengizinkan scroll vertikal jika konten lebih tinggi */
+  overflow-x: hidden; /* Mencegah scroll horizontal di main-content */
+  min-width: 0; /* Memungkinkan item flex ini untuk menyusut, penting untuk mencegah overflow halaman */
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  border: none;
+  background-color: transparent;
+  color: #4b5563;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.icon-button:hover {
+  background-color: #f3f4f6;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: #e03131;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Dashboard */
+.dashboard {
+  padding: 1.5rem;
+}
+
+/* Welcome Message */
+.welcome-message {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  border-left: 4px solid #da0700;
+}
+
+.welcome-message h2 {
+  color: #da0700;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-message p {
+  color: #6c757d;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  overflow: hidden; /* Untuk menampung teks besar jika ada */
+  min-width: 0; /* Membantu jika konten kartu mencoba meluas melebihi alokasi grid */
+}
+
+.stat-card h3 {
+  color: #e03131;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.stat-value {
+  font-size: 5rem; /* Hati-hati jika angka menjadi sangat panjang */
+  font-weight: 700;
+  color: #e03131;
+  text-align: center;
+  word-break: break-all; /* Jika angka sangat panjang */
+}
+
+/* Tables Grid */
+.tables-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Default untuk layar lebih lebar */
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) { /* Sesuaikan breakpoint jika perlu */
+  .tables-grid {
+    grid-template-columns: 1fr; /* Tumpuk tabel di layar lebih kecil */
+  }
+}
+
+.table-container {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  /* overflow: hidden; -- Dihapus agar .table-responsive dapat bekerja dengan baik */
+  min-width: 0; /* Penting untuk item grid yang berisi konten yang berpotensi lebar */
+}
+
+.table-header {
+  padding: 1.5rem;
+}
+
+.table-header h2 {
+  color: #e03131;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.table-responsive {
+  overflow-x: auto; /* Memungkinkan tabel untuk di-scroll secara horizontal di dalam container ini */
+  width: 100%; /* Memastikan .table-responsive tidak meluap dari .table-container */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  /* Pertimbangkan table-layout: fixed; jika Anda mendefinisikan lebar kolom */
+  /* table-layout: fixed; */
+}
+
+th {
+  background-color: #f9fafb;
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap; /* Mencegah header tabel terpotong jika terlalu panjang */
+}
+
+td {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #e5e7eb;
+  word-break: break-word; /* Membantu memotong teks panjang di dalam sel */
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* Tumpuk sidebar dan konten utama */
+  }
+
+  .sidebar {
+    width: 100%; /* Lebar penuh untuk sidebar */
+    height: auto;
+    border-right: none; /* Hapus border saat ditumpuk */
+    border-bottom: 1px solid #e5e7eb; /* Tambah border bawah */
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr; /* Tumpuk kartu statistik */
+  }
+
+  /* .tables-grid sudah ditangani oleh breakpoint 1024px, tetapi bisa diperkuat atau disesuaikan */
+  .tables-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-container {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .background-image {
+    display: none;
+  }
+
+  .header h1 { /* Contoh: kurangi ukuran header di mobile */
+    font-size: 1.25rem;
+  }
+
+  .navbar-inner {
+    padding: 0 20px; /* Kurangi padding navbar di mobile */
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0px 10px 10px rgba(0,0,0,0.03);
+  }
+  .nav-links.active { display: flex; }
+
+  .hamburger {
+    display: block; /* Tampilkan tombol hamburger */
+  }
 }
