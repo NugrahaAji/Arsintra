@@ -1,11 +1,3 @@
-/*
-  Combined CSS file for Arsintra
-  Contains styles for:
-  - Login/Registration pages
-  - Dashboard
-  - Responsive adjustments
-*/
-
 /* Base Styles */
 * {
   box-sizing: border-box;
@@ -259,13 +251,14 @@ input[type="password"] {
   display: flex;
 }
 
+/* Dashboard Styles */
+/* Layout */
 .container {
   display: flex;
   height: 100vh;
   background-color: #ffffff;
-  /* Mencegah container meluap dari viewport */
-  max-width: 100%;
-  overflow-x: hidden;
+  max-width: 100%;     /* Mencegah container meluap dari viewport */
+  overflow-x: hidden;  /* Mencegah scroll horizontal pada container utama */
 }
 
 /* Sidebar */
@@ -328,12 +321,12 @@ input[type="password"] {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Mengizinkan scroll vertikal jika konten lebih tinggi */
-  overflow-x: hidden; /* Mencegah scroll horizontal di main-content */
-  min-width: 0; /* Memungkinkan item flex ini untuk menyusut, penting untuk mencegah overflow halaman */
+  overflow-y: auto;  /* Izinkan scroll vertikal jika konten lebih tinggi */
+  overflow-x: hidden; /* Cegah scroll horizontal pada main-content itu sendiri */
+  min-width: 0;      /* PENTING: Izinkan main-content untuk menyusut jika konten di dalamnya lebar */
 }
 
-/* Header */
+/* Header within Main Content (Dashboard Header) */
 .header {
   display: flex;
   align-items: center;
@@ -387,12 +380,47 @@ input[type="password"] {
   cursor: pointer;
 }
 
-/* Dashboard */
-.dashboard {
+/* Dashboard Specific Content (Beranda) */
+.dashboard { /* Ini untuk konten spesifik di halaman beranda/dashboard */
   padding: 1.5rem;
 }
 
-/* Welcome Message */
+/* Generic Page Content (untuk Surat Masuk, Surat Keluar, dll.) */
+.page-content { /* Gunakan ini sebagai pembungkus utama konten di halaman selain dashboard */
+  padding: 1.5rem;
+  width: 100%; /* Pastikan page-content tidak mencoba lebih lebar dari main-content */
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.btn-add {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+  background-color: #059669;
+}
+
+/* Welcome Message (Dashboard specific) */
 .welcome-message {
   margin-bottom: 2rem;
   padding: 1rem;
@@ -411,7 +439,7 @@ input[type="password"] {
   color: #6c757d;
 }
 
-/* Stats Grid */
+/* Stats Grid (Dashboard specific) */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -424,8 +452,8 @@ input[type="password"] {
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
-  overflow: hidden; /* Untuk menampung teks besar jika ada */
-  min-width: 0; /* Membantu jika konten kartu mencoba meluas melebihi alokasi grid */
+  overflow: hidden;
+  min-width: 0; /* PENTING: Izinkan kartu untuk menyusut dalam grid */
 }
 
 .stat-card h3 {
@@ -436,35 +464,36 @@ input[type="password"] {
 }
 
 .stat-value {
-  font-size: 5rem; /* Hati-hati jika angka menjadi sangat panjang */
+  font-size: 5rem;
   font-weight: 700;
   color: #e03131;
   text-align: center;
   word-break: break-all; /* Jika angka sangat panjang */
 }
 
-/* Tables Grid */
+/* Tables Grid (Dashboard specific) */
 .tables-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Default untuk layar lebih lebar */
+  grid-template-columns: 2fr 1fr;
   gap: 1.5rem;
 }
 
-@media (max-width: 1024px) { /* Sesuaikan breakpoint jika perlu */
+@media (max-width: 1024px) {
   .tables-grid {
-    grid-template-columns: 1fr; /* Tumpuk tabel di layar lebih kecil */
+    grid-template-columns: 1fr;
   }
 }
 
+/* Table Container (digunakan di .tables-grid dan bisa juga untuk .data-table jika diperlukan wrapper) */
 .table-container {
   background-color: #ffffff;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  /* overflow: hidden; -- Dihapus agar .table-responsive dapat bekerja dengan baik */
-  min-width: 0; /* Penting untuk item grid yang berisi konten yang berpotensi lebar */
+  /* overflow: hidden; -- Dihapus jika .table-responsive menangani overflow dengan baik */
+  min-width: 0; /* PENTING: Jika .table-container adalah item grid/flex */
 }
 
-.table-header {
+.table-header { /* Header di atas tabel dalam .table-container */
   padding: 1.5rem;
 }
 
@@ -474,16 +503,22 @@ input[type="password"] {
   font-weight: 600;
 }
 
+/* Table Responsive Wrapper (untuk SEMUA tabel data) */
 .table-responsive {
-  overflow-x: auto; /* Memungkinkan tabel untuk di-scroll secara horizontal di dalam container ini */
-  width: 100%; /* Memastikan .table-responsive tidak meluap dari .table-container */
+  overflow-x: auto; /* Ini yang membuat tabel bisa di-scroll horizontal */
+  width: 100%;     /* Pastikan wrapper ini tidak lebih lebar dari parentnya */
 }
 
-table {
-  width: 100%;
+/* Generic Table Styling */
+table { /* Style dasar untuk semua tabel */
+  width: 100%; /* Tabel mencoba mengisi .table-responsive */
   border-collapse: collapse;
-  /* Pertimbangkan table-layout: fixed; jika Anda mendefinisikan lebar kolom */
-  /* table-layout: fixed; */
+}
+
+.data-table { /* Class spesifik untuk tabel data di halaman seperti Surat Masuk */
+  /* width: 100%; (sudah di 'table') */
+  /* border-collapse: collapse; (sudah di 'table') */
+  /* Style tambahan spesifik untuk .data-table jika ada */
 }
 
 th {
@@ -508,25 +543,147 @@ tr:last-child td {
   border-bottom: none;
 }
 
+/* Status Badges (digunakan dalam tabel data) */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.status-icon {
+  width: 1rem;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+/* Action Buttons (digunakan dalam tabel data) */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-detail {
+  background-color: transparent;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-detail:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background-color: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: #f3f4f6;
+}
+
+.btn-delete {
+  color: #dc2626;
+}
+
+.btn-delete:hover {
+  background-color: #fee2e2;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .container {
-    flex-direction: column; /* Tumpuk sidebar dan konten utama */
+    flex-direction: column;
   }
 
   .sidebar {
-    width: 100%; /* Lebar penuh untuk sidebar */
+    width: 100%;
     height: auto;
-    border-right: none; /* Hapus border saat ditumpuk */
-    border-bottom: 1px solid #e5e7eb; /* Tambah border bawah */
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
   }
+
+  .navbar-inner {
+    padding: 0 20px;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  /* Sembunyikan nav-links default di mobile, akan ditampilkan oleh JS jika hamburger diklik */
+  /* Anda perlu JS untuk toggle class .active pada .nav-links */
+  .nav-links {
+     display: none;
+     flex-direction: column;
+     align-items: flex-start;
+     position: absolute;
+     top: 80px; /* Sesuaikan dengan tinggi navbar */
+     left: 0;
+     width: 100%;
+     background-color: white;
+     padding: 1rem;
+     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+     gap: 1rem;
+  }
+
+  .nav-links.active {
+     display: flex;
+  }
+  
+  .nav-links > li:not(.btn-login) > a {
+    padding: 0.5rem 0; /* Padding untuk item menu mobile */
+  }
+
+  .btn-login { /* Sesuaikan tombol login untuk menu mobile jika perlu */
+    width: auto; 
+    padding: 0.5rem 1rem;
+  }
+
 
   .stats-grid {
-    grid-template-columns: 1fr; /* Tumpuk kartu statistik */
+    grid-template-columns: 1fr;
   }
 
-  /* .tables-grid sudah ditangani oleh breakpoint 1024px, tetapi bisa diperkuat atau disesuaikan */
-  .tables-grid {
+  .tables-grid { /* Sudah ditangani oleh breakpoint 1024px, ini untuk konsistensi */
     grid-template-columns: 1fr;
   }
 
@@ -539,27 +696,17 @@ tr:last-child td {
     display: none;
   }
 
-  .header h1 { /* Contoh: kurangi ukuran header di mobile */
-    font-size: 1.25rem;
-  }
-
-  .navbar-inner {
-    padding: 0 20px; /* Kurangi padding navbar di mobile */
-  }
-
-  .nav-links {
-    display: none;
+  .page-header {
     flex-direction: column;
-    position: absolute;
-    top: 80px;
-    left: 0;
-    width: 100%;
-    background-color: white;
-    box-shadow: 0px 10px 10px rgba(0,0,0,0.03);
+    align-items: flex-start;
+    gap: 1rem;
   }
-  .nav-links.active { display: flex; }
+  
+  .page-header h1 {
+    font-size: 1.5rem; /* Sesuaikan ukuran font header halaman di mobile */
+  }
 
-  .hamburger {
-    display: block; /* Tampilkan tombol hamburger */
+  .header h1 { /* Dashboard header title */
+    font-size: 1.25rem;
   }
 }
