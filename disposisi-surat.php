@@ -7,47 +7,47 @@ session_start();
 //     exit();
 // }
 
-// Sample data for Surat Keluar
-$suratKeluarData = [
+// Sample data for Disposisi Surat
+$disposisiData = [
     [
         'no' => '001',
         'nama_surat' => 'Poposal Kegiatan',
-        'kategori' => 'Poposal',
-        'tanggal_keluar' => '17-07-2025',
-        'di_keluarkan' => 'Ketua Himakom',
-        'tujuan_surat' => 'Himakom FMIPA UNILA'
+        'perihal_surat' => 'Revisi Kontrak Kerjasama',
+        'tanggal_masuk' => '17-07-2025',
+        'tujuan_surat' => 'Kepala Bagian Umum',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
     ],
     [
         'no' => '002',
         'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_keluar' => '16-10-2024',
-        'di_keluarkan' => 'Sekretaris Himakom',
-        'tujuan_surat' => 'Kepala Badan Khusus'
+        'perihal_surat' => 'Undangan Rapat Koordinasi',
+        'tanggal_masuk' => '16-10-2024',
+        'tujuan_surat' => 'Kepala Badan Khusus',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
     ],
     [
         'no' => '003',
         'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_keluar' => '16-10-2024',
-        'di_keluarkan' => 'Bendahara Himakom',
-        'tujuan_surat' => 'Kepala Badan Khusus'
+        'perihal_surat' => 'Permohonan Anggaran',
+        'tanggal_masuk' => '16-10-2024',
+        'tujuan_surat' => 'Kepala Bagian Keuanagan',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
     ],
     [
         'no' => '004',
         'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_keluar' => '16-10-2024',
-        'di_keluarkan' => 'Bidang Keilmuan',
-        'tujuan_surat' => 'Kepala Lab FMIPA'
+        'perihal_surat' => 'Persetujuan Cuti',
+        'tanggal_masuk' => '16-10-2024',
+        'tujuan_surat' => 'Kepala Bagian Umum',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
     ],
     [
         'no' => '005',
         'nama_surat' => 'Pegajuan Kerja Sama',
-        'kategori' => 'Kerja Sama',
-        'tanggal_keluar' => '16-10-2024',
-        'di_keluarkan' => 'Badan Khusus',
-        'tujuan_surat' => 'Himatro FMIPA Unila'
+        'perihal_surat' => 'Pengajuan Pembelian',
+        'tanggal_masuk' => '16-10-2024',
+        'tujuan_surat' => 'Kepala Bagian Administrasi',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
     ]
 ];
 ?>
@@ -57,7 +57,7 @@ $suratKeluarData = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Keluar - Arsintra</title>
+    <title>Disposisi Surat - Arsintra</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -80,13 +80,13 @@ $suratKeluarData = [
                     </svg>
                     <span>Surat Masuk</span>
                 </a>
-                <a href="surat-keluar.php" class="sidebar-item active">
+                <a href="surat-keluar.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
                     <span>Surat Keluar</span>
                 </a>
-                <a href="disposisi-surat.php" class="sidebar-item">
+                <a href="disposisi-surat.php" class="sidebar-item active">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                     </svg>
@@ -133,13 +133,13 @@ $suratKeluarData = [
             <!-- Page Content -->
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Surat Keluar</h1>
-                    <a href="tambah-surat-keluar.php" class="btn-add">
+                    <h1>Disposisi Surat</h1>
+                    <a href="tambah-disposisi-surat.php" class="btn-add">
                         <span>Tambah +</span>
                     </a>
                 </div>
 
-                <!-- Surat Keluar Table -->
+                <!-- Disposisi Surat Table -->
                 <div class="table-container">
                     <div class="table-responsive">
                         <table class="data-table">
@@ -147,30 +147,25 @@ $suratKeluarData = [
                                 <tr>
                                     <th>No</th>
                                     <th>Nama Surat</th>
-                                    <th>Kategori Surat</th>
-                                    <th>Tanggal Keluar</th>
-                                    <th>Di Keluarkan</th>
+                                    <th>Perihal Surat</th>
+                                    <th>Tanggal Surat Masuk</th>
                                     <th>Tujuan Surat</th>
+                                    <th>Komentar</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($suratKeluarData as $surat): ?>
+                                <?php foreach ($disposisiData as $disposisi): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($surat['no']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['nama_surat']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['kategori']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['tanggal_keluar']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['di_keluarkan']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['tujuan_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['no']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['nama_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['perihal_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['tanggal_masuk']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['tujuan_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['komentar']); ?></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="detail-surat-keluar.php?id=<?php echo urlencode($surat['no']); ?>" class="btn-detail">Detail</a>
-                                            <button class="btn-delete" title="Download">
-                                                <svg class="icon" viewBox="0 0 24 24">
-                                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
-                                                </svg>
-                                            </button>
+                                            <a href="detail-disposisi-surat.php?id=<?php echo urlencode($disposisi['no']); ?>" class="btn-detail">Detail</a>
                                             <button class="btn-delete" title="Edit">
                                                 <svg class="icon" viewBox="0 0 24 24">
                                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>

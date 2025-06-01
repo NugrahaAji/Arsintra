@@ -62,7 +62,7 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                     </svg>
                     <span>Surat Keluar</span>
                 </a>
-                <a href="#" class="sidebar-item">
+                <a href="disposisi-surat.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                     </svg>
@@ -87,11 +87,11 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
         <div class="main-content">
             <!-- Header -->
             <header class="header">
-                <h1>Arsintra</h1>
+                <h1></h1>
                 <div class="header-actions">
                     <button class="icon-button">
                         <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 00-15 0v5h5l-5 5-5-5h5V7a9.5 9.5 0 0119 0v10z"></path>
+                            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
                         </svg>
                     </button>
                     <button class="icon-button">
@@ -99,9 +99,10 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div>
+                    </div> -->
+                    <div class="avatar"></div>
                 </div>
             </header>
 

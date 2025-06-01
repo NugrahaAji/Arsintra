@@ -7,27 +7,26 @@ session_start();
 //     exit();
 // }
 
-// Get letter ID from URL parameter
-$letter_id = $_GET['id'] ?? '001';
+// Get disposition ID from URL parameter
+$disposisi_id = $_GET['id'] ?? '001';
 
-// Sample data for the letter (in real app, this would come from database)
-$letterData = [
+// Sample data for the disposition (in real app, this would come from database)
+$disposisiData = [
     '001' => [
         'no_surat' => '001',
         'nama_surat' => 'Proposal Kegiatan Pelatihan Mata',
-        'kategori' => 'Poposal',
-        'tanggal_masuk' => '17 - 02 - 2025',
         'asal_surat' => 'Himakorn FMIPA UNILA',
-        'petugas_arsip' => 'Dea Delvinata',
+        'kategori' => 'Proposal',
+        'tanggal_keluar' => '17 - 02 - 2025',
+        'tujuan_surat' => 'Dea Delvinata',
+        'isi_disposisi' => 'Surat ini ditujukan untuk meminta tanda tangan dari wakil dekan bidang kemahasiswaan supaya kegiatan bisa berjalan',
         'jumlah_lampiran' => '3 Rangkap',
-        'deskripsi_surat' => 'Surat ini ditujukan untuk meminta tanda tangan dari wakil dekan bidang kemahasiswaan supaya kegiatan bisa berjalan',
-        'file_path' => 'asset/image/sample-document.png',
-        'status' => 'Selesai Arsip'
+        'file_path' => 'asset/image/sample-document.png'
     ]
 ];
 
-// Get letter data or default
-$letter = $letterData[$letter_id] ?? $letterData['001'];
+// Get disposition data or default
+$disposisi = $disposisiData[$disposisi_id] ?? $disposisiData['001'];
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +34,7 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Surat Masuk - Arsintra</title>
+    <title>Detail Disposisi Surat - Arsintra</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -52,7 +51,7 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                     </svg>
                     <span>Beranda</span>
                 </a>
-                <a href="surat-masuk.php" class="sidebar-item active">
+                <a href="surat-masuk.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
@@ -64,7 +63,7 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                     </svg>
                     <span>Surat Keluar</span>
                 </a>
-                <a href="disposisi-surat.php" class="sidebar-item">
+                <a href="disposisi-surat.php" class="sidebar-item active">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                     </svg>
@@ -111,9 +110,9 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
             <!-- Page Content -->
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Surat Masuk</h1>
+                    <h1>Disposisi Surat</h1>
                     <div class="header-actions">
-                        <a href="surat-masuk.php" class="btn-back">
+                        <a href="disposisi-surat.php" class="btn-back">
                             <svg class="icon" viewBox="0 0 24 24">
                                 <path d="M19 12H5m7-7l-7 7 7 7"></path>
                             </svg>
@@ -128,53 +127,53 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                     <div class="document-section">
                         <h3>Foto Bukti Usaha</h3>
                         <div class="document-image">
-                            <img src="<?php echo htmlspecialchars($letter['file_path']); ?>" alt="Document Scan" />
+                            <img src="<?php echo htmlspecialchars($disposisi['file_path']); ?>" alt="Document Scan" />
                         </div>
                     </div>
 
-                    <!-- Letter Details -->
+                    <!-- Disposition Details -->
                     <div class="detail-form">
                         <div class="form-row">
                             <div class="detail-group">
                                 <label>No Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['no_surat']); ?></div>
+                                <div class="detail-value"><?php echo htmlspecialchars($disposisi['no_surat']); ?></div>
                             </div>
                             <div class="detail-group">
                                 <label>Asal Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['asal_surat']); ?></div>
+                                <div class="detail-value"><?php echo htmlspecialchars($disposisi['asal_surat']); ?></div>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="detail-group">
                                 <label>Nama Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['nama_surat']); ?></div>
+                                <div class="detail-value"><?php echo htmlspecialchars($disposisi['nama_surat']); ?></div>
                             </div>
                             <div class="detail-group">
                                 <label>Kategori</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['kategori']); ?></div>
+                                <div class="detail-value"><?php echo htmlspecialchars($disposisi['kategori']); ?></div>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="detail-group">
-                                <label>Tanggal Masuk</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['tanggal_masuk']); ?></div>
+                                <label>Tanggal Keluar</label>
+                                <div class="detail-value"><?php echo htmlspecialchars($disposisi['tanggal_keluar']); ?></div>
                             </div>
                             <div class="detail-group">
-                                <label>Petugas Arsip</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['petugas_arsip']); ?></div>
+                                <label>Tujuan Surat</label>
+                                <div class="detail-value"><?php echo htmlspecialchars($disposisi['tujuan_surat']); ?></div>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="detail-group">
-                                <label>Deskripsi Surat</label>
-                                <div class="detail-value description"><?php echo htmlspecialchars($letter['deskripsi_surat']); ?></div>
+                                <label>Isi Disposisi</label>
+                                <div class="detail-value description"><?php echo htmlspecialchars($disposisi['isi_disposisi']); ?></div>
                             </div>
                             <div class="detail-group">
                                 <label>Jumlah Lampiran</label>
-                                <div class="detail-value description"><?php echo htmlspecialchars($letter['jumlah_lampiran']); ?></div>
+                                <div class="detail-value description"><?php echo htmlspecialchars($disposisi['jumlah_lampiran']); ?></div>
                             </div>
                         </div>
                     </div>

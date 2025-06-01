@@ -91,7 +91,7 @@ $suratMasukData = [
                     </svg>
                     <span>Surat Keluar</span>
                 </a>
-                <a href="#" class="sidebar-item">
+                <a href="disposisi-surat.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                     </svg>
@@ -188,19 +188,19 @@ $suratMasukData = [
                                     <td>
                                         <div class="action-buttons">
                                             <a href="detail-surat-masuk.php?id=<?php echo urlencode($surat['no']); ?>" class="btn-detail">Detail</a>
-                                            <button class="btn-icon" title="Download">
+                                            <button class="btn-delete" title="Download">
                                                 <svg class="icon" viewBox="0 0 24 24">
                                                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
                                                 </svg>
                                             </button>
-                                            <button class="btn-icon" title="Edit">
+                                            <button class="btn-delete" title="Edit">
                                                 <svg class="icon" viewBox="0 0 24 24">
                                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                 </svg>
                                             </button>
-                                            <button class="btn-icon btn-delete" title="Delete">
+                                            <button class="btn-delete" title="Delete">
                                                 <svg class="icon" viewBox="0 0 24 24">
-                                                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
                                                 </svg>
                                             </button>
                                         </div>
