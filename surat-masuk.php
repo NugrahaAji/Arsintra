@@ -11,8 +11,8 @@ session_start();
 $suratMasukData = [
     [
         'no' => '001',
-        'nama_surat' => 'Poposal Kegiatan',
-        'kategori' => 'Poposal',
+        'nama_surat' => 'Proposal Kegiatan',
+        'kategori' => 'Proposal',
         'tanggal_masuk' => '17-07-2025',
         'asal_surat' => 'Himakorn FMIPA UNILA',
         'status' => 'Selesai Arsip',
@@ -120,7 +120,7 @@ $suratMasukData = [
                 <div class="header-actions">
                     <button class="icon-button">
                         <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 00-15 0v5h5l-5 5-5-5h5V7a9.5 9.5 0 0119 0v10z"></path>
+                            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
                         </svg>
                     </button>
                     <button class="icon-button">
@@ -128,9 +128,10 @@ $suratMasukData = [
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div>
+                    </div> -->
+                    <div class="avatar"></div>
                 </div>
             </header>
 
@@ -138,9 +139,9 @@ $suratMasukData = [
             <main class="page-content">
                 <div class="page-header">
                     <h1>Surat Masuk</h1>
-                    <button class="btn-add">
+                    <a href="tambah-surat-masuk.php" class="btn-add">
                         <span>Tambah +</span>
-                    </button>
+                    </a>
                 </div>
 
                 <!-- Surat Masuk Table -->
@@ -186,7 +187,7 @@ $suratMasukData = [
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-detail">Detail</button>
+                                            <a href="detail-surat-masuk.php?id=<?php echo urlencode($surat['no']); ?>" class="btn-detail">Detail</a>
                                             <button class="btn-icon" title="Download">
                                                 <svg class="icon" viewBox="0 0 24 24">
                                                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>

@@ -1,3 +1,14 @@
+/* 
+  Combined CSS file for Arsintra
+  Contains styles for:
+  - Login/Registration pages
+  - Dashboard
+  - Surat Masuk page
+  - Form pages
+  - Detail pages
+  - Responsive adjustments
+*/
+
 /* Base Styles */
 * {
   box-sizing: border-box;
@@ -9,7 +20,6 @@
 body,
 html {
   height: 100%;
-  overflow-x: hidden; /* Mencegah scroll horizontal di level body */
 }
 
 /* Login/Register Page Styles */
@@ -162,6 +172,12 @@ input[type="password"] {
   border: 1px solid #cfc;
 }
 
+.success-message a {
+  color: #059669;
+  text-decoration: underline;
+  margin-left: 10px;
+}
+
 /* Navbar */
 .navbar {
   width: 100%;
@@ -257,8 +273,6 @@ input[type="password"] {
   display: flex;
   height: 100vh;
   background-color: #ffffff;
-  max-width: 100%;     /* Mencegah container meluap dari viewport */
-  overflow-x: hidden;  /* Mencegah scroll horizontal pada container utama */
 }
 
 /* Sidebar */
@@ -269,7 +283,6 @@ input[type="password"] {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  flex-shrink: 0; /* Mencegah sidebar menyusut jika konten utama terlalu lebar */
 }
 
 .sidebar-header {
@@ -321,12 +334,10 @@ input[type="password"] {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;  /* Izinkan scroll vertikal jika konten lebih tinggi */
-  overflow-x: hidden; /* Cegah scroll horizontal pada main-content itu sendiri */
-  min-width: 0;      /* PENTING: Izinkan main-content untuk menyusut jika konten di dalamnya lebar */
+  overflow: auto;
 }
 
-/* Header within Main Content (Dashboard Header) */
+/* Header */
 .header {
   display: flex;
   align-items: center;
@@ -380,15 +391,14 @@ input[type="password"] {
   cursor: pointer;
 }
 
-/* Dashboard Specific Content (Beranda) */
-.dashboard { /* Ini untuk konten spesifik di halaman beranda/dashboard */
+/* Dashboard */
+.dashboard {
   padding: 1.5rem;
 }
 
-/* Generic Page Content (untuk Surat Masuk, Surat Keluar, dll.) */
-.page-content { /* Gunakan ini sebagai pembungkus utama konten di halaman selain dashboard */
+/* Page Content */
+.page-content {
   padding: 1.5rem;
-  width: 100%; /* Pastikan page-content tidak mencoba lebih lebar dari main-content */
 }
 
 .page-header {
@@ -414,13 +424,36 @@ input[type="password"] {
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn-add:hover {
   background-color: #059669;
 }
 
-/* Welcome Message (Dashboard specific) */
+.btn-back {
+  background-color: #da0700;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-back:hover {
+  background-color: #da0700;
+}
+
+/* Welcome Message */
 .welcome-message {
   margin-bottom: 2rem;
   padding: 1rem;
@@ -439,7 +472,243 @@ input[type="password"] {
   color: #6c757d;
 }
 
-/* Stats Grid (Dashboard specific) */
+/* Detail Page Styles */
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.document-section {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+}
+
+.document-section h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.document-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  min-height: 400px;
+}
+
+.document-image img {
+  max-width: 100%;
+  max-height: 500px;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.detail-form {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+}
+
+.detail-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem; /* Add margin bottom for spacing between groups */
+}
+
+.detail-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.75rem; /* Increased from 0.5rem to 0.75rem */
+}
+
+.detail-value {
+  padding: 1rem 0.75rem; /* Increased vertical padding from 0.75rem to 1rem */
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #1f2937;
+  min-height: 2.75rem; /* Increased from 2.5rem to 2.75rem */
+  display: flex;
+  align-items: center;
+}
+
+.detail-value.description {
+  min-height: 120px;
+  align-items: flex-start;
+  padding-top: 0.75rem;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: flex-end;
+}
+
+.btn-edit {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-edit:hover {
+  background-color: #2563eb;
+}
+
+.btn-download {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-download:hover {
+  background-color: #059669;
+}
+
+.btn-delete {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-delete:hover {
+  background-color: #dc2626;
+}
+
+/* Form Styles */
+.form-container-page {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Increased from 1.5rem to 2rem */
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 2rem; /* horizontal gap 2rem, vertical gap 1.5rem */
+  margin-bottom: 1.5rem; /* Add margin bottom for more vertical spacing */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #da0700;
+  box-shadow: 0 0 0 3px rgba(218, 7, 0, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.file-input-container {
+  position: relative;
+}
+
+.file-format-note {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.btn-save {
+  background-color: #da0700;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-save:hover {
+  background-color: #b91c1c;
+}
+
+/* Stats Grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -453,7 +722,6 @@ input[type="password"] {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
   overflow: hidden;
-  min-width: 0; /* PENTING: Izinkan kartu untuk menyusut dalam grid */
 }
 
 .stat-card h3 {
@@ -468,10 +736,9 @@ input[type="password"] {
   font-weight: 700;
   color: #e03131;
   text-align: center;
-  word-break: break-all; /* Jika angka sangat panjang */
 }
 
-/* Tables Grid (Dashboard specific) */
+/* Tables Grid */
 .tables-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -484,16 +751,14 @@ input[type="password"] {
   }
 }
 
-/* Table Container (digunakan di .tables-grid dan bisa juga untuk .data-table jika diperlukan wrapper) */
 .table-container {
   background-color: #ffffff;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  /* overflow: hidden; -- Dihapus jika .table-responsive menangani overflow dengan baik */
-  min-width: 0; /* PENTING: Jika .table-container adalah item grid/flex */
+  overflow: hidden;
 }
 
-.table-header { /* Header di atas tabel dalam .table-container */
+.table-header {
   padding: 1.5rem;
 }
 
@@ -503,22 +768,18 @@ input[type="password"] {
   font-weight: 600;
 }
 
-/* Table Responsive Wrapper (untuk SEMUA tabel data) */
 .table-responsive {
-  overflow-x: auto; /* Ini yang membuat tabel bisa di-scroll horizontal */
-  width: 100%;     /* Pastikan wrapper ini tidak lebih lebar dari parentnya */
+  overflow-x: auto;
 }
 
-/* Generic Table Styling */
-table { /* Style dasar untuk semua tabel */
-  width: 100%; /* Tabel mencoba mengisi .table-responsive */
+table {
+  width: 100%;
   border-collapse: collapse;
 }
 
-.data-table { /* Class spesifik untuk tabel data di halaman seperti Surat Masuk */
-  /* width: 100%; (sudah di 'table') */
-  /* border-collapse: collapse; (sudah di 'table') */
-  /* Style tambahan spesifik untuk .data-table jika ada */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 th {
@@ -529,21 +790,19 @@ th {
   text-align: left;
   padding: 0.75rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
-  white-space: nowrap; /* Mencegah header tabel terpotong jika terlalu panjang */
 }
 
 td {
   padding: 1rem 1.5rem;
   font-size: 0.875rem;
   border-bottom: 1px solid #e5e7eb;
-  word-break: break-word; /* Membantu memotong teks panjang di dalam sel */
 }
 
 tr:last-child td {
   border-bottom: none;
 }
 
-/* Status Badges (digunakan dalam tabel data) */
+/* Status Badges */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -579,7 +838,7 @@ tr:last-child td {
   fill: none;
 }
 
-/* Action Buttons (digunakan dalam tabel data) */
+/* Action Buttons */
 .action-buttons {
   display: flex;
   align-items: center;
@@ -595,6 +854,7 @@ tr:last-child td {
   font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
 }
 
 .btn-detail:hover {
@@ -637,53 +897,9 @@ tr:last-child td {
   .sidebar {
     width: 100%;
     height: auto;
-    border-right: none;
-    border-bottom: 1px solid #e5e7eb;
   }
-
-  .navbar-inner {
-    padding: 0 20px;
-  }
-
-  .hamburger {
-    display: block;
-  }
-
-  /* Sembunyikan nav-links default di mobile, akan ditampilkan oleh JS jika hamburger diklik */
-  /* Anda perlu JS untuk toggle class .active pada .nav-links */
-  .nav-links {
-     display: none;
-     flex-direction: column;
-     align-items: flex-start;
-     position: absolute;
-     top: 80px; /* Sesuaikan dengan tinggi navbar */
-     left: 0;
-     width: 100%;
-     background-color: white;
-     padding: 1rem;
-     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-     gap: 1rem;
-  }
-
-  .nav-links.active {
-     display: flex;
-  }
-  
-  .nav-links > li:not(.btn-login) > a {
-    padding: 0.5rem 0; /* Padding untuk item menu mobile */
-  }
-
-  .btn-login { /* Sesuaikan tombol login untuk menu mobile jika perlu */
-    width: auto; 
-    padding: 0.5rem 1rem;
-  }
-
 
   .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .tables-grid { /* Sudah ditangani oleh breakpoint 1024px, ini untuk konsistensi */
     grid-template-columns: 1fr;
   }
 
@@ -701,12 +917,33 @@ tr:last-child td {
     align-items: flex-start;
     gap: 1rem;
   }
-  
-  .page-header h1 {
-    font-size: 1.5rem; /* Sesuaikan ukuran font header halaman di mobile */
+
+  .action-buttons {
+    flex-wrap: wrap;
   }
 
-  .header h1 { /* Dashboard header title */
-    font-size: 1.25rem;
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-container-page {
+    padding: 1rem;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .detail-actions button {
+    width: 100%;
+  }
+
+  .document-image {
+    min-height: 300px;
+  }
+
+  .document-image img {
+    max-height: 350px;
   }
 }
