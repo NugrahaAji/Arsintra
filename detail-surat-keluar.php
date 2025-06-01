@@ -16,13 +16,11 @@ $letterData = [
         'no_surat' => '001',
         'nama_surat' => 'Proposal Kegiatan Pelatihan Mata',
         'kategori' => 'Poposal',
-        'tanggal_masuk' => '17 - 02 - 2025',
-        'asal_surat' => 'Himakorn FMIPA UNILA',
-        'petugas_arsip' => 'Dea Delvinata',
-        'jumlah_lampiran' => '3 Rangkap',
+        'tanggal_keluar' => '17 - 02 - 2025',
+        'tujuan_surat' => 'Himakorn FMIPA UNILA',
+        'di_keluarkan' => 'Ketua Himakorn',
         'deskripsi_surat' => 'Surat ini ditujukan untuk meminta tanda tangan dari wakil dekan bidang kemahasiswaan supaya kegiatan bisa berjalan',
-        'file_path' => 'asset/image/sample-document.png',
-        'status' => 'Selesai Arsip'
+        'file_path' => 'asset/image/sample-document.png'
     ]
 ];
 
@@ -35,7 +33,7 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Surat Masuk - Arsintra</title>
+    <title>Detail Surat Keluar - Arsintra</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -52,13 +50,13 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                     </svg>
                     <span>Beranda</span>
                 </a>
-                <a href="surat-masuk.php" class="sidebar-item active">
+                <a href="surat-masuk.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                     <span>Surat Masuk</span>
                 </a>
-                <a href="surat-keluar.php" class="sidebar-item">
+                <a href="surat-keluar.php" class="sidebar-item active">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
@@ -93,7 +91,7 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                 <div class="header-actions">
                     <button class="icon-button">
                         <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
+                            <path d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 00-15 0v5h5l-5 5-5-5h5V7a9.5 9.5 0 0119 0v10z"></path>
                         </svg>
                     </button>
                     <button class="icon-button">
@@ -101,19 +99,18 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div> -->
-                    <div class="avatar"></div>
+                    </div>
                 </div>
             </header>
 
             <!-- Page Content -->
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Surat Masuk</h1>
+                    <h1>Surat Keluar</h1>
                     <div class="header-actions">
-                        <a href="surat-masuk.php" class="btn-back">
+                        <a href="surat-keluar.php" class="btn-back">
                             <svg class="icon" viewBox="0 0 24 24">
                                 <path d="M19 12H5m7-7l-7 7 7 7"></path>
                             </svg>
@@ -140,8 +137,8 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                                 <div class="detail-value"><?php echo htmlspecialchars($letter['no_surat']); ?></div>
                             </div>
                             <div class="detail-group">
-                                <label>Asal Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['asal_surat']); ?></div>
+                                <label>Tujuan Surat</label>
+                                <div class="detail-value"><?php echo htmlspecialchars($letter['tujuan_surat']); ?></div>
                             </div>
                         </div>
 
@@ -158,23 +155,19 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
 
                         <div class="form-row">
                             <div class="detail-group">
-                                <label>Tanggal Masuk</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['tanggal_masuk']); ?></div>
+                                <label>Tanggal Keluar</label>
+                                <div class="detail-value"><?php echo htmlspecialchars($letter['tanggal_keluar']); ?></div>
                             </div>
                             <div class="detail-group">
-                                <label>Petugas Arsip</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['petugas_arsip']); ?></div>
+                                <label>Di Keluarkan</label>
+                                <div class="detail-value"><?php echo htmlspecialchars($letter['di_keluarkan']); ?></div>
                             </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="detail-group">
+                            <div class="detail-group full-width">
                                 <label>Deskripsi Surat</label>
                                 <div class="detail-value description"><?php echo htmlspecialchars($letter['deskripsi_surat']); ?></div>
-                            </div>
-                            <div class="detail-group">
-                                <label>Jumlah Lampiran</label>
-                                <div class="detail-value description"><?php echo htmlspecialchars($letter['jumlah_lampiran']); ?></div>
                             </div>
                         </div>
                     </div>

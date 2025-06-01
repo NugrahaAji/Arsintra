@@ -7,52 +7,47 @@ session_start();
 //     exit();
 // }
 
-// Sample data for Surat Masuk
-$suratMasukData = [
+// Sample data for Surat Keluar
+$suratKeluarData = [
     [
         'no' => '001',
-        'nama_surat' => 'Proposal Kegiatan',
-        'kategori' => 'Proposal',
-        'tanggal_masuk' => '17-07-2025',
-        'asal_surat' => 'Himakorn FMIPA UNILA',
-        'status' => 'Selesai Arsip',
-        'status_color' => 'success'
+        'nama_surat' => 'Poposal Kegiatan',
+        'kategori' => 'Poposal',
+        'tanggal_keluar' => '17-07-2025',
+        'di_keluarkan' => 'Ketua Himakorn',
+        'tujuan_surat' => 'Himakorn FMIPA UNILA'
     ],
     [
         'no' => '002',
         'nama_surat' => 'Pegajuan Dana Lab',
         'kategori' => 'Pendanaan',
-        'tanggal_masuk' => '16-10-2024',
-        'asal_surat' => 'Kepala Badan Khusus',
-        'status' => 'Menunggu Tindakan',
-        'status_color' => 'warning'
+        'tanggal_keluar' => '16-10-2024',
+        'di_keluarkan' => 'Sekretaris Himakorn',
+        'tujuan_surat' => 'Kepala Badan Khusus'
     ],
     [
         'no' => '003',
         'nama_surat' => 'Pegajuan Dana Lab',
         'kategori' => 'Pendanaan',
-        'tanggal_masuk' => '16-10-2024',
-        'asal_surat' => 'Kepala Badan Khusus',
-        'status' => 'Selesai Arsip',
-        'status_color' => 'success'
+        'tanggal_keluar' => '16-10-2024',
+        'di_keluarkan' => 'Bendahara Himakorn',
+        'tujuan_surat' => 'Kepala Badan Khusus'
     ],
     [
         'no' => '004',
         'nama_surat' => 'Pegajuan Dana Lab',
         'kategori' => 'Pendanaan',
-        'tanggal_masuk' => '16-10-2024',
-        'asal_surat' => 'Kepala Badan Khusus',
-        'status' => 'Ditolak',
-        'status_color' => 'danger'
+        'tanggal_keluar' => '16-10-2024',
+        'di_keluarkan' => 'Bidang Keilmuan',
+        'tujuan_surat' => 'Kepala Lab FMIPA'
     ],
     [
         'no' => '005',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_masuk' => '16-10-2024',
-        'asal_surat' => 'Kepala Badan Khusus',
-        'status' => 'Selesai Arsip',
-        'status_color' => 'success'
+        'nama_surat' => 'Pegajuan Kerja Sama',
+        'kategori' => 'Kerja Sama',
+        'tanggal_keluar' => '16-10-2024',
+        'di_keluarkan' => 'Badan Khusus',
+        'tujuan_surat' => 'Himatro FMIPA Unila'
     ]
 ];
 ?>
@@ -62,7 +57,7 @@ $suratMasukData = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Masuk - Arsintra</title>
+    <title>Surat Keluar - Arsintra</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -79,13 +74,13 @@ $suratMasukData = [
                     </svg>
                     <span>Beranda</span>
                 </a>
-                <a href="surat-masuk.php" class="sidebar-item active">
+                <a href="surat-masuk.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                     <span>Surat Masuk</span>
                 </a>
-                <a href="surat-keluar.php" class="sidebar-item">
+                <a href="surat-keluar.php" class="sidebar-item active">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
@@ -138,13 +133,13 @@ $suratMasukData = [
             <!-- Page Content -->
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Surat Masuk</h1>
-                    <a href="tambah-surat-masuk.php" class="btn-add">
+                    <h1>Surat Keluar</h1>
+                    <a href="tambah-surat-keluar.php" class="btn-add">
                         <span>Tambah +</span>
                     </a>
                 </div>
 
-                <!-- Surat Masuk Table -->
+                <!-- Surat Keluar Table -->
                 <div class="table-container">
                     <div class="table-responsive">
                         <table class="data-table">
@@ -153,41 +148,24 @@ $suratMasukData = [
                                     <th>No</th>
                                     <th>Nama Surat</th>
                                     <th>Kategori Surat</th>
-                                    <th>Tanggal Masuk</th>
-                                    <th>Asal Surat</th>
-                                    <th>Status</th>
+                                    <th>Tanggal Keluar</th>
+                                    <th>Di Keluarkan</th>
+                                    <th>Tujuan Surat</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($suratMasukData as $surat): ?>
+                                <?php foreach ($suratKeluarData as $surat): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($surat['no']); ?></td>
                                     <td><?php echo htmlspecialchars($surat['nama_surat']); ?></td>
                                     <td><?php echo htmlspecialchars($surat['kategori']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['tanggal_masuk']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['asal_surat']); ?></td>
-                                    <td>
-                                        <span class="status-badge status-<?php echo $surat['status_color']; ?>">
-                                            <?php if ($surat['status_color'] === 'success'): ?>
-                                                <svg class="status-icon" viewBox="0 0 24 24">
-                                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                            <?php elseif ($surat['status_color'] === 'warning'): ?>
-                                                <svg class="status-icon" viewBox="0 0 24 24">
-                                                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                                </svg>
-                                            <?php else: ?>
-                                                <svg class="status-icon" viewBox="0 0 24 24">
-                                                    <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                            <?php endif; ?>
-                                            <?php echo htmlspecialchars($surat['status']); ?>
-                                        </span>
-                                    </td>
+                                    <td><?php echo htmlspecialchars($surat['tanggal_keluar']); ?></td>
+                                    <td><?php echo htmlspecialchars($surat['di_keluarkan']); ?></td>
+                                    <td><?php echo htmlspecialchars($surat['tujuan_surat']); ?></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="detail-surat-masuk.php?id=<?php echo urlencode($surat['no']); ?>" class="btn-detail">Detail</a>
+                                            <a href="detail-surat-keluar.php?id=<?php echo urlencode($surat['no']); ?>" class="btn-detail">Detail</a>
                                             <button class="btn-icon" title="Download">
                                                 <svg class="icon" viewBox="0 0 24 24">
                                                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>

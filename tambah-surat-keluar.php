@@ -12,12 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Process form data here
     $no_surat = $_POST['no_surat'] ?? '';
     $nama_surat = $_POST['nama_surat'] ?? '';
-    $tanggal_masuk = $_POST['tanggal_masuk'] ?? '';
-    $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? '';
-    $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
-    $asal_surat = $_POST['asal_surat'] ?? '';
+    $tanggal_keluar = $_POST['tanggal_keluar'] ?? '';
+    $di_keluarkan = $_POST['di_keluarkan'] ?? '';
+    $tujuan_surat = $_POST['tujuan_surat'] ?? '';
     $kategori = $_POST['kategori'] ?? '';
-    $petugas_arsip = $_POST['petugas_arsip'] ?? '';
+    $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
     
     // Handle file upload
     if (isset($_FILES['scan_surat']) && $_FILES['scan_surat']['error'] === UPLOAD_ERR_OK) {
@@ -33,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Move uploaded file
         if (move_uploaded_file($file_tmp, $upload_dir . $file_name)) {
-            $success = 'Surat masuk berhasil ditambahkan!';
+            $success = 'Surat keluar berhasil ditambahkan!';
         } else {
             $error = 'Gagal mengupload file!';
         }
@@ -41,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // In a real application, you would save to database here
     if (!isset($error)) {
-        $success = 'Surat masuk berhasil ditambahkan!';
+        $success = 'Surat keluar berhasil ditambahkan!';
     }
 }
 ?>
@@ -51,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Surat Masuk - Arsintra</title>
+    <title>Tambah Surat Keluar - Arsintra</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -68,13 +67,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </svg>
                     <span>Beranda</span>
                 </a>
-                <a href="surat-masuk.php" class="sidebar-item active">
+                <a href="surat-masuk.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                     <span>Surat Masuk</span>
                 </a>
-                <a href="surat-keluar.php" class="sidebar-item">
+                <a href="surat-keluar.php" class="sidebar-item active">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
@@ -127,9 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Page Content -->
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Surat Masuk</h1>
+                    <h1>Surat Keluar</h1>
                     <div class="header-actions">
-                        <a href="surat-masuk.php" class="btn-back">
+                        <a href="surat-keluar.php" class="btn-back">
                             <svg class="icon" viewBox="0 0 24 24">
                                 <path d="M19 12H5m7-7l-7 7 7 7"></path>
                             </svg>
@@ -141,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if (isset($success)): ?>
                 <div class="success-message">
                     <?php echo htmlspecialchars($success); ?>
-                    <a href="surat-masuk.php">Kembali ke daftar surat masuk</a>
+                    <a href="surat-keluar.php">Kembali ke daftar surat keluar</a>
                 </div>
                 <?php endif; ?>
 
@@ -160,8 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="text" id="no_surat" name="no_surat" value="001" required>
                             </div>
                             <div class="form-group">
-                                <label for="asal_surat">Asal Surat<span class="required">*</span></label>
-                                <input type="text" id="asal_surat" name="asal_surat" value="Himakorn FMIPA UNILA" required>
+                                <label for="tujuan_surat">Tujuan Surat<span class="required">*</span></label>
+                                <input type="text" id="tujuan_surat" name="tujuan_surat" value="Himakorn FMIPA UNILA" required>
                             </div>
                         </div>
 
@@ -172,18 +171,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class="form-group">
                                 <label for="kategori">Kategori<span class="required">*</span></label>
-                                <input type="text" id="kategori" name="kategori" value="Proposal" required>
+                                <input type="text" id="kategori" name="kategori" value="Poposal" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="tanggal_masuk">Tanggal Masuk<span class="required">*</span></label>
-                                <input type="text" id="tanggal_masuk" name="tanggal_masuk" value="17 - 02 - 2025" required>
+                                <label for="tanggal_keluar">Tanggal Keluar<span class="required">*</span></label>
+                                <input type="text" id="tanggal_keluar" name="tanggal_keluar" value="17 - 02 - 2025" required>
                             </div>
                             <div class="form-group">
-                                <label for="petugas_arsip">Petugas Arsip<span class="required">*</span></label>
-                                <input type="text" id="petugas_arsip" name="petugas_arsip" value="Dea Delvinata" required>
+                                <label for="di_keluarkan">Di Keluarkan<span class="required">*</span></label>
+                                <input type="text" id="di_keluarkan" name="di_keluarkan" value="Ketua Himakorn" required>
                             </div>
                         </div>
 
