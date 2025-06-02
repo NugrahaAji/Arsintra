@@ -87,14 +87,12 @@
             <p>18 Maret 2025</p>
             <img src="asset/image/surat-preview.png" alt="Surat" class="surat-image">
             <div class="button-group">
-                <button class="btn simpan">
-                    <span class="icon">⬇️</span> Simpan
-                </button>
-                <a href="detail-surat-masuk.php">
-                <button class="btn detail">
-                    <span class="icon">🔍</span> Detail
-                </button>
-                </a>
+              <button class="btn simpan">
+                <span class="icon">⬇️</span> Simpan
+              </button>
+              <a href="detail-surat-masuk.php" class="btn detail">
+                <span class="icon">🔍</span> Detail
+              </a>
             </div>
         </div>
         <?php endfor; ?>

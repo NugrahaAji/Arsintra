@@ -1031,21 +1031,26 @@ tr:last-child td {
       margin-bottom: 1rem;
     }
 
-    .button-group {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.5rem;
-    }
+.button-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 kolom otomatis */
+  gap: 10px;
+  margin-top: 10px;
+}
 
-    .btn {
-      flex: 1;
-      padding: 0.5rem;
-      font-size: 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
+.btn {
+  background-color: #d4f8d4;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #006400;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
 
     .btn.simpan {
       background-color: #dfffe2;
