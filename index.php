@@ -76,8 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="password" placeholder="Masukkan kata sandi" name="password" required />
           </div>
 
-          <a href="#" class="forgot-password">Lupa kata sandi?</a>
-
           <div class="button-group">
             <button type="submit" class="btn btn-primary">Masuk</button>
             <a href="register.php" class="btn btn-secondary">Buat akun</a>
