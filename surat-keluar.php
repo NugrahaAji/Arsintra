@@ -134,7 +134,7 @@ $suratKeluarData = [
             <main class="page-content">
                 <div class="page-header">
                     <h1>Surat Keluar</h1>
-                    <a href="tambah-surat-keluar.php" class="btn-add">
+                    <a href="tambah-surat-keluar.php" class="btn-save">
                         <span>Tambah +</span>
                     </a>
                 </div>

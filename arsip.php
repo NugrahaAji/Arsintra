@@ -87,11 +87,15 @@
             <p>18 Maret 2025</p>
             <img src="asset/image/surat-preview.png" alt="Surat" class="surat-image">
             <div class="button-group">
-              <button class="btn simpan">
-                <span class="icon">⬇️</span> Simpan
+              <button style="font-weight: 400; gap: 10px" class="btn btn-primary">
+                <svg class="icon" viewBox="0 0 24 24">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
+                </svg>Simpan
               </button>
-              <a href="detail-surat-masuk.php" class="btn detail">
-                <span class="icon">🔍</span> Detail
+              <a href="detail-surat-masuk.php" style="color: #da0700; gap: 10px" class="btn btn-secondary">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>Detail
               </a>
             </div>
         </div>

@@ -134,7 +134,7 @@ $disposisiData = [
             <main class="page-content">
                 <div class="page-header">
                     <h1>Disposisi Surat</h1>
-                    <a href="tambah-disposisi-surat.php" class="btn-add">
+                    <a href="tambah-disposisi-surat.php" class="btn-save">
                         <span>Tambah +</span>
                     </a>
                 </div>
