@@ -78,7 +78,7 @@
 
 
     <main class="content">
-    <h2>Surat Keluar</h2>
+    <h2>Arsip Surat</h2>
     <div class="grid-container">
         <!-- Kartu Surat -->
         <?php for ($i = 0; $i < 10; $i++): ?>
@@ -86,7 +86,7 @@
             <h3>Surat Pengajuan Pendanaan</h3>
             <p>18 Maret 2025</p>
             <img src="asset/image/surat-preview.png" alt="Surat" class="surat-image">
-            <div class="button-group">
+            <div class="button-group-arsip">
               <button style="font-weight: 400; gap: 10px" class="btn btn-primary">
                 <svg class="icon" viewBox="0 0 24 24">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>

@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <h1 class="navbar-brand">Arsintra</h1>
 
       <ul class="nav-links">
-        <li class="nav-item btn-login"> <a href="#">Daftar</a>
+        <li class="nav-item btn-login"> <a href="register.php">Daftar</a>
         </li>
         <li class="nav-item"> <a href="index.php">Masuk</a>
         </li>

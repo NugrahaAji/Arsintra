@@ -168,22 +168,20 @@ $suratMasukData = [
                                     <td><?php echo htmlspecialchars($surat['tanggal_masuk']); ?></td>
                                     <td><?php echo htmlspecialchars($surat['asal_surat']); ?></td>
                                     <td>
-                                        <span class="status-badge status-<?php echo $surat['status_color']; ?>">
-                                            <?php if ($surat['status_color'] === 'success'): ?>
-                                                <svg class="status-icon" viewBox="0 0 24 24">
-                                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                            <?php elseif ($surat['status_color'] === 'warning'): ?>
-                                                <svg class="status-icon" viewBox="0 0 24 24">
-                                                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                                </svg>
-                                            <?php else: ?>
-                                                <svg class="status-icon" viewBox="0 0 24 24">
-                                                    <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                            <?php endif; ?>
-                                            <?php echo htmlspecialchars($surat['status']); ?>
-                                        </span>
+                                        <!-- <form method="POST" action="update_status.php"> -->
+                                            <!-- <input type="hidden" name="id_surat" value="<?php echo $surat['id']; ?>"> -->
+                                            <select name="status" onchange="this.form.submit()" class="status-badge status-<?php echo $surat['status_color']; ?>">
+                                                <option value="Selesai Arsip" class="status-success" <?php echo ($surat['status'] === 'Selesai Arsip') ? 'selected' : ''; ?>>
+                                                    ✅ Selesai Arsip
+                                                </option>
+                                                <option value="menunggu tindakan" class="status-warning" <?php echo ($surat['status'] === 'menunggu tindakan') ? 'selected' : ''; ?>>
+                                                    ⚠️ Menunggu Tindakan
+                                                </option>
+                                                <option value="ditolak" class="status-danger" <?php echo ($surat['status'] === 'ditolak') ? 'selected' : ''; ?>>
+                                                    ❌ Ditolak
+                                                </option>
+                                            </select>
+                                        </form>
                                     </td>
                                     <td>
                                         <div class="action-buttons">
