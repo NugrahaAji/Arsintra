@@ -60,7 +60,7 @@ $akunPengguna = [
                 <h1>Arsintra</h1>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="sidebar-item active">
+                <a href="admindashboard.php" class="sidebar-item active">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
@@ -159,5 +159,38 @@ $akunPengguna = [
             </main>
         </div>
     </div>
+    <div id="logoutModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3 class="modal-confirm">Yakin ingin keluar?</h3>
+    <p>Anda akan keluar dari sistem.</p>
+    <div class="modal-actions">
+      <button id="cancelLogout" class="btn-cancel">Batal</button>
+      <a href="logout.php" class="btn-logout">Keluar</a>
+    </div>
+  </div>
+</div>
+<script>
+  const logoutBtn = document.querySelector('.sidebar-item[href="logout.php"]');
+  const modal = document.getElementById('logoutModal');
+  const cancelBtn = document.getElementById('cancelLogout');
+
+  logoutBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    modal.classList.remove('hidden');
+  });
+
+  cancelBtn.addEventListener('click', function () {
+    modal.classList.add('hidden');
+  });
+
+  window.addEventListener('click', function (e) {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+    }
+  });
+</script>
+
+
+
 </body>
 </html>

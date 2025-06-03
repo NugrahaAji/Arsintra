@@ -19,19 +19,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pengirim_surat = $_POST['pengirim_surat'] ?? '';
     $isi_disposisi = $_POST['isi_disposisi'] ?? '';
     $catatan_tambahan = $_POST['catatan_tambahan'] ?? '';
-    
+
     // Handle file upload
     if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] === UPLOAD_ERR_OK) {
         // File upload logic here
         $upload_dir = 'uploads/';
         $file_name = $_FILES['file_surat']['name'];
         $file_tmp = $_FILES['file_surat']['tmp_name'];
-        
+
         // Create upload directory if it doesn't exist
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
-        
+
         // Move uploaded file
         if (move_uploaded_file($file_tmp, $upload_dir . $file_name)) {
             $success = 'Disposisi surat berhasil ditambahkan!';
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Gagal mengupload file!';
         }
     }
-    
+
     // In a real application, you would save to database here
     if (!isset($error)) {
         $success = 'Disposisi surat berhasil ditambahkan!';
@@ -241,5 +241,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </main>
         </div>
     </div>
+    <div id="logoutModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3 class="modal-confirm">Yakin ingin keluar?</h3>
+    <p>Anda akan keluar dari sistem.</p>
+    <div class="modal-actions">
+      <button id="cancelLogout" class="btn-cancel">Batal</button>
+      <a href="logout.php" class="btn-logout">Keluar</a>
+    </div>
+  </div>
+</div>
+<script>
+  const logoutBtn = document.querySelector('.sidebar-item[href="logout.php"]');
+  const modal = document.getElementById('logoutModal');
+  const cancelBtn = document.getElementById('cancelLogout');
+
+  logoutBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    modal.classList.remove('hidden');
+  });
+
+  cancelBtn.addEventListener('click', function () {
+    modal.classList.add('hidden');
+  });
+
+  window.addEventListener('click', function (e) {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+    }
+  });
+</script>
+
+
+
 </body>
 </html>
