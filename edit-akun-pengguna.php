@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <main class="page-content">
             <div class="page-header">
-                <h1>Tambah Akun</h1>
+                <h1>Edit Akun</h1>
                 <div class="header-actions">
                     <a href="admindashboard.php" class="btn-back">
                         <svg class="icon" viewBox="0 0 24 24">
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn-save">Tambah</button>
+                        <button type="submit" class="btn-save">Simpan</button>
                     </div>
                 </form>
             </div>
