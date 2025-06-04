@@ -1,52 +1,3 @@
-<?php
-session_start();
-
-// Check if user is logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit();
-// }
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Process form data here
-    $no_surat = $_POST['no_surat'] ?? '';
-    $nama_surat = $_POST['nama_surat'] ?? '';
-    $tanggal_surat_masuk = $_POST['tanggal_surat_masuk'] ?? '';
-    $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? '';
-    $tujuan_disposisi = $_POST['tujuan_disposisi'] ?? '';
-    $tingkat_urgensi = $_POST['tingkat_urgensi'] ?? '';
-    $pengirim_surat = $_POST['pengirim_surat'] ?? '';
-    $isi_disposisi = $_POST['isi_disposisi'] ?? '';
-    $catatan_tambahan = $_POST['catatan_tambahan'] ?? '';
-
-    // Handle file upload
-    if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] === UPLOAD_ERR_OK) {
-        // File upload logic here
-        $upload_dir = 'uploads/';
-        $file_name = $_FILES['file_surat']['name'];
-        $file_tmp = $_FILES['file_surat']['tmp_name'];
-
-        // Create upload directory if it doesn't exist
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-
-        // Move uploaded file
-        if (move_uploaded_file($file_tmp, $upload_dir . $file_name)) {
-            $success = 'Disposisi surat berhasil ditambahkan!';
-        } else {
-            $error = 'Gagal mengupload file!';
-        }
-    }
-
-    // In a real application, you would save to database here
-    if (!isset($error)) {
-        $success = 'Disposisi surat berhasil ditambahkan!';
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -234,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn-save">Tambah</button>
+                            <button type="submit" class="btn-save">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -251,28 +202,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 </div>
-<script>
-  const logoutBtn = document.querySelector('.sidebar-item[href="logout.php"]');
-  const modal = document.getElementById('logoutModal');
-  const cancelBtn = document.getElementById('cancelLogout');
-
-  logoutBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    modal.classList.remove('hidden');
-  });
-
-  cancelBtn.addEventListener('click', function () {
-    modal.classList.add('hidden');
-  });
-
-  window.addEventListener('click', function (e) {
-    if (e.target === modal) {
-      modal.classList.add('hidden');
-    }
-  });
-</script>
-
-
-
 </body>
 </html>

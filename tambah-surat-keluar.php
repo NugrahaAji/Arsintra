@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn-save">Simpan</button>
+                            <button type="submit" class="btn-save">Tambah</button>
                         </div>
                     </form>
                 </div>

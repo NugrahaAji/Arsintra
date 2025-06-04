@@ -191,10 +191,11 @@ $suratMasukData = [
                                                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
                                                 </svg>
                                             </button>
-                                            <button class="btn-delete" title="Edit">
+                                            <a class="btn-delete" title="Edit" href="edit-surat-masuk.php">
                                                 <svg class="icon" viewBox="0 0 24 24">
                                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                 </svg>
+                                            </a>
                                             </button>
                                             <button class="btn-delete" title="Delete">
                                                 <svg class="icon" viewBox="0 0 24 24">

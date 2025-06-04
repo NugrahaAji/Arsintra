@@ -1,82 +1,17 @@
-<?php
-session_start();
-
-// Check if user is logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit();
-// }
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Process form data here
-    $no_surat = $_POST['no_surat'] ?? '';
-    $nama_surat = $_POST['nama_surat'] ?? '';
-    $tanggal_surat_masuk = $_POST['tanggal_surat_masuk'] ?? '';
-    $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? '';
-    $tujuan_disposisi = $_POST['tujuan_disposisi'] ?? '';
-    $tingkat_urgensi = $_POST['tingkat_urgensi'] ?? '';
-    $pengirim_surat = $_POST['pengirim_surat'] ?? '';
-    $isi_disposisi = $_POST['isi_disposisi'] ?? '';
-    $catatan_tambahan = $_POST['catatan_tambahan'] ?? '';
-
-    // Handle file upload
-    if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] === UPLOAD_ERR_OK) {
-        // File upload logic here
-        $upload_dir = 'uploads/';
-        $file_name = $_FILES['file_surat']['name'];
-        $file_tmp = $_FILES['file_surat']['tmp_name'];
-
-        // Create upload directory if it doesn't exist
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-
-        // Move uploaded file
-        if (move_uploaded_file($file_tmp, $upload_dir . $file_name)) {
-            $success = 'Disposisi surat berhasil ditambahkan!';
-        } else {
-            $error = 'Gagal mengupload file!';
-        }
-    }
-
-    // In a real application, you would save to database here
-    if (!isset($error)) {
-        $success = 'Disposisi surat berhasil ditambahkan!';
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Disposisi Surat - Arsintra</title>
+    <title>Tambah Surat Keluar - Arsintra</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* Additional styles for radio buttons */
-        .radio-group {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 0.5rem;
-        }
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .radio-option input[type="radio"] {
-            margin: 0;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <h1></h1>
+                <h1>Arsintra</h1>
             </div>
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="sidebar-item">
@@ -91,13 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </svg>
                     <span>Surat Masuk</span>
                 </a>
-                <a href="surat-keluar.php" class="sidebar-item">
+                <a href="surat-keluar.php" class="sidebar-item active">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
                     <span>Surat Keluar</span>
                 </a>
-                <a href="disposisi-surat.php" class="sidebar-item active">
+                <a href="disposisi-surat.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                     </svg>
@@ -122,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="main-content">
             <!-- Header -->
             <header class="header">
-                <h1>Arsintra</h1>
+                <h1></h1>
                 <div class="header-actions">
                     <button class="icon-button">
                         <svg class="icon" viewBox="0 0 24 24">
@@ -144,13 +79,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Page Content -->
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Disposisi Surat</h1>
+                    <h1>Surat Keluar</h1>
+                    <div class="header-actions">
+                        <a href="surat-keluar.php" class="btn-back">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M19 12H5m7-7l-7 7 7 7"></path>
+                            </svg>
+                            Kembali
+                        </a>
+                    </div>
                 </div>
 
                 <?php if (isset($success)): ?>
                 <div class="success-message">
                     <?php echo htmlspecialchars($success); ?>
-                    <a href="disposisi-surat.php">Kembali ke daftar disposisi surat</a>
+                    <a href="surat-keluar.php">Kembali ke daftar surat keluar</a>
                 </div>
                 <?php endif; ?>
 
@@ -169,43 +112,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="text" id="no_surat" name="no_surat" value="001" required>
                             </div>
                             <div class="form-group">
-                                <label for="tujuan_disposisi">Tujuan Disposisi<span class="required">*</span></label>
-                                <input type="text" id="tujuan_disposisi" name="tujuan_disposisi" value="Kepala Bagian Umum" required>
+                                <label for="tujuan_surat">Tujuan Surat<span class="required">*</span></label>
+                                <input type="text" id="tujuan_surat" name="tujuan_surat" value="Himakorn FMIPA UNILA" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="nama_surat">Nama Surat<span class="required">*</span></label>
-                                <input type="text" id="nama_surat" name="nama_surat" value="Pengajuan Kerja Sama" required>
+                                <input type="text" id="nama_surat" name="nama_surat" value="Proposal Kegiatan Pelatihan Mata" required>
                             </div>
                             <div class="form-group">
-                                <label>Tingkat Urgensi<span class="required">*</span></label>
-                                <div class="radio-group">
-                                    <div class="radio-option">
-                                        <input type="radio" id="biasa" name="tingkat_urgensi" value="Biasa" checked>
-                                        <label for="biasa">Biasa</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="penting" name="tingkat_urgensi" value="Penting">
-                                        <label for="penting">Penting</label>
-                                    </div>
-                                    <div class="radio-option">
-                                        <input type="radio" id="sangat_penting" name="tingkat_urgensi" value="Sangat Penting">
-                                        <label for="sangat_penting">Sangat Penting</label>
-                                    </div>
-                                </div>
+                                <label for="kategori">Kategori<span class="required">*</span></label>
+                                <input type="text" id="kategori" name="kategori" value="Poposal" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="tanggal_surat_masuk">Tanggal Surat Masuk<span class="required">*</span></label>
-                                <input type="text" id="tanggal_surat_masuk" name="tanggal_surat_masuk" value="17 - 02 - 2025" required>
+                                <label for="tanggal_keluar">Tanggal Keluar<span class="required">*</span></label>
+                                <input type="text" id="tanggal_keluar" name="tanggal_keluar" value="17 - 02 - 2025" required>
                             </div>
                             <div class="form-group">
-                                <label for="pengirim_surat">Pengirim Surat<span class="required">*</span></label>
-                                <input type="text" id="pengirim_surat" name="pengirim_surat" value="Dea Delvinata" required>
+                                <label for="di_keluarkan">Di Keluarkan<span class="required">*</span></label>
+                                <input type="text" id="di_keluarkan" name="di_keluarkan" value="Ketua Himakorn" required>
                             </div>
                         </div>
 
@@ -215,26 +145,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="text" id="jumlah_lampiran" name="jumlah_lampiran" value="3 Rangkap" required>
                             </div>
                             <div class="form-group">
-                                <label for="file_surat">File Surat<span class="required">*</span></label>
+                                <label for="scan_surat">Scan Surat<span class="required">*</span></label>
                                 <div class="file-input-container">
-                                    <input type="file" id="file_surat" name="file_surat" accept=".pdf,.docx,.csv,.png,.jpg" required>
+                                    <input type="file" id="scan_surat" name="scan_surat" accept=".pdf,.docx,.csv,.png,.jpg" required>
                                     <span class="file-format-note">format image (pdf,docx,csv,png,jpg)</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group full-width">
-                            <label for="isi_disposisi">Isi Disposisi<span class="required">*</span></label>
-                            <textarea id="isi_disposisi" name="isi_disposisi" rows="6" required>Surat ini ditujukan untuk meminta tanda tangan dari wakil dekan bidang kemahasiswaan supaya kegiatan bisa berjalan</textarea>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="catatan_tambahan">Catatan Tambahan</label>
-                            <textarea id="catatan_tambahan" name="catatan_tambahan" rows="6" placeholder="(opsional)"></textarea>
+                            <label for="deskripsi_surat">Deskripsi Surat<span class="required">*</span></label>
+                            <textarea id="deskripsi_surat" name="deskripsi_surat" rows="6" required>Surat ini ditujukan untuk meminta tanda tangan dari wakil dekan bidang kemahasiswaan supaya kegiatan bisa berjalan</textarea>
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn-save">Tambah</button>
+                            <button type="submit" class="btn-save">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -251,28 +176,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 </div>
-<script>
-  const logoutBtn = document.querySelector('.sidebar-item[href="logout.php"]');
-  const modal = document.getElementById('logoutModal');
-  const cancelBtn = document.getElementById('cancelLogout');
-
-  logoutBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    modal.classList.remove('hidden');
-  });
-
-  cancelBtn.addEventListener('click', function () {
-    modal.classList.add('hidden');
-  });
-
-  window.addEventListener('click', function (e) {
-    if (e.target === modal) {
-      modal.classList.add('hidden');
-    }
-  });
-</script>
-
-
-
 </body>
 </html>

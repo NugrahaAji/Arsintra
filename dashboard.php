@@ -248,7 +248,5 @@ $statusData = [
   });
 </script>
 
-
-
 </body>
 </html>
