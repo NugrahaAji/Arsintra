@@ -1,19 +1,16 @@
 <?php
 session_start();
 
-// If user is already logged in, redirect to dashboard
 if (isset($_SESSION['user_id'])) {
     header('Location: dashboard.php');
     exit();
 }
 
-// Handle registration form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     
-    // Simple validation
     if (empty($email) || empty($password) || empty($confirm_password)) {
         $error = 'Semua field harus diisi!';
     } elseif ($password !== $confirm_password) {
@@ -21,8 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($password) < 6) {
         $error = 'Kata sandi minimal 6 karakter!';
     } else {
-        // In a real application, you would save to database
-        // For now, we'll just redirect to login
         $success = 'Akun berhasil dibuat! Silakan masuk.';
     }
 }
@@ -34,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Arsintra - Daftar</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
     <nav class="navbar">
@@ -42,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <h1 class="navbar-brand">Arsintra</h1>
 
       <ul class="nav-links">
-        <li class="nav-item btn-login"> <a href="register.php">Daftar</a>
+        <li class="nav-item btn-login"> <a href="./register.php">Daftar</a>
         </li>
-        <li class="nav-item"> <a href="index.php">Masuk</a>
+        <li class="nav-item"> <a href="../dashboard.php">Masuk</a>
         </li>
       </ul>
 
@@ -52,10 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </nav>
   <section class="full-screen-section">
     <div class="background-image">
-      <img src="asset/image/login-bg.png" alt="Login Background" />
+      <img src="/Arsintra/asset/image/login-bg.png" alt="Login Background" />
     </div>
 
-    <div class="form-container">
+    <div class="form-container" style="margin-top: 50px;">
       <div class="form-inner">
         <div>
           <h1 class="heading-bold">Buat Akunmu!</h1>
@@ -91,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           <div class="button-group">
             <button type="submit" class="btn btn-primary">Selanjutnya</button>
-            <a href="index.php" class="btn btn-secondary">Sudah Punya Akun</a>
+            <a href="../login.php" class="btn btn-secondary">Sudah Punya Akun</a>
           </div>
         </form>
       </div>

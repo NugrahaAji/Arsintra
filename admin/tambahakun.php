@@ -21,23 +21,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Tambah Akun - Arsintra</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 <div class="container">
-    <!-- Sidebar -->
+   
     <div class="sidebar">
         <div class="sidebar-header">
             <h1>Arsintra</h1>
         </div>
         <nav class="sidebar-nav">
-            <a href="admindashboard.php" class="sidebar-item active">
+            <a href="./admindashboard.php" class="sidebar-item active">
                 <svg class="icon" viewBox="0 0 24 24">
                     <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                 </svg>
                 <span>Beranda</span>
             </a>
-            <a href="logout.php" class="sidebar-item">
+            <a href="./adminlogout.php" class="sidebar-item">
                 <svg class="icon" viewBox="0 0 24 24">
                     <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                 </svg>
@@ -46,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </nav>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <header class="header">
             <h1></h1>
@@ -67,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <main class="page-content">
             <div class="page-header">
-                <h1>Edit Akun</h1>
+                <h1>Tambah Akun</h1>
                 <div class="header-actions">
-                    <a href="admindashboard.php" class="btn-back">
+                    <a href="./admindashboard.php" class="btn-back">
                         <svg class="icon" viewBox="0 0 24 24">
                             <path d="M19 12H5m7-7l-7 7 7 7"></path>
                         </svg>
@@ -81,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if (isset($success)): ?>
             <div class="success-message">
                 <?php echo htmlspecialchars($success); ?>
-                <a href="akun.php">Kembali ke daftar akun</a>
+                <a href="./akun.php">Kembali ke daftar akun</a>
             </div>
             <?php endif; ?>
 
@@ -128,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn-save">Simpan</button>
+                        <button type="submit" class="btn-save">Tambah</button>
                     </div>
                 </form>
             </div>
@@ -142,12 +141,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p>Anda akan keluar dari sistem.</p>
     <div class="modal-actions">
       <button id="cancelLogout" class="btn-cancel">Batal</button>
-      <a href="logout.php" class="btn-logout">Keluar</a>
+      <a href="./adminlogout.php" class="btn-logout">Keluar</a>
     </div>
   </div>
 </div>
 <script>
-  const logoutBtn = document.querySelector('.sidebar-item[href="logout.php"]');
+  const logoutBtn = document.querySelector('.sidebar-item[href="./adminlogout.php"]');
   const modal = document.getElementById('logoutModal');
   const cancelBtn = document.getElementById('cancelLogout');
 
@@ -166,8 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   });
 </script>
-
-
 
 </body>
 </html>

@@ -7,40 +7,47 @@ session_start();
 //     exit();
 // }
 
-// Sample data for Surat Masuk
-$akunPengguna = [
+$disposisiData = [
     [
-        'id' => '001',
-        'username' => 'presidium',
-        'nama' => 'Presidium Himakom',
-        'kategori' => 'User',
-        'email' => 'presiHimakom@gmail.com',
-        'password' => 'makinjaya'
+        'no' => '001',
+        'nama_surat' => 'Poposal Kegiatan',
+        'perihal_surat' => 'Revisi Kontrak Kerjasama',
+        'tanggal_masuk' => '17-07-2025',
+        'tujuan_surat' => 'Kepala Bagian Umum',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
     ],
     [
-        'id' => '002',
-        'username' => 'bansus',
-        'nama' => 'Badan Khusus Himakom',
-        'kategori' => 'User',
-        'email' => 'bansusiHimakom@gmail.com',
-        'password' => 'susss'
+        'no' => '002',
+        'nama_surat' => 'Pegajuan Dana Lab',
+        'perihal_surat' => 'Undangan Rapat Koordinasi',
+        'tanggal_masuk' => '16-10-2024',
+        'tujuan_surat' => 'Kepala Badan Khusus',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
     ],
     [
-        'id' => '003',
-        'username' => 'Kaderisasi Himakom',
-        'nama' => 'kader',
-        'kategori' => 'User',
-        'email' => 'kaderHimakom@gmail.com',
-        'password' => 'derrr'
+        'no' => '003',
+        'nama_surat' => 'Pegajuan Dana Lab',
+        'perihal_surat' => 'Permohonan Anggaran',
+        'tanggal_masuk' => '16-10-2024',
+        'tujuan_surat' => 'Kepala Bagian Keuanagan',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
     ],
     [
-        'id' => '004',
-        'username' => 'keilmuan',
-        'nama' => 'Keilmuan Himakom',
-        'kategori' => 'User',
-        'email' => 'keilHimakom@gmail.com',
-        'password' => 'ilmu'
+        'no' => '004',
+        'nama_surat' => 'Pegajuan Dana Lab',
+        'perihal_surat' => 'Persetujuan Cuti',
+        'tanggal_masuk' => '16-10-2024',
+        'tujuan_surat' => 'Kepala Bagian Umum',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
     ],
+    [
+        'no' => '005',
+        'nama_surat' => 'Pegajuan Kerja Sama',
+        'perihal_surat' => 'Pengajuan Pembelian',
+        'tanggal_masuk' => '16-10-2024',
+        'tujuan_surat' => 'Kepala Bagian Administrasi',
+        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
+    ]
 ];
 ?>
 
@@ -49,8 +56,8 @@ $akunPengguna = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Masuk - Arsintra</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Disposisi Surat - Arsintra</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="container">
@@ -60,13 +67,37 @@ $akunPengguna = [
                 <h1>Arsintra</h1>
             </div>
             <nav class="sidebar-nav">
-                <a href="admindashboard.php" class="sidebar-item active">
+                <a href="./dashboard.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     <span>Beranda</span>
                 </a>
-                <a href="logout.php" class="sidebar-item">
+                <a href="./surat-masuk.php" class="sidebar-item">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Surat Masuk</span>
+                </a>
+                <a href="./surat-keluar.php" class="sidebar-item">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Surat Keluar</span>
+                </a>
+                <a href="./disposisi-surat.php" class="sidebar-item active">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                    </svg>
+                    <span>Disposisi Surat</span>
+                </a>
+                <a href="./arsip.php" class="sidebar-item">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                    </svg>
+                    <span>Arsip</span>
+                </a>
+                <a href="./logout.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
@@ -74,9 +105,8 @@ $akunPengguna = [
                 </a>
             </nav>
         </div>
-        <!-- Main Content -->
+
         <div class="main-content">
-            <!-- Header -->
             <header class="header">
                 <h1></h1>
                 <div class="header-actions">
@@ -97,42 +127,41 @@ $akunPengguna = [
                 </div>
             </header>
 
-            <!-- Page Content -->
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Kelola Akun</h1>
-                    <a href="tambahakun.php" class="btn-save">
+                    <h1>Disposisi Surat</h1>
+                    <a href="tambah-disposisi-surat.php" class="btn-save">
                         <span>Tambah +</span>
                     </a>
                 </div>
 
-                <!-- Surat Masuk Table -->
                 <div class="table-container">
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Nama</th>
-                                    <th>Username</th>
-                                    <th>Email</th>
-                                    <th>Kategori</th>
-                                    <th>Password</th>
+                                    <th>No</th>
+                                    <th>Nama Surat</th>
+                                    <th>Perihal Surat</th>
+                                    <th>Tanggal Surat Masuk</th>
+                                    <th>Tujuan Surat</th>
+                                    <th>Komentar</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($akunPengguna as $akun): ?>
+                                <?php foreach ($disposisiData as $disposisi): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($akun['id']); ?></td>
-                                    <td><?php echo htmlspecialchars($akun['nama']); ?></td>
-                                    <td><?php echo htmlspecialchars($akun['username']); ?></td>
-                                    <td><?php echo htmlspecialchars($akun['email']); ?></td>
-                                    <td><?php echo htmlspecialchars($akun['kategori']); ?></td>
-                                    <td><?php echo htmlspecialchars($akun['password']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['no']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['nama_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['perihal_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['tanggal_masuk']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['tujuan_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['komentar']); ?></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a class="btn-delete" title="Edit" href="edit-akun-pengguna.php">
+                                            <a href="detail-disposisi-surat.php?id=<?php echo urlencode($disposisi['no']); ?>" class="btn-detail">Detail</a>
+                                            <a class="btn-delete" title="Edit" href="edit-disposisi.php">
                                                 <svg class="icon" viewBox="0 0 24 24">
                                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                 </svg>

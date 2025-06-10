@@ -1,98 +1,49 @@
-<?php
-session_start();
-
-// Check if user is logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit();
-// }
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Process form data here
-    $no_surat = $_POST['no_surat'] ?? '';
-    $nama_surat = $_POST['nama_surat'] ?? '';
-    $tanggal_masuk = $_POST['tanggal_masuk'] ?? '';
-    $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? '';
-    $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
-    $asal_surat = $_POST['asal_surat'] ?? '';
-    $kategori = $_POST['kategori'] ?? '';
-    $petugas_arsip = $_POST['petugas_arsip'] ?? '';
-
-    // Handle file upload
-    if (isset($_FILES['scan_surat']) && $_FILES['scan_surat']['error'] === UPLOAD_ERR_OK) {
-        // File upload logic here
-        $upload_dir = 'uploads/';
-        $file_name = $_FILES['scan_surat']['name'];
-        $file_tmp = $_FILES['scan_surat']['tmp_name'];
-
-        // Create upload directory if it doesn't exist
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-
-        // Move uploaded file
-        if (move_uploaded_file($file_tmp, $upload_dir . $file_name)) {
-            $success = 'Surat masuk berhasil ditambahkan!';
-        } else {
-            $error = 'Gagal mengupload file!';
-        }
-    }
-
-    // In a real application, you would save to database here
-    if (!isset($error)) {
-        $success = 'Surat masuk berhasil ditambahkan!';
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Surat Masuk - Arsintra</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Tambah Surat Keluar - Arsintra</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h1>Arsintra</h1>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="sidebar-item">
+                <a href="./dashboard.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     <span>Beranda</span>
                 </a>
-                <a href="surat-masuk.php" class="sidebar-item active">
+                <a href="./surat-masuk.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                     <span>Surat Masuk</span>
                 </a>
-                <a href="surat-keluar.php" class="sidebar-item">
+                <a href="./surat-keluar.php" class="sidebar-item active">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
                     <span>Surat Keluar</span>
                 </a>
-                <a href="disposisi-surat.php" class="sidebar-item">
+                <a href="./disposisi-surat.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                     </svg>
                     <span>Disposisi Surat</span>
                 </a>
-                <a href="arsip.php" class="sidebar-item">
+                <a href="./arsip.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                     </svg>
                     <span>Arsip</span>
                 </a>
-                <a href="logout.php" class="sidebar-item">
+                <a href="./logout.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
@@ -101,9 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </nav>
         </div>
 
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Header -->
+            
             <header class="header">
                 <h1></h1>
                 <div class="header-actions">
@@ -124,12 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </header>
 
-            <!-- Page Content -->
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Surat Masuk</h1>
+                    <h1>Surat Keluar</h1>
                     <div class="header-actions">
-                        <a href="surat-masuk.php" class="btn-back">
+                        <a href="./surat-keluar.php" class="btn-back">
                             <svg class="icon" viewBox="0 0 24 24">
                                 <path d="M19 12H5m7-7l-7 7 7 7"></path>
                             </svg>
@@ -141,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if (isset($success)): ?>
                 <div class="success-message">
                     <?php echo htmlspecialchars($success); ?>
-                    <a href="surat-masuk.php">Kembali ke daftar surat masuk</a>
+                    <a href="./surat-keluar.php">Kembali ke daftar surat keluar</a>
                 </div>
                 <?php endif; ?>
 
@@ -151,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <?php endif; ?>
 
-                <!-- Form -->
                 <div class="form-container-page">
                     <form class="form-grid" method="POST" enctype="multipart/form-data">
                         <div class="form-row">
@@ -160,8 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="text" id="no_surat" name="no_surat" value="001" required>
                             </div>
                             <div class="form-group">
-                                <label for="asal_surat">Asal Surat<span class="required">*</span></label>
-                                <input type="text" id="asal_surat" name="asal_surat" value="Himakorn FMIPA UNILA" required>
+                                <label for="tujuan_surat">Tujuan Surat<span class="required">*</span></label>
+                                <input type="text" id="tujuan_surat" name="tujuan_surat" value="Himakorn FMIPA UNILA" required>
                             </div>
                         </div>
 
@@ -172,18 +120,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class="form-group">
                                 <label for="kategori">Kategori<span class="required">*</span></label>
-                                <input type="text" id="kategori" name="kategori" value="Proposal" required>
+                                <input type="text" id="kategori" name="kategori" value="Poposal" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="tanggal_masuk">Tanggal Masuk<span class="required">*</span></label>
-                                <input type="text" id="tanggal_masuk" name="tanggal_masuk" value="17 - 02 - 2025" required>
+                                <label for="tanggal_keluar">Tanggal Keluar<span class="required">*</span></label>
+                                <input type="text" id="tanggal_keluar" name="tanggal_keluar" value="17 - 02 - 2025" required>
                             </div>
                             <div class="form-group">
-                                <label for="petugas_arsip">Petugas Arsip<span class="required">*</span></label>
-                                <input type="text" id="petugas_arsip" name="petugas_arsip" value="Dea Delvinata" required>
+                                <label for="di_keluarkan">Di Keluarkan<span class="required">*</span></label>
+                                <input type="text" id="di_keluarkan" name="di_keluarkan" value="Ketua Himakorn" required>
                             </div>
                         </div>
 
@@ -207,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn-save">Tambah</button>
+                            <button type="submit" class="btn-save">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -220,32 +168,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p>Anda akan keluar dari sistem.</p>
     <div class="modal-actions">
       <button id="cancelLogout" class="btn-cancel">Batal</button>
-      <a href="logout.php" class="btn-logout">Keluar</a>
+      <a href="./logout.php" class="btn-logout">Keluar</a>
     </div>
   </div>
 </div>
-<script>
-  const logoutBtn = document.querySelector('.sidebar-item[href="logout.php"]');
-  const modal = document.getElementById('logoutModal');
-  const cancelBtn = document.getElementById('cancelLogout');
-
-  logoutBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    modal.classList.remove('hidden');
-  });
-
-  cancelBtn.addEventListener('click', function () {
-    modal.classList.add('hidden');
-  });
-
-  window.addEventListener('click', function (e) {
-    if (e.target === modal) {
-      modal.classList.add('hidden');
-    }
-  });
-</script>
-
-
-
 </body>
 </html>

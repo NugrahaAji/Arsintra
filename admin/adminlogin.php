@@ -1,11 +1,10 @@
-@ -0,0 +1,58 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin | Login</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="../css/style.css" />
   <style>
     body{
         height: 100vh;
@@ -27,7 +26,7 @@
   </nav>
   <section class="full-screen-section">
     <div class="background-image">
-      <img src="asset/image/login-bg.png" alt="Login Background" />
+      <img src="/Arsintra/asset/image/login-bg.png" alt="Login Background" />
     </div>
 
     <div class="form-container">
@@ -67,12 +66,12 @@
     <p>Anda akan keluar dari sistem.</p>
     <div class="modal-actions">
       <button id="cancelLogout" class="btn-cancel">Batal</button>
-      <a href="logout.php" class="btn-logout">Keluar</a>
+      <a href="./adminlogout.php" class="btn-logout">Keluar</a>
     </div>
   </div>
 </div>
 <script>
-  const logoutBtn = document.querySelector('.sidebar-item[href="logout.php"]');
+  const logoutBtn = document.querySelector('.sidebar-item[href="./adminlogout.php"]');
   const modal = document.getElementById('logoutModal');
   const cancelBtn = document.getElementById('cancelLogout');
 
