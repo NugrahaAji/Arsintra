@@ -1,9 +1,99 @@
+<?php
+require_once '../config.php';
+require_once '../config/session.php';
+
+requireLogin();
+
+$error = '';
+$success = '';
+
+$id = $_GET['id'] ?? 0;
+$stmt = $conn->prepare("SELECT * FROM surat_keluar WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$surat = $result->fetch_assoc();
+
+if (!$surat) {
+    header('Location: surat-keluar.php');
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nomor_surat = $_POST['nomor_surat'] ?? '';
+    $nama_surat = $_POST['nama_surat'] ?? '';
+    $tanggal_keluar = $_POST['tanggal_keluar'] ?? '';
+    $di_keluarkan = $_POST['di_keluarkan'] ?? '';
+    $tujuan_surat = $_POST['tujuan_surat'] ?? '';
+    $kategori = $_POST['kategori'] ?? '';
+    $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
+    $status = $_POST['status'] ?? 'draft';
+
+    // Handle file upload
+    $file_path = $surat['file_path'];
+    if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = '../uploads/surat_keluar/';
+        if (!file_exists($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        // Delete old file if exists
+        if ($file_path && file_exists('../' . $file_path)) {
+            unlink('../' . $file_path);
+        }
+
+        $file_name = time() . '_' . basename($_FILES['file_surat']['name']);
+        $target_path = $upload_dir . $file_name;
+
+        if (move_uploaded_file($_FILES['file_surat']['tmp_name'], $target_path)) {
+            $file_path = 'uploads/surat_keluar/' . $file_name;
+        }
+    }
+
+    if (empty($nomor_surat) || empty($nama_surat) || empty($tanggal_keluar) || empty($di_keluarkan) || empty($tujuan_surat) || empty($kategori) || empty($deskripsi_surat)) {
+        $error = "Semua field harus diisi";
+    } else {
+        try {
+            $user_id = (int)$_SESSION['user_id'];
+
+            $stmt = $conn->prepare("UPDATE surat_keluar SET nomor_surat = ?, nama_surat = ?, tanggal_keluar = ?, di_keluarkan = ?, tujuan_surat = ?, kategori = ?, deskripsi_surat = ?, file_path = ? WHERE id = ?");
+            
+            if (!$stmt) {
+                throw new Exception("Prepare failed: " . $conn->error);
+            }
+
+            $stmt->bind_param("ssssssssi", 
+                $nomor_surat, 
+                $nama_surat, 
+                $tanggal_keluar, 
+                $di_keluarkan, 
+                $tujuan_surat, 
+                $kategori, 
+                $deskripsi_surat, 
+                $file_path, 
+                $id
+            );
+
+            if (!$stmt->execute()) {
+                throw new Exception("Execute failed: " . $stmt->error);
+            }
+
+            $success = "Surat keluar berhasil diperbarui";
+            header("Location: surat-keluar.php?success=1");
+            exit();
+        } catch (Exception $e) {
+            error_log("Error in edit-surat-keluar.php: " . $e->getMessage());
+            $error = "Gagal memperbarui surat keluar: " . $e->getMessage();
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Surat Keluar - Arsintra</title>
+    <title>Edit Surat Keluar - Arsintra</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -67,16 +157,15 @@
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div> -->
-                    <div class="avatar"></div>
+                    </div>
                 </div>
             </header>
 
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Surat Keluar</h1>
+                    <h1>Edit Surat Keluar</h1>
                     <div class="header-actions">
                         <a href="./surat-keluar.php" class="btn-back">
                             <svg class="icon" viewBox="0 0 24 24">
@@ -87,15 +176,20 @@
                     </div>
                 </div>
 
-                <?php if (isset($success)): ?>
-                <div class="success-message">
+                <?php if ($success): ?>
+                <div class="alert alert-success" style="margin-bottom:20px; color:#1a7f37; background:#d4f8e8; border:1px solid #1a7f37; border-radius:8px; padding:12px 20px; font-weight:500;">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; margin-right:8px; vertical-align:middle;">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                     <?php echo htmlspecialchars($success); ?>
-                    <a href="./surat-keluar.php">Kembali ke daftar surat keluar</a>
                 </div>
                 <?php endif; ?>
 
-                <?php if (isset($error)): ?>
-                <div class="error-message">
+                <?php if ($error): ?>
+                <div class="alert alert-danger" style="margin-bottom:20px; color:#d32f2f; background:#ffe0e0; border:1px solid #d32f2f; border-radius:8px; padding:12px 20px; font-weight:500;">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; margin-right:8px; vertical-align:middle;">
+                        <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                     <?php echo htmlspecialchars($error); ?>
                 </div>
                 <?php endif; ?>
@@ -104,58 +198,64 @@
                     <form class="form-grid" method="POST" enctype="multipart/form-data">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="no_surat">No Surat<span class="required">*</span></label>
-                                <input type="text" id="no_surat" name="no_surat" value="001" required>
+                                <label for="nomor_surat">No Surat<span class="required">*</span></label>
+                                <input type="text" id="nomor_surat" name="nomor_surat" value="<?php echo htmlspecialchars($surat['nomor_surat']); ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="tujuan_surat">Tujuan Surat<span class="required">*</span></label>
-                                <input type="text" id="tujuan_surat" name="tujuan_surat" value="Himakorn FMIPA UNILA" required>
+                                <input type="text" id="tujuan_surat" name="tujuan_surat" value="<?php echo htmlspecialchars($surat['tujuan_surat']); ?>" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="nama_surat">Nama Surat<span class="required">*</span></label>
-                                <input type="text" id="nama_surat" name="nama_surat" value="Proposal Kegiatan Pelatihan Mata" required>
+                                <input type="text" id="nama_surat" name="nama_surat" value="<?php echo htmlspecialchars($surat['nama_surat']); ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="kategori">Kategori<span class="required">*</span></label>
-                                <input type="text" id="kategori" name="kategori" value="Poposal" required>
+                                <input type="text" id="kategori" name="kategori" value="<?php echo htmlspecialchars($surat['kategori']); ?>" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="tanggal_keluar">Tanggal Keluar<span class="required">*</span></label>
-                                <input type="text" id="tanggal_keluar" name="tanggal_keluar" value="17 - 02 - 2025" required>
+                                <input type="date" id="tanggal_keluar" name="tanggal_keluar" value="<?php echo htmlspecialchars($surat['tanggal_keluar']); ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="di_keluarkan">Di Keluarkan<span class="required">*</span></label>
-                                <input type="text" id="di_keluarkan" name="di_keluarkan" value="Ketua Himakorn" required>
+                                <input type="text" id="di_keluarkan" name="di_keluarkan" value="<?php echo htmlspecialchars($surat['di_keluarkan']); ?>" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="jumlah_lampiran">Jumlah Lampiran<span class="required">*</span></label>
-                                <input type="text" id="jumlah_lampiran" name="jumlah_lampiran" value="3 Rangkap" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="scan_surat">Scan Surat<span class="required">*</span></label>
-                                <div class="file-input-container">
-                                    <input type="file" id="scan_surat" name="scan_surat" accept=".pdf,.docx,.csv,.png,.jpg" required>
-                                    <span class="file-format-note">format image (pdf,docx,csv,png,jpg)</span>
-                                </div>
+                                <label for="file_surat">Scan Surat<span class="required">*</span></label>
+                                <?php if ($surat['file_path']): ?>
+                                    <p>File saat ini: <a href="../<?php echo htmlspecialchars($surat['file_path']); ?>" target="_blank" class="btn-link">
+                                        <svg class="icon" viewBox="0 0 24 24" style="width:16px; height:16px; vertical-align:middle;">
+                                            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                        </svg>
+                                        Lihat File
+                                    </a></p>
+                                <?php endif; ?>
+                                <input type="file" id="file_surat" name="file_surat" accept=".pdf,.doc,.docx,.csv,.png,.jpg">
+                                <span class="file-format-note">format image (pdf,doc,docx,csv,png,jpg)</span>
                             </div>
                         </div>
 
                         <div class="form-group full-width">
-                            <label for="deskripsi_surat">Deskripsi Surat<span class="required">*</span></label>
-                            <textarea id="deskripsi_surat" name="deskripsi_surat" rows="6" required>Surat ini ditujukan untuk meminta tanda tangan dari wakil dekan bidang kemahasiswaan supaya kegiatan bisa berjalan</textarea>
+                            <label for="deskripsi_surat">Deskripsi Surat *</label>
+                            <textarea id="deskripsi_surat" name="deskripsi_surat" required><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
                         </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn-save">Simpan</button>
+                        <div class="button-group" style="display: flex; justify-content: flex-end;">
+                            <button type="submit" class="btn btn-primary" style="width: fit-content; min-width: 120px;">
+                                <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; margin-right:8px; vertical-align:middle;">
+                                    <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Simpan
+                            </button>
                         </div>
                     </form>
                 </div>

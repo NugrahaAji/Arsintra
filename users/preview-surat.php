@@ -42,15 +42,31 @@ if (!file_exists("../$file_path")) {
 }
 
 // Get file extension
-$extension = pathinfo($file_path, PATHINFO_EXTENSION);
+$extension = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
 
-// Set headers for download
-header('Content-Type: application/octet-stream');
-header('Content-Disposition: attachment; filename="' . $file_name . '.' . $extension . '"');
-header('Content-Length: ' . filesize("../$file_path"));
-header('Cache-Control: no-cache, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
+// Set appropriate content type based on file extension
+switch ($extension) {
+    case 'pdf':
+        header('Content-Type: application/pdf');
+        break;
+    case 'jpg':
+    case 'jpeg':
+        header('Content-Type: image/jpeg');
+        break;
+    case 'png':
+        header('Content-Type: image/png');
+        break;
+    case 'doc':
+        header('Content-Type: application/msword');
+        break;
+    case 'docx':
+        header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        break;
+    default:
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $file_name . '.' . $extension . '"');
+        break;
+}
 
 // Output file
 readfile("../$file_path");

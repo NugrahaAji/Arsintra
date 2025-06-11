@@ -6,24 +6,30 @@ requireLogin();
 
 // Fetch archived letters
 $stmt = $conn->prepare("
-    SELECT sm.*, u.nama_lengkap as created_by_name 
+    SELECT sm.*, u.nama_lengkap as created_by_name, 'masuk' as tipe, sm.tanggal_masuk as tanggal_arsip 
     FROM surat_masuk sm 
     LEFT JOIN users u ON sm.created_by = u.id 
     WHERE sm.status = 'selesai'
-    ORDER BY sm.tanggal_surat DESC
 ");
 $stmt->execute();
-$surat_masuk = $stmt->fetchAll();
+$surat_masuk = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
+// Surat keluar: tampilkan semua tanpa filter status
 $stmt = $conn->prepare("
-    SELECT sk.*, u.nama_lengkap as created_by_name 
+    SELECT sk.*, u.nama_lengkap as created_by_name, 'keluar' as tipe, sk.tanggal_keluar as tanggal_arsip 
     FROM surat_keluar sk 
-    LEFT JOIN users u ON sk.created_by = u.id 
-    WHERE sk.status = 'terkirim'
-    ORDER BY sk.tanggal_surat DESC
+    LEFT JOIN users u ON sk.created_by = u.id
 ");
 $stmt->execute();
-$surat_keluar = $stmt->fetchAll();
+$surat_keluar = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Gabungkan dan urutkan berdasarkan tanggal arsip terbaru
+date_default_timezone_set('Asia/Jakarta');
+$arsip = array_merge($surat_masuk, $surat_keluar);
+// Urutkan berdasarkan tanggal_arsip DESC
+usort($arsip, function($a, $b) {
+    return strtotime($b['tanggal_arsip']) - strtotime($a['tanggal_arsip']);
+});
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -102,31 +108,74 @@ $surat_keluar = $stmt->fetchAll();
 
     <main class="content">
     <h2>Arsip Surat</h2>
+    <div style="margin-bottom:24px;display:flex;gap:12px;">
+        <button class="arsip-filter-btn" data-filter="all" style="padding:6px 18px;border-radius:6px;border:1px solid #d1d5db;background:#fff;cursor:pointer;font-weight:500;">Semua</button>
+        <button class="arsip-filter-btn" data-filter="masuk" style="padding:6px 18px;border-radius:6px;border:1px solid #2563eb;background:#2563eb;color:#fff;cursor:pointer;font-weight:500;">Surat Masuk</button>
+        <button class="arsip-filter-btn" data-filter="keluar" style="padding:6px 18px;border-radius:6px;border:1px solid #059669;background:#059669;color:#fff;cursor:pointer;font-weight:500;">Surat Keluar</button>
+    </div>
     <div class="grid-container">
-        <?php foreach ($surat_masuk as $surat): ?>
-        <div class="card">
-            <h3><?php echo htmlspecialchars($surat['perihal']); ?></h3>
-            <p><?php echo date('d F Y', strtotime($surat['tanggal_surat'])); ?></p>
-            <?php if ($surat['file_path']): ?>
-                <img src="<?php echo htmlspecialchars($surat['file_path']); ?>" alt="Surat" class="surat-image">
+        <?php foreach ($arsip as $surat): ?>
+        <div class="card arsip-card" data-tipe="<?php echo $surat['tipe']; ?>">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <span style="font-size:12px;font-weight:600;padding:2px 10px;border-radius:12px;
+                    <?php if($surat['tipe']==='masuk'){echo 'background:#2563eb;color:#fff;';}else{echo 'background:#059669;color:#fff;';} ?>
+                ">
+                    <?php echo $surat['tipe']==='masuk'?'Surat Masuk':'Surat Keluar'; ?>
+                </span>
+            </div>
+            <h3 style="font-weight:600;min-height:40px;">
+                <?php echo htmlspecialchars($surat['nama_surat']); ?>
+            </h3>
+            <p style="color:#666;font-size:15px;margin-bottom:10px;">
+                <?php echo date('d F Y', strtotime($surat['tanggal_arsip'])); ?>
+            </p>
+            <?php
+            $file_path = !empty($surat['file_path']) ? '../' . $surat['file_path'] : '';
+            $img_src = !empty($surat['file_path']) ? $surat['file_path'] : '';
+            $file_ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+            $is_image = in_array($file_ext, ['jpg','jpeg','png']);
+            ?>
+            <?php if ($is_image && file_exists($file_path)): ?>
+                <img src="<?php echo htmlspecialchars($img_src); ?>" alt="Scan Surat" class="surat-image" style="width:100%;max-height:180px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
             <?php else: ?>
-                <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image">
+                <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image" style="width:100%;max-height:120px;object-fit:contain;border-radius:6px;margin-bottom:1rem;" />
             <?php endif; ?>
-            <div class="button-group-arsip">
-              <button style="font-weight: 400; gap: 10px" class="btn btn-primary">
-                <svg class="icon" viewBox="0 0 24 24">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
-                </svg>Simpan
-              </button>
-              <a href="detail-surat-masuk.php?id=<?php echo $surat['id']; ?>" style="color: #da0700; gap: 10px" class="btn btn-secondary">
-                <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>Detail
-              </a>
+            <div class="button-group-arsip" style="display:flex;gap:16px;align-items:center;">
+                <a href="download-surat.php?id=<?php echo $surat['id']; ?>&type=<?php echo $surat['tipe']; ?>" style="font-weight: 400; gap: 10px; display: flex; align-items: center;" class="btn btn-primary" title="Download Scan Surat">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
+                    </svg>Simpan
+                </a>
+                <a href="<?php echo $surat['tipe'] === 'masuk' ? 'detail-surat-masuk.php?id=' . $surat['id'] : 'detail-surat-keluar.php?id=' . $surat['id']; ?>" style="color: #da0700; gap: 10px; display: flex; align-items: center;" class="btn btn-secondary">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>Detail
+                </a>
             </div>
         </div>
         <?php endforeach; ?>
     </div>
+    <script>
+    // Filter arsip
+    const filterBtns = document.querySelectorAll('.arsip-filter-btn');
+    const cards = document.querySelectorAll('.arsip-card');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            cards.forEach(card => {
+                if (filter === 'all' || card.getAttribute('data-tipe') === filter) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            filterBtns.forEach(b=>b.style.background='#fff');
+            filterBtns.forEach(b=>b.style.color='');
+            if(filter==='masuk'){this.style.background='#2563eb';this.style.color='#fff';}
+            else if(filter==='keluar'){this.style.background='#059669';this.style.color='#fff';}
+        });
+    });
+    </script>
 </main>
 </div>
 </div>

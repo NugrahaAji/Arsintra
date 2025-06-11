@@ -1,28 +1,20 @@
 <?php
-session_start();
+require_once '../config.php';
+require_once '../config/session.php';
 
-// Check if user is logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit();
-// }
+requireLogin();
 
-$letter_id = $_GET['id'] ?? '001';
+$id = $_GET['id'] ?? 0;
+$stmt = $conn->prepare("SELECT * FROM surat_keluar WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$surat = $result->fetch_assoc();
 
-$letterData = [
-    '001' => [
-        'no_surat' => '001',
-        'nama_surat' => 'Proposal Kegiatan Pelatihan Mata',
-        'kategori' => 'Poposal',
-        'tanggal_keluar' => '17 - 02 - 2025',
-        'tujuan_surat' => 'Himakorn FMIPA UNILA',
-        'di_keluarkan' => 'Ketua Himakorn',
-        'deskripsi_surat' => 'Surat ini ditujukan untuk meminta tanda tangan dari wakil dekan bidang kemahasiswaan supaya kegiatan bisa berjalan',
-        'file_path' => 'asset/image/sample-document.png'
-    ]
-];
-
-$letter = $letterData[$letter_id] ?? $letterData['001'];
+if (!$surat) {
+    header('Location: surat-keluar.php');
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -93,18 +85,17 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div> -->
-                    <div class="avatar"></div>
+                    </div>
                 </div>
             </header>
 
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Surat Keluar</h1>
+                    <h1>Detail Surat Keluar</h1>
                     <div class="header-actions">
-                        <a href="surat-keluar.php" class="btn-back">
+                        <a href="./surat-keluar.php" class="btn-back">
                             <svg class="icon" viewBox="0 0 24 24">
                                 <path d="M19 12H5m7-7l-7 7 7 7"></path>
                             </svg>
@@ -113,91 +104,89 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                     </div>
                 </div>
 
-                <div class="detail-container">
-                    <div class="document-section">
-                        <h3>Foto Bukti Usaha</h3>
-                        <div class="document-image">
-                            <img src="/Arsintra/asset/image/sample-document.png" alt="Document Scan" />
+                <div class="detail-container" >
+                    <div class="detail-header" style="margin-top: 20px;">
+                        <div>
+                        <h2><?php echo htmlspecialchars($surat['nama_surat']); ?></h2>
+                            <?php
+                            $file_path = $surat['file_path'];
+                            $is_image = false;
+                            if ($file_path) {
+                                $ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+                                $is_image = in_array($ext, ['jpg','jpeg','png','gif']);
+                            }
+                            if ($file_path && $is_image): ?>
+                                <img src="../<?php echo htmlspecialchars($file_path); ?>" alt="Foto Surat" style="max-width:700px;max-height:500px;border-radius:8px;border:1px solid #ddd;box-shadow:0 2px 8px #0001;">
+                            <?php elseif ($file_path): ?>
+                                <a href="../<?php echo htmlspecialchars($file_path); ?>" target="_blank" class="btn btn-primary" style="margin-top:16px;display:inline-block;">Download File</a>
+                            <?php else: ?>
+                                <div style="color:#888;font-style:italic;">Tidak ada file</div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
-                    <div class="detail-form">
-                        <div class="form-row">
-                            <div class="detail-group">
-                                <label>No Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['no_surat']); ?></div>
-                            </div>
-                            <div class="detail-group">
-                                <label>Tujuan Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['tujuan_surat']); ?></div>
-                            </div>
+                    <div class="detail-content"style="margin-top: 20px;">
+                        <div class="detail-row">
+                            <div class="detail-label">Nomor Surat</div>
+                            <div class="detail-value"><?php echo htmlspecialchars($surat['nomor_surat']); ?></div>
                         </div>
-
-                        <div class="form-row">
-                            <div class="detail-group">
-                                <label>Nama Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['nama_surat']); ?></div>
-                            </div>
-                            <div class="detail-group">
-                                <label>Kategori</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['kategori']); ?></div>
-                            </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Tanggal Keluar</div>
+                            <div class="detail-value"><?php echo date('d-m-Y', strtotime($surat['tanggal_keluar'])); ?></div>
                         </div>
-
-                        <div class="form-row">
-                            <div class="detail-group">
-                                <label>Tanggal Keluar</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['tanggal_keluar']); ?></div>
-                            </div>
-                            <div class="detail-group">
-                                <label>Di Keluarkan</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['di_keluarkan']); ?></div>
-                            </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Dikeluarkan Oleh</div>
+                            <div class="detail-value"><?php echo htmlspecialchars($surat['di_keluarkan']); ?></div>
                         </div>
-
-                        <div class="form-row">
-                            <div class="detail-group full-width">
-                                <label>Deskripsi Surat</label>
-                                <div class="detail-value description"><?php echo htmlspecialchars($letter['deskripsi_surat']); ?></div>
-                            </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Tujuan Surat</div>
+                            <div class="detail-value"><?php echo htmlspecialchars($surat['tujuan_surat']); ?></div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Kategori</div>
+                            <div class="detail-value"><?php echo htmlspecialchars($surat['kategori']); ?></div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Deskripsi</div>
+                            <div class="detail-value"><?php echo nl2br(htmlspecialchars($surat['deskripsi_surat'])); ?></div>
                         </div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
-    <div id="logoutModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <h3 class="modal-confirm">Yakin ingin keluar?</h3>
-    <p>Anda akan keluar dari sistem.</p>
-    <div class="modal-actions">
-      <button id="cancelLogout" class="btn-cancel">Batal</button>
-      <a href="logout.php" class="btn-logout">Keluar</a>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="modal-confirm">Yakin ingin menghapus surat ini?</h3>
+            <p>Data yang dihapus tidak dapat dikembalikan.</p>
+            <div class="modal-actions">
+                <button id="cancelDelete" class="btn-cancel">Batal</button>
+                <a href="#" id="confirmDelete" class="btn-delete">Hapus</a>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-<script>
-  const logoutBtn = document.querySelector('.sidebar-item[href="logout.php"]');
-  const modal = document.getElementById('logoutModal');
-  const cancelBtn = document.getElementById('cancelLogout');
 
-  logoutBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    modal.classList.remove('hidden');
-  });
+    <script>
+        function confirmDelete(id) {
+            const modal = document.getElementById('deleteModal');
+            const confirmBtn = document.getElementById('confirmDelete');
+            const cancelBtn = document.getElementById('cancelDelete');
 
-  cancelBtn.addEventListener('click', function () {
-    modal.classList.add('hidden');
-  });
+            modal.classList.remove('hidden');
+            confirmBtn.href = `./hapus-surat-keluar.php?id=${id}`;
 
-  window.addEventListener('click', function (e) {
-    if (e.target === modal) {
-      modal.classList.add('hidden');
-    }
-  });
-</script>
+            cancelBtn.onclick = function() {
+                modal.classList.add('hidden');
+            }
 
-
-
+            window.onclick = function(e) {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            }
+        }
+    </script>
 </body>
 </html>

@@ -113,7 +113,7 @@ if (!$surat) {
                 </div>
                 <div style="background:#fafafa;padding:32px 24px 24px 24px;border-radius:18px;box-shadow:0 2px 16px #0001;max-width:1100px;margin:auto;display:flex;flex-direction:column;gap:32px;">
                     <div>
-                        <label style="font-weight:500;margin-bottom:20px;display:block;">Scan Surat Masuk</label>
+                        <h2><?php echo htmlspecialchars($surat['nama_surat']); ?></h2>
                         <?php
                         $file_path = $surat['file_path'];
                         $is_image = false;

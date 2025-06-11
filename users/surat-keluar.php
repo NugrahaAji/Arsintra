@@ -1,54 +1,43 @@
 <?php
-session_start();
+require_once '../config.php';
+require_once '../config/session.php';
 
-// Check if user is logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit();
-// }
+requireLogin();
 
-$suratKeluarData = [
-    [
-        'no' => '001',
-        'nama_surat' => 'Poposal Kegiatan',
-        'kategori' => 'Poposal',
-        'tanggal_keluar' => '17-07-2025',
-        'di_keluarkan' => 'Ketua Himakom',
-        'tujuan_surat' => 'Himakom FMIPA UNILA'
-    ],
-    [
-        'no' => '002',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_keluar' => '16-10-2024',
-        'di_keluarkan' => 'Sekretaris Himakom',
-        'tujuan_surat' => 'Kepala Badan Khusus'
-    ],
-    [
-        'no' => '003',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_keluar' => '16-10-2024',
-        'di_keluarkan' => 'Bendahara Himakom',
-        'tujuan_surat' => 'Kepala Badan Khusus'
-    ],
-    [
-        'no' => '004',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_keluar' => '16-10-2024',
-        'di_keluarkan' => 'Bidang Keilmuan',
-        'tujuan_surat' => 'Kepala Lab FMIPA'
-    ],
-    [
-        'no' => '005',
-        'nama_surat' => 'Pegajuan Kerja Sama',
-        'kategori' => 'Kerja Sama',
-        'tanggal_keluar' => '16-10-2024',
-        'di_keluarkan' => 'Badan Khusus',
-        'tujuan_surat' => 'Himatro FMIPA Unila'
-    ]
-];
+$search = $_GET['search'] ?? '';
+$page = $_GET['page'] ?? 1;
+$per_page = 10;
+$offset = ($page - 1) * $per_page;
+
+// Get total records for pagination
+$total_query = "SELECT COUNT(*) as total FROM surat_keluar";
+if ($search) {
+    $total_query .= " WHERE nomor_surat LIKE ? OR nama_surat LIKE ? OR tujuan_surat LIKE ?";
+}
+$stmt = $conn->prepare($total_query);
+if ($search) {
+    $search_param = "%$search%";
+    $stmt->bind_param("sss", $search_param, $search_param, $search_param);
+}
+$stmt->execute();
+$total_records = $stmt->get_result()->fetch_assoc()['total'];
+$total_pages = ceil($total_records / $per_page);
+
+// Get records for current page
+$query = "SELECT * FROM surat_keluar";
+if ($search) {
+    $query .= " WHERE nomor_surat LIKE ? OR nama_surat LIKE ? OR tujuan_surat LIKE ?";
+}
+$query .= " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+
+$stmt = $conn->prepare($query);
+if ($search) {
+    $stmt->bind_param("sssii", $search_param, $search_param, $search_param, $per_page, $offset);
+} else {
+    $stmt->bind_param("ii", $per_page, $offset);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -121,105 +110,144 @@ $suratKeluarData = [
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div> -->
-                    <div class="avatar"></div>
+                    </div>
                 </div>
             </header>
 
             <main class="page-content">
                 <div class="page-header">
-                    <h1>Surat Keluar</h1>
+                    <h1>Surat keluar</h1>
                     <a href="./tambah-surat-keluar.php" class="btn-save">
                         <span>Tambah +</span>
                     </a>
                 </div>
 
+                <?php if (isset($_GET['success'])): ?>
+                    <div class="alert alert-success" style="margin-bottom:20px; color:#1a7f37; background:#d4f8e8; border:1px solid #1a7f37; border-radius:8px; padding:12px 20px; font-weight:500;">
+                        <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; margin-right:8px; vertical-align:middle;">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <?php echo $_GET['success'] == 1 ? 'Surat keluar berhasil ditambahkan' : 'Surat keluar berhasil diperbarui'; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($_GET['error'])): ?>
+                    <div class="alert alert-error" style="margin-bottom:20px; color:#dc2626; background:#fee2e2; border:1px solid #dc2626; border-radius:8px; padding:12px 20px; font-weight:500;">
+                        <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; margin-right:8px; vertical-align:middle;">
+                            <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <?php echo htmlspecialchars($_GET['error']); ?>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Table -->
                 <div class="table-container">
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Nomor Surat</th>
                                     <th>Nama Surat</th>
-                                    <th>Kategori Surat</th>
                                     <th>Tanggal Keluar</th>
-                                    <th>Di Keluarkan</th>
-                                    <th>Tujuan Surat</th>
+                                    <th>Tujuan</th>
+                                    <th>Kategori</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($suratKeluarData as $surat): ?>
+                                <?php 
+                                $no = $offset + 1;
+                                while ($row = $result->fetch_assoc()): 
+                                ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($surat['no']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['nama_surat']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['kategori']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['tanggal_keluar']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['di_keluarkan']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['tujuan_surat']); ?></td>
+                                    <td><?php echo $no++; ?></td>
+                                    <td><?php echo htmlspecialchars($row['nomor_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['nama_surat']); ?></td>
+                                    <td><?php echo date('d-m-Y', strtotime($row['tanggal_keluar'])); ?></td>
+                                    <td><?php echo htmlspecialchars($row['tujuan_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['kategori']); ?></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="./detail-surat-keluar.php?id=<?php echo urlencode($surat['no']); ?>" class="btn-detail">Detail</a>
-                                            <button class="btn-delete" title="Download">
+                                            <a href="detail-surat-keluar.php?id=<?php echo $row['id']; ?>" class="btn-detail">Detail</a>    
+                                            <a href="download-surat.php?id=<?php echo $row['id']; ?>&type=keluar" class="btn-icon" title="Download">
                                                 <svg class="icon" viewBox="0 0 24 24">
-                                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
-                                                </svg>
-                                            </button>
-                                            <a class="btn-delete" title="Edit" href="./edit-surat-keluar.php">
-                                                <svg class="icon" viewBox="0 0 24 24">
-                                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                                 </svg>
                                             </a>
-                                            <button class="btn-delete" title="Delete">
+                                            <a href="./edit-surat-keluar.php?id=<?php echo $row['id']; ?>" class="btn-icon" title="Edit">
                                                 <svg class="icon" viewBox="0 0 24 24">
-                                                    <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+                                                    <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                            </a>
+                                            <button onclick="confirmDelete(<?php echo $row['id']; ?>)" class="btn-icon" title="Hapus">
+                                                <svg class="icon" viewBox="0 0 24 24">
+                                                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <?php endforeach; ?>
+                                <?php endwhile; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <!-- Pagination -->
+                <?php if ($total_pages > 1): ?>
+                <div class="pagination">
+                    <?php if ($page > 1): ?>
+                        <a href="?page=<?php echo $page-1; ?>&search=<?php echo urlencode($search); ?>" class="page-link">&laquo; Sebelumnya</a>
+                    <?php endif; ?>
+                    
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>" class="page-link <?php echo $i == $page ? 'active' : ''; ?>">
+                            <?php echo $i; ?>
+                        </a>
+                    <?php endfor; ?>
+                    
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?page=<?php echo $page+1; ?>&search=<?php echo urlencode($search); ?>" class="page-link">Selanjutnya &raquo;</a>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
             </main>
         </div>
     </div>
-    <div id="logoutModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <h3 class="modal-confirm">Yakin ingin keluar?</h3>
-    <p>Anda akan keluar dari sistem.</p>
-    <div class="modal-actions">
-      <button id="cancelLogout" class="btn-cancel">Batal</button>
-      <a href="./logout.php" class="btn-logout">Keluar</a>
+
+    <div id="deleteModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="modal-confirm">Yakin ingin menghapus surat ini?</h3>
+            <p>Data yang dihapus tidak dapat dikembalikan.</p>
+            <div class="modal-actions">
+                <button id="cancelDelete" class="btn-cancel">Batal</button>
+                <a href="#" id="confirmDelete" class="btn-delete">Hapus</a>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-<script>
-  const logoutBtn = document.querySelector('.sidebar-item[href="./logout.php"]');
-  const modal = document.getElementById('logoutModal');
-  const cancelBtn = document.getElementById('cancelLogout');
 
-  logoutBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    modal.classList.remove('hidden');
-  });
+    <script>
+        function confirmDelete(id) {
+            const modal = document.getElementById('deleteModal');
+            const confirmBtn = document.getElementById('confirmDelete');
+            const cancelBtn = document.getElementById('cancelDelete');
 
-  cancelBtn.addEventListener('click', function () {
-    modal.classList.add('hidden');
-  });
+            modal.classList.remove('hidden');
+            confirmBtn.href = `./hapus-surat-keluar.php?id=${id}`;
 
-  window.addEventListener('click', function (e) {
-    if (e.target === modal) {
-      modal.classList.add('hidden');
-    }
-  });
-</script>
+            cancelBtn.onclick = function() {
+                modal.classList.add('hidden');
+            }
 
-
-
+            window.onclick = function(e) {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            }
+        }
+    </script>
 </body>
 </html>
