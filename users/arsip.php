@@ -1,3 +1,30 @@
+<?php
+require_once '../config.php';
+require_once '../config/session.php';
+
+requireLogin();
+
+// Fetch archived letters
+$stmt = $conn->prepare("
+    SELECT sm.*, u.nama_lengkap as created_by_name 
+    FROM surat_masuk sm 
+    LEFT JOIN users u ON sm.created_by = u.id 
+    WHERE sm.status = 'selesai'
+    ORDER BY sm.tanggal_surat DESC
+");
+$stmt->execute();
+$surat_masuk = $stmt->fetchAll();
+
+$stmt = $conn->prepare("
+    SELECT sk.*, u.nama_lengkap as created_by_name 
+    FROM surat_keluar sk 
+    LEFT JOIN users u ON sk.created_by = u.id 
+    WHERE sk.status = 'terkirim'
+    ORDER BY sk.tanggal_surat DESC
+");
+$stmt->execute();
+$surat_keluar = $stmt->fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -66,10 +93,9 @@
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div> -->
-                    <div class="avatar"></div>
+                    </div>
                 </div>
             </header>
 
@@ -77,25 +103,29 @@
     <main class="content">
     <h2>Arsip Surat</h2>
     <div class="grid-container">
-        <?php for ($i = 0; $i < 10; $i++): ?>
+        <?php foreach ($surat_masuk as $surat): ?>
         <div class="card">
-            <h3>Surat Pengajuan Pendanaan</h3>
-            <p>18 Maret 2025</p>
-            <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image">
+            <h3><?php echo htmlspecialchars($surat['perihal']); ?></h3>
+            <p><?php echo date('d F Y', strtotime($surat['tanggal_surat'])); ?></p>
+            <?php if ($surat['file_path']): ?>
+                <img src="<?php echo htmlspecialchars($surat['file_path']); ?>" alt="Surat" class="surat-image">
+            <?php else: ?>
+                <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image">
+            <?php endif; ?>
             <div class="button-group-arsip">
               <button style="font-weight: 400; gap: 10px" class="btn btn-primary">
                 <svg class="icon" viewBox="0 0 24 24">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
                 </svg>Simpan
               </button>
-              <a href="detail-surat-masuk.php" style="color: #da0700; gap: 10px" class="btn btn-secondary">
+              <a href="detail-surat-masuk.php?id=<?php echo $surat['id']; ?>" style="color: #da0700; gap: 10px" class="btn btn-secondary">
                 <svg class="icon" viewBox="0 0 24 24">
                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>Detail
               </a>
             </div>
         </div>
-        <?php endfor; ?>
+        <?php endforeach; ?>
     </div>
 </main>
 </div>
