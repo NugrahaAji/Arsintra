@@ -21,11 +21,14 @@ if (!$surat) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nomor_surat = $_POST['nomor_surat'] ?? '';
-    $tanggal_surat = $_POST['tanggal_surat'] ?? '';
-    $tanggal_terima = $_POST['tanggal_terima'] ?? '';
-    $pengirim = $_POST['pengirim'] ?? '';
-    $perihal = $_POST['perihal'] ?? '';
-    $status = $_POST['status'] ?? 'belum_diproses';
+    $asal_surat = $_POST['asal_surat'] ?? '';
+    $nama_surat = $_POST['nama_surat'] ?? '';
+    $kategori = $_POST['kategori'] ?? '';
+    $tanggal_masuk = $_POST['tanggal_masuk'] ?? '';
+    $petugas_arsip = $_POST['petugas_arsip'] ?? '';
+    $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? '';
+    $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
+    $status = $_POST['status'] ?? 'menunggu';
 
     // Handle file upload
     $file_path = $surat['file_path'];
@@ -48,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (empty($nomor_surat) || empty($tanggal_surat) || empty($tanggal_terima) || empty($pengirim) || empty($perihal)) {
+    if (empty($nomor_surat) || empty($asal_surat) || empty($nama_surat) || empty($kategori) || empty($tanggal_masuk) || empty($petugas_arsip) || empty($jumlah_lampiran) || empty($deskripsi_surat)) {
         $error = "Semua field harus diisi";
     } else {
-        $stmt = $conn->prepare("UPDATE surat_masuk SET nomor_surat = ?, tanggal_surat = ?, tanggal_terima = ?, pengirim = ?, perihal = ?, file_path = ?, status = ? WHERE id = ?");
-        $stmt->bind_param("sssssssi", $nomor_surat, $tanggal_surat, $tanggal_terima, $pengirim, $perihal, $file_path, $status, $id);
+        $stmt = $conn->prepare("UPDATE surat_masuk SET nomor_surat = ?, asal_surat = ?, nama_surat = ?, kategori = ?, tanggal_masuk = ?, petugas_arsip = ?, jumlah_lampiran = ?, deskripsi_surat = ?, file_path = ?, status = ? WHERE id = ?");
+        $stmt->bind_param("ssssssssssi", $nomor_surat, $asal_surat, $nama_surat, $kategori, $tanggal_masuk, $petugas_arsip, $jumlah_lampiran, $deskripsi_surat, $file_path, $status, $id);
         
         if ($stmt->execute()) {
             $success = "Surat masuk berhasil diperbarui";
@@ -227,8 +230,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group full-width">
                         <label for="status">Status</label>
                         <select id="status" name="status">
-                            <option value="selesai" <?php echo $surat['status'] === 'selesai' ? 'selected' : ''; ?>>Selesai Arsip</option>
                             <option value="menunggu" <?php echo $surat['status'] === 'menunggu' ? 'selected' : ''; ?>>Menunggu Tindakan</option>
+                            <option value="selesai" <?php echo $surat['status'] === 'selesai' ? 'selected' : ''; ?>>Selesai Arsip</option>
                             <option value="ditolak" <?php echo $surat['status'] === 'ditolak' ? 'selected' : ''; ?>>Ditolak</option>
                         </select>
                     </div>

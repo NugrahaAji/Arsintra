@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $petugas_arsip = $_POST['petugas_arsip'] ?? '';
     $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? '';
     $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
-    $status = 'belum_diproses';
+    $status = 'menunggu';
 
     // Handle file upload
     $file_path = '';

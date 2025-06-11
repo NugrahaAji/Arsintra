@@ -5,7 +5,7 @@ require_once '../config/session.php';
 requireLogin();
 
 $stmt = $conn->prepare("
-    SELECT id, nomor_surat, nama_surat, kategori, tanggal_masuk, asal_surat, status 
+    SELECT id, nomor_surat, nama_surat, kategori, tanggal_masuk, asal_surat, status, file_path 
     FROM surat_masuk 
     ORDER BY tanggal_masuk DESC
 ");
@@ -128,21 +128,22 @@ $surat_masuk = $result->fetch_all(MYSQLI_ASSOC);
                                         $status = $surat['status'];
                                         $badge = '';
                                         $label = '';
-                                        if ($status === 'selesai' || $status === 'Selesai Arsip') {
-                                            $badge = 'style="background:#d4f8e8;color:#1a7f37;border:1px solid #1a7f37;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;"';
-                                            $label = '<span style="font-size:18px;">&#10003;</span> Selesai Arsip';
-                                        } elseif ($status === 'menunggu' || $status === 'Menunggu Tindakan') {
+                                        if ($status === 'menunggu') {
                                             $badge = 'style="background:#fff6e0;color:#e6a700;border:1px solid #e6a700;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;"';
                                             $label = '<span style="font-size:18px;">&#9888;</span> Menunggu Tindakan';
-                                        } elseif ($status === 'ditolak' || $status === 'Ditolak') {
+                                        } elseif ($status === 'selesai') {
+                                            $badge = 'style="background:#d4f8e8;color:#1a7f37;border:1px solid #1a7f37;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;"';
+                                            $label = '<span style="font-size:18px;">&#10003;</span> Selesai Arsip';
+                                        } elseif ($status === 'ditolak') {
                                             $badge = 'style="background:#ffe0e0;color:#d32f2f;border:1px solid #d32f2f;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;"';
-                                            $label = '<span style="font-size:18px;">&#9888;</span> Ditolak';
+                                            $label = '<span style="font-size:18px;">&#10005;</span> Ditolak';
                                         } else {
-                                            $badge = 'style="background:#eee;color:#333;padding:2px 12px;border-radius:16px;"';
-                                            $label = htmlspecialchars($status);
+                                            // Default to 'menunggu' if status is not recognized
+                                            $badge = 'style="background:#fff6e0;color:#e6a700;border:1px solid #e6a700;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;"';
+                                            $label = '<span style="font-size:18px;">&#9888;</span> Menunggu Tindakan';
                                         }
-                                        echo '<span '.$badge.'>'.$label.'</span>';
                                         ?>
+                                        <span <?php echo $badge; ?>><?php echo $label; ?></span>
                                     </td>
                                     <td>
                                         <div class="action-buttons">

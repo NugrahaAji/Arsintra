@@ -48,7 +48,7 @@ CREATE TABLE surat_masuk (
     pengirim VARCHAR(100),
     perihal TEXT,
     file_path VARCHAR(255),
-    status ENUM('belum_diproses', 'diproses', 'selesai') DEFAULT 'belum_diproses',
+    status ENUM('selesai', 'menunggu', 'ditolak') DEFAULT 'menunggu',
     petugas_arsip VARCHAR(100),
     jumlah_lampiran VARCHAR(50),
     deskripsi_surat TEXT,
