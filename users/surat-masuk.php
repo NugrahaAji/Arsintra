@@ -1,59 +1,17 @@
 <?php
-session_start();
+require_once '../config.php';
+require_once '../config/session.php';
 
-// Check if user is logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit();
-// }
+requireLogin();
 
-$suratMasukData = [
-    [
-        'no' => '001',
-        'nama_surat' => 'Proposal Kegiatan',
-        'kategori' => 'Proposal',
-        'tanggal_masuk' => '17-07-2025',
-        'asal_surat' => 'Himakorn FMIPA UNILA',
-        'status' => 'Selesai Arsip',
-        'status_color' => 'success'
-    ],
-    [
-        'no' => '002',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_masuk' => '16-10-2024',
-        'asal_surat' => 'Kepala Badan Khusus',
-        'status' => 'Menunggu Tindakan',
-        'status_color' => 'warning'
-    ],
-    [
-        'no' => '003',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_masuk' => '16-10-2024',
-        'asal_surat' => 'Kepala Badan Khusus',
-        'status' => 'Selesai Arsip',
-        'status_color' => 'success'
-    ],
-    [
-        'no' => '004',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_masuk' => '16-10-2024',
-        'asal_surat' => 'Kepala Badan Khusus',
-        'status' => 'Ditolak',
-        'status_color' => 'danger'
-    ],
-    [
-        'no' => '005',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'kategori' => 'Pendanaan',
-        'tanggal_masuk' => '16-10-2024',
-        'asal_surat' => 'Kepala Badan Khusus',
-        'status' => 'Selesai Arsip',
-        'status_color' => 'success'
-    ]
-];
+$stmt = $conn->prepare("
+    SELECT id, nomor_surat, nama_surat, kategori, tanggal_masuk, asal_surat, status 
+    FROM surat_masuk 
+    ORDER BY tanggal_masuk DESC
+");
+$stmt->execute();
+$result = $stmt->get_result();
+$surat_masuk = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -127,10 +85,9 @@ $suratMasukData = [
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div> -->
-                    <div class="avatar"></div>
+                    </div>
                 </div>
             </header>
 
@@ -159,46 +116,55 @@ $suratMasukData = [
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($suratMasukData as $surat): ?>
+                                <?php foreach ($surat_masuk as $index => $surat): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($surat['no']); ?></td>
+                                    <td><?php echo htmlspecialchars($surat['nomor_surat']); ?></td>
                                     <td><?php echo htmlspecialchars($surat['nama_surat']); ?></td>
                                     <td><?php echo htmlspecialchars($surat['kategori']); ?></td>
-                                    <td><?php echo htmlspecialchars($surat['tanggal_masuk']); ?></td>
+                                    <td><?php echo date('d-m-Y', strtotime($surat['tanggal_masuk'])); ?></td>
                                     <td><?php echo htmlspecialchars($surat['asal_surat']); ?></td>
                                     <td>
-                                        <!-- <form method="POST" action="update_status.php"> -->
-                                            <!-- <input type="hidden" name="id_surat" value="<?php echo $surat['id']; ?>"> -->
-                                            <select name="status" onchange="this.form.submit()" class="status-badge status-<?php echo $surat['status_color']; ?>">
-                                                <option value="Selesai Arsip" class="status-success" <?php echo ($surat['status'] === 'Selesai Arsip') ? 'selected' : ''; ?>>
-                                                    ✅ Selesai Arsip
-                                                </option>
-                                                <option value="menunggu tindakan" class="status-warning" <?php echo ($surat['status'] === 'menunggu tindakan') ? 'selected' : ''; ?>>
-                                                    ⚠️ Menunggu Tindakan
-                                                </option>
-                                                <option value="ditolak" class="status-danger" <?php echo ($surat['status'] === 'ditolak') ? 'selected' : ''; ?>>
-                                                    ❌ Ditolak
-                                                </option>
-                                            </select>
-                                        </form>
+                                        <?php
+                                        $status = $surat['status'];
+                                        $badge = '';
+                                        $label = '';
+                                        if ($status === 'selesai' || $status === 'Selesai Arsip') {
+                                            $badge = 'style="background:#d4f8e8;color:#1a7f37;border:1px solid #1a7f37;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;"';
+                                            $label = '<span style="font-size:18px;">&#10003;</span> Selesai Arsip';
+                                        } elseif ($status === 'menunggu' || $status === 'Menunggu Tindakan') {
+                                            $badge = 'style="background:#fff6e0;color:#e6a700;border:1px solid #e6a700;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;"';
+                                            $label = '<span style="font-size:18px;">&#9888;</span> Menunggu Tindakan';
+                                        } elseif ($status === 'ditolak' || $status === 'Ditolak') {
+                                            $badge = 'style="background:#ffe0e0;color:#d32f2f;border:1px solid #d32f2f;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;"';
+                                            $label = '<span style="font-size:18px;">&#9888;</span> Ditolak';
+                                        } else {
+                                            $badge = 'style="background:#eee;color:#333;padding:2px 12px;border-radius:16px;"';
+                                            $label = htmlspecialchars($status);
+                                        }
+                                        echo '<span '.$badge.'>'.$label.'</span>';
+                                        ?>
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="./detail-surat-masuk.php?id=<?php echo urlencode($surat['no']); ?>" class="btn-detail">Detail</a>
-                                            <button class="btn-delete" title="Download">
+                                            <a href="detail-surat-masuk.php?id=<?php echo $surat['id']; ?>" class="btn-icon" title="Detail">
+                                                <svg class="icon" viewBox="0 0 24 24">
+                                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                </svg>
+                                            </a>
+                                            <a href="download-surat.php?id=<?php echo $surat['id']; ?>" class="btn-icon" title="Download">
                                                 <svg class="icon" viewBox="0 0 24 24">
                                                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
                                                 </svg>
-                                            </button>
-                                            <a class="btn-delete" title="Edit" href="./edit-surat-masuk.php">
+                                            </a>
+                                            <a href="edit-surat-masuk.php?id=<?php echo $surat['id']; ?>" class="btn-icon" title="Edit">
                                                 <svg class="icon" viewBox="0 0 24 24">
                                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                 </svg>
                                             </a>
-                                            </button>
-                                            <button class="btn-delete" title="Delete">
+                                            <button onclick="deleteSurat(<?php echo $surat['id']; ?>)" class="btn-icon" title="Hapus">
                                                 <svg class="icon" viewBox="0 0 24 24">
-                                                    <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+                                                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
                                             </button>
                                         </div>
@@ -241,9 +207,12 @@ $suratMasukData = [
       modal.classList.add('hidden');
     }
   });
+
+  function deleteSurat(id) {
+    if (confirm('Apakah Anda yakin ingin menghapus surat ini?')) {
+        window.location.href = `hapus-surat-masuk.php?id=${id}`;
+    }
+  }
 </script>
-
-
-
 </body>
 </html>

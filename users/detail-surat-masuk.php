@@ -1,30 +1,27 @@
 <?php
-session_start();
+require_once '../config.php';
+require_once '../config/session.php';
 
-// Check if user is logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit();
-// }
+requireLogin();
 
-$letter_id = $_GET['id'] ?? '001';
+$id = $_GET['id'] ?? 0;
 
-$letterData = [
-    '001' => [
-        'no_surat' => '001',
-        'nama_surat' => 'Proposal Kegiatan Pelatihan Mata',
-        'kategori' => 'Poposal',
-        'tanggal_masuk' => '17 - 02 - 2025',
-        'asal_surat' => 'Himakorn FMIPA UNILA',
-        'petugas_arsip' => 'Dea Delvinata',
-        'jumlah_lampiran' => '3 Rangkap',
-        'deskripsi_surat' => 'Surat ini ditujukan untuk meminta tanda tangan dari wakil dekan bidang kemahasiswaan supaya kegiatan bisa berjalan',
-        'file_path' => 'asset/image/sample-document.png',
-        'status' => 'Selesai Arsip'
-    ]
-];
+// Get surat data
+$stmt = $conn->prepare("
+    SELECT sm.*, u.nama_lengkap as created_by_name 
+    FROM surat_masuk sm 
+    LEFT JOIN users u ON sm.created_by = u.id 
+    WHERE sm.id = ?
+");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$surat = $result->fetch_assoc();
 
-$letter = $letterData[$letter_id] ?? $letterData['001'];
+if (!$surat) {
+    header('Location: surat-masuk.php');
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -96,16 +93,15 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div> -->
-                    <div class="avatar"></div>
+                    </div>
                 </div>
             </header>
 
-            <main class="page-content">
-                <div class="page-header">
-                    <h1>Surat Masuk</h1>
+            <main class="content">
+            <div class="page-header">
+                    <h1>Detail Surat Masuk</h1>
                     <div class="header-actions">
                         <a href="./surat-masuk.php" class="btn-back">
                             <svg class="icon" viewBox="0 0 24 24">
@@ -115,56 +111,63 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
                         </a>
                     </div>
                 </div>
-
-                <div class="detail-container">
-                    <div class="document-section">
-                        <h3>Foto Bukti Usaha</h3>
-                        <div class="document-image">
-                            <img src="/Arsintra/asset/image/sample-document.png" alt="Document Scan" />
-                        </div>
+                <div style="background:#fafafa;padding:32px 24px 24px 24px;border-radius:18px;box-shadow:0 2px 16px #0001;max-width:1100px;margin:auto;display:flex;flex-direction:column;gap:32px;">
+                    <div>
+                        <label style="font-weight:500;margin-bottom:20px;display:block;">Foto Bukti Usaha</label>
+                        <?php
+                        $file_path = $surat['file_path'];
+                        $is_image = false;
+                        if ($file_path) {
+                            $ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+                            $is_image = in_array($ext, ['jpg','jpeg','png','gif']);
+                        }
+                        if ($file_path && $is_image): ?>
+                            <img src="../<?php echo htmlspecialchars($file_path); ?>" alt="Foto Surat" style="max-width:700px;max-height:500px;border-radius:8px;border:1px solid #ddd;box-shadow:0 2px 8px #0001;">
+                        <?php elseif ($file_path): ?>
+                            <a href="../<?php echo htmlspecialchars($file_path); ?>" target="_blank" class="btn btn-primary" style="margin-top:16px;display:inline-block;">Download File</a>
+                        <?php else: ?>
+                            <div style="color:#888;font-style:italic;">Tidak ada file</div>
+                        <?php endif; ?>
                     </div>
-                    <div class="detail-form">
-                        <div class="form-row">
-                            <div class="detail-group">
-                                <label>No Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['no_surat']); ?></div>
+                    <div>
+                        <div style="display:flex;gap:16px;margin-bottom:16px;" style="margin-bottom:20px;">
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">No Surat</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['nomor_surat']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
                             </div>
-                            <div class="detail-group">
-                                <label>Asal Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['asal_surat']); ?></div>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="detail-group">
-                                <label>Nama Surat</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['nama_surat']); ?></div>
-                            </div>
-                            <div class="detail-group">
-                                <label>Kategori</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['kategori']); ?></div>
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Asal Surat</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['asal_surat']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
                             </div>
                         </div>
-
-                        <div class="form-row">
-                            <div class="detail-group">
-                                <label>Tanggal Masuk</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['tanggal_masuk']); ?></div>
+                        <div style="display:flex;gap:16px;margin-bottom:16px;">
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Nama Surat</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['nama_surat']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
                             </div>
-                            <div class="detail-group">
-                                <label>Petugas Arsip</label>
-                                <div class="detail-value"><?php echo htmlspecialchars($letter['petugas_arsip']); ?></div>
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Kategori</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['kategori']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
                             </div>
                         </div>
-
-                        <div class="form-row">
-                            <div class="detail-group">
-                                <label>Deskripsi Surat</label>
-                                <div class="detail-value description"><?php echo htmlspecialchars($letter['deskripsi_surat']); ?></div>
+                        <div style="display:flex;gap:16px;margin-bottom:16px;">
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Tanggal Masuk</label>
+                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_masuk'])); ?>" readonly style="width:100%;margin-bottom:0.5em;">
                             </div>
-                            <div class="detail-group">
-                                <label>Jumlah Lampiran</label>
-                                <div class="detail-value description"><?php echo htmlspecialchars($letter['jumlah_lampiran']); ?></div>
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Petugas Arsip</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['petugas_arsip']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:16px;margin-bottom:16px;">
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Deskripsi Surat</label>
+                                <textarea readonly style="width:100%;min-height:60px;resize:vertical;"><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
+                            </div>
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Jumlah Lampiran</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['jumlah_lampiran']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
                             </div>
                         </div>
                     </div>
@@ -202,8 +205,6 @@ $letter = $letterData[$letter_id] ?? $letterData['001'];
     }
   });
 </script>
-
-
 
 </body>
 </html>

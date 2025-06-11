@@ -1,13 +1,83 @@
+<?php
+require_once '../config.php';
+require_once '../config/session.php';
+
+requireLogin();
+
+$error = '';
+$success = '';
+
+$id = $_GET['id'] ?? 0;
+$stmt = $conn->prepare("SELECT * FROM surat_masuk WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$surat = $result->fetch_assoc();
+
+if (!$surat) {
+    header('Location: surat-masuk.php');
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nomor_surat = $_POST['nomor_surat'] ?? '';
+    $tanggal_surat = $_POST['tanggal_surat'] ?? '';
+    $tanggal_terima = $_POST['tanggal_terima'] ?? '';
+    $pengirim = $_POST['pengirim'] ?? '';
+    $perihal = $_POST['perihal'] ?? '';
+    $status = $_POST['status'] ?? 'belum_diproses';
+
+    // Handle file upload
+    $file_path = $surat['file_path'];
+    if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = '../uploads/surat_masuk/';
+        if (!file_exists($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        // Delete old file if exists
+        if ($file_path && file_exists('../' . $file_path)) {
+            unlink('../' . $file_path);
+        }
+
+        $file_name = time() . '_' . basename($_FILES['file_surat']['name']);
+        $target_path = $upload_dir . $file_name;
+
+        if (move_uploaded_file($_FILES['file_surat']['tmp_name'], $target_path)) {
+            $file_path = 'uploads/surat_masuk/' . $file_name;
+        }
+    }
+
+    if (empty($nomor_surat) || empty($tanggal_surat) || empty($tanggal_terima) || empty($pengirim) || empty($perihal)) {
+        $error = "Semua field harus diisi";
+    } else {
+        $stmt = $conn->prepare("UPDATE surat_masuk SET nomor_surat = ?, tanggal_surat = ?, tanggal_terima = ?, pengirim = ?, perihal = ?, file_path = ?, status = ? WHERE id = ?");
+        $stmt->bind_param("sssssssi", $nomor_surat, $tanggal_surat, $tanggal_terima, $pengirim, $perihal, $file_path, $status, $id);
+        
+        if ($stmt->execute()) {
+            $success = "Surat masuk berhasil diperbarui";
+            // Refresh surat data
+            $stmt = $conn->prepare("SELECT * FROM surat_masuk WHERE id = ?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $surat = $result->fetch_assoc();
+        } else {
+            $error = "Gagal memperbarui surat masuk";
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Surat Masuk - Arsintra</title>
+    <title>Edit Surat Masuk - Arsintra</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="container"> 
+    <div class="container">
         <div class="sidebar">
             <div class="sidebar-header">
                 <h1>Arsintra</h1>
@@ -66,16 +136,15 @@
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
-                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
                         <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div> -->
-                    <div class="avatar"></div>
+                    </div>
                 </div>
             </header>
 
-            <main class="page-content">
+            <main class="content">
                 <div class="page-header">
-                    <h1>Surat Masuk</h1>
+                    <h1>Edit Surat Masuk</h1>
                     <div class="header-actions">
                         <a href="./surat-masuk.php" class="btn-back">
                             <svg class="icon" viewBox="0 0 24 24">
@@ -86,78 +155,87 @@
                     </div>
                 </div>
 
-                <?php if (isset($success)): ?>
-                <div class="success-message">
-                    <?php echo htmlspecialchars($success); ?>
-                    <a href="./surat-masuk.php">Kembali ke daftar surat masuk</a>
-                </div>
+                
+                <?php if ($error): ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
                 <?php endif; ?>
 
-                <?php if (isset($error)): ?>
-                <div class="error-message">
-                    <?php echo htmlspecialchars($error); ?>
-                </div>
+                <?php if ($success): ?>
+                    <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
                 <?php endif; ?>
 
+                <form method="POST" enctype="multipart/form-data" class="form">
                 <div class="form-container-page">
-                    <form class="form-grid" method="POST" enctype="multipart/form-data">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="no_surat">No Surat<span class="required">*</span></label>
-                                <input type="text" id="no_surat" name="no_surat" value="001" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="asal_surat">Asal Surat<span class="required">*</span></label>
-                                <input type="text" id="asal_surat" name="asal_surat" value="Himakorn FMIPA UNILA" required>
-                            </div>
+                    <?php if ($success): ?>
+                        <div class="alert alert-success" style="margin-bottom:20px; color:#1a7f37; background:#d4f8e8; border:1px solid #1a7f37; border-radius:8px; padding:12px 20px; font-weight:500;">
+                            <?php echo htmlspecialchars($success); ?>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="nama_surat">Nama Surat<span class="required">*</span></label>
-                                <input type="text" id="nama_surat" name="nama_surat" value="Proposal Kegiatan Pelatihan Mata" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="kategori">Kategori<span class="required">*</span></label>
-                                <input type="text" id="kategori" name="kategori" value="Proposal" required>
-                            </div>
+                    <?php endif; ?>
+                    <?php if ($error): ?>
+                        <div class="alert alert-danger" style="margin-bottom:20px; color:#d32f2f; background:#ffe0e0; border:1px solid #d32f2f; border-radius:8px; padding:12px 20px; font-weight:500;">
+                            <?php echo htmlspecialchars($error); ?>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="tanggal_masuk">Tanggal Masuk<span class="required">*</span></label>
-                                <input type="text" id="tanggal_masuk" name="tanggal_masuk" value="17 - 02 - 2025" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="petugas_arsip">Petugas Arsip<span class="required">*</span></label>
-                                <input type="text" id="petugas_arsip" name="petugas_arsip" value="Dea Delvinata" required>
-                            </div>
+                    <?php endif; ?>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nomor_surat">No Surat*</label>
+                            <input type="text" id="nomor_surat" name="nomor_surat" value="<?php echo htmlspecialchars($surat['nomor_surat']); ?>" required>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="jumlah_lampiran">Jumlah Lampiran<span class="required">*</span></label>
-                                <input type="text" id="jumlah_lampiran" name="jumlah_lampiran" value="3 Rangkap" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="scan_surat">Scan Surat<span class="required">*</span></label>
-                                <div class="file-input-container">
-                                    <input type="file" id="scan_surat" name="scan_surat" accept=".pdf,.docx,.csv,.png,.jpg" required>
-                                    <span class="file-format-note">format image (pdf,docx,csv,png,jpg)</span>
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            <label for="asal_surat">Asal Surat *</label>
+                            <input type="text" id="asal_surat" name="asal_surat" value="<?php echo htmlspecialchars($surat['asal_surat']); ?>" required>
                         </div>
-
-                        <div class="form-group full-width">
-                            <label for="deskripsi_surat">Deskripsi Surat<span class="required">*</span></label>
-                            <textarea id="deskripsi_surat" name="deskripsi_surat" rows="6" required>Surat ini ditujukan untuk meminta tanda tangan dari wakil dekan bidang kemahasiswaan supaya kegiatan bisa berjalan</textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nama_surat">Nama Surat *</label>
+                            <input type="text" id="nama_surat" name="nama_surat" value="<?php echo htmlspecialchars($surat['nama_surat']); ?>" required>
                         </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn-save">Simpan</button>
+                        <div class="form-group">
+                            <label for="kategori">Kategori *</label>
+                            <input type="text" id="kategori" name="kategori" value="<?php echo htmlspecialchars($surat['kategori']); ?>" required>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tanggal_masuk">Tanggal Masuk *</label>
+                            <input type="date" id="tanggal_masuk" name="tanggal_masuk" value="<?php echo htmlspecialchars($surat['tanggal_masuk']); ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petugas_arsip">Petugas Arsip *</label>
+                            <input type="text" id="petugas_arsip" name="petugas_arsip" value="<?php echo htmlspecialchars($surat['petugas_arsip']); ?>" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jumlah_lampiran">Jumlah Lampiran *</label>
+                            <input type="text" id="jumlah_lampiran" name="jumlah_lampiran" value="<?php echo htmlspecialchars($surat['jumlah_lampiran']); ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="file_surat">Scan Surat*</label>
+                            <?php if ($surat['file_path']): ?>
+                                <p>File saat ini: <a href="../<?php echo htmlspecialchars($surat['file_path']); ?>" target="_blank">Lihat File</a></p>
+                            <?php endif; ?>
+                            <input type="file" id="file_surat" name="file_surat" accept=".pdf,.doc,.docx,.csv,.png,.jpg">
+                            <span class="file-format-note">format image (pdf,doc,docx,csv,png,jpg)</span>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="deskripsi_surat">Deskripsi Surat *</label>
+                        <textarea id="deskripsi_surat" name="deskripsi_surat" required><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="status">Status</label>
+                        <select id="status" name="status">
+                            <option value="selesai" <?php echo $surat['status'] === 'selesai' ? 'selected' : ''; ?>>Selesai Arsip</option>
+                            <option value="menunggu" <?php echo $surat['status'] === 'menunggu' ? 'selected' : ''; ?>>Menunggu Tindakan</option>
+                            <option value="ditolak" <?php echo $surat['status'] === 'ditolak' ? 'selected' : ''; ?>>Ditolak</option>
+                        </select>
+                    </div>
+                    <div class="button-group" style="display: flex; justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary" style="width: fit-content; min-width: 120px;">Simpan</button>
+                    </div>
+                </form>
             </main>
         </div>
     </div>
