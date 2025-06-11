@@ -1,15 +1,28 @@
 <?php
 session_start();
-
+require_once '../config.php';
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: adminlogin.php');
+    exit();
+}
+$error = '';
+$success = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = $_POST['nama'] ?? '';
     $username = $_POST['username'] ?? '';
     $email = $_POST['email'] ?? '';
     $kategori = $_POST['kategori'] ?? '';
     $password = $_POST['password'] ?? '';
-
     if ($nama && $username && $email && $kategori && $password) {
-        $success = 'Akun berhasil ditambahkan!';
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        $stmt = $conn->prepare("INSERT INTO users (username, nama, kategori, email, password) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param('sssss', $username, $nama, $kategori, $email, $hash);
+        if ($stmt->execute()) {
+            $success = 'Akun berhasil ditambahkan!';
+        } else {
+            $error = 'Gagal menambah akun. Email mungkin sudah terdaftar.';
+        }
+        $stmt->close();
     } else {
         $error = 'Semua field wajib diisi!';
     }
@@ -20,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Akun - Arsintra</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
@@ -47,28 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <div class="main-content">
-        <header class="header">
-            <h1></h1>
-            <div class="header-actions">
-                <button class="icon-button">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                </button>
-                <button class="icon-button">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </button>
-                <div class="avatar"></div>
-            </div>
-        </header>
 
         <main class="page-content">
             <div class="page-header">
                 <h1>Tambah Akun</h1>
                 <div class="header-actions">
-                    <a href="./admindashboard.php" class="btn-back">
+                    <a href="admindashboard.php" class="btn-back">
                         <svg class="icon" viewBox="0 0 24 24">
                             <path d="M19 12H5m7-7l-7 7 7 7"></path>
                         </svg>
@@ -77,14 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <?php if (isset($success)): ?>
+            <?php if ($success): ?>
             <div class="success-message">
                 <?php echo htmlspecialchars($success); ?>
-                <a href="./akun.php">Kembali ke daftar akun</a>
+                <a href="admindashboard.php">Kembali ke daftar akun</a>
             </div>
             <?php endif; ?>
 
-            <?php if (isset($error)): ?>
+            <?php if ($error): ?>
             <div class="error-message">
                 <?php echo htmlspecialchars($error); ?>
             </div>
@@ -127,11 +125,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn-save">Tambah</button>
+                        <button type="submit" class="btn-save">Simpan</button>
                     </div>
                 </form>
             </div>
-
         </main>
     </div>
 </div>

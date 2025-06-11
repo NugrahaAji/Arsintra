@@ -1,3 +1,36 @@
+<?php
+session_start();
+require_once '../config.php';
+
+$error = '';
+if (isset($_SESSION['admin_id'])) {
+    header('Location: admindashboard.php');
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $stmt = $conn->prepare("SELECT id, username, nama, password FROM users WHERE username=? AND kategori='Admin' LIMIT 1");
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        if (password_verify($password, $row['password'])) {
+            $_SESSION['admin_id'] = $row['id'];
+            $_SESSION['admin_username'] = $row['username'];
+            $_SESSION['admin_nama'] = $row['nama'];
+            header('Location: admindashboard.php');
+            exit();
+        } else {
+            $error = 'Password salah!';
+        }
+    } else {
+        $error = 'Username tidak ditemukan atau bukan admin!';
+    }
+    $stmt->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,54 +38,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin | Login</title>
   <link rel="stylesheet" href="../css/style.css" />
-  <style>
-    body{
-        height: 100vh;
-        overflow: hidden;
-    }
-  </style>
 </head>
 <body>
     <nav class="navbar">
     <div class="navbar-inner">
       <h1 class="navbar-brand">Arsintra</h1>
-
-      <ul class="nav-links">
-        <li class="nav-item btn-login"> <a href="#">Masuk</a>
-        </li>
-      </ul>
-
     </div>
   </nav>
   <section class="full-screen-section">
     <div class="background-image">
       <img src="/Arsintra/asset/image/login-bg.png" alt="Login Background" />
     </div>
-
     <div class="form-container">
       <div class="form-inner">
         <div>
           <h1 class="heading-bold">Hi!</h1>
           <h1 class="heading">Selamat datang kembali</h1>
         </div>
-
-        <?php if (isset($error)): ?>
+        <?php if ($error): ?>
         <div class="error-message">
           <?php echo htmlspecialchars($error); ?>
         </div>
         <?php endif; ?>
-
-        <form class="form" method="POST">
+        <form class="form" method="POST" autocomplete="off">
           <div class="form-group">
-            <label for="username">username<span class="required">*</span></label><br />
-            <input type="username" placeholder="Masukkan username" name="username" required />
+            <label for="username">Username<span class="required">*</span></label><br />
+            <input type="text" placeholder="Masukkan username" name="username" required />
           </div>
-
           <div class="form-group">
             <label for="password">Kata Sandi<span class="required">*</span></label><br />
             <input type="password" placeholder="Masukkan kata sandi" name="password" required />
           </div>
-
           <div class="button-group">
             <button type="submit" class="btn btn-primary">Masuk</button>
           </div>
@@ -60,38 +76,5 @@
       </div>
     </div>
   </section>
-  <div id="logoutModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <h3 class="modal-confirm">Yakin ingin keluar?</h3>
-    <p>Anda akan keluar dari sistem.</p>
-    <div class="modal-actions">
-      <button id="cancelLogout" class="btn-cancel">Batal</button>
-      <a href="./adminlogout.php" class="btn-logout">Keluar</a>
-    </div>
-  </div>
-</div>
-<script>
-  const logoutBtn = document.querySelector('.sidebar-item[href="./adminlogout.php"]');
-  const modal = document.getElementById('logoutModal');
-  const cancelBtn = document.getElementById('cancelLogout');
-
-  logoutBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    modal.classList.remove('hidden');
-  });
-
-  cancelBtn.addEventListener('click', function () {
-    modal.classList.add('hidden');
-  });
-
-  window.addEventListener('click', function (e) {
-    if (e.target === modal) {
-      modal.classList.add('hidden');
-    }
-  });
-</script>
-
-
-
 </body>
 </html>
