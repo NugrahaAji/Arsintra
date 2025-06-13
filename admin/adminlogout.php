@@ -2,5 +2,5 @@
 session_start();
 session_unset();
 session_destroy();
-header('Location: adminlogin.php');
+header('Location: adminlogin.php?logout=1');
 exit();

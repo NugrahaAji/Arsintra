@@ -21,7 +21,7 @@ $params = [];
 $types = '';
 
 if ($search) {
-    $where = "WHERE nama LIKE ? OR username LIKE ? OR email LIKE ?";
+    $where = "WHERE nama_lengkap LIKE ? OR username LIKE ? OR email LIKE ?";
     $searchTerm = "%$search%";
     $params = [$searchTerm, $searchTerm, $searchTerm];
     $types = 'sss';
@@ -89,18 +89,18 @@ $stmt->close();
                     </div>
                     <div class="profile-dropdown">
                         <button class="icon-button" id="profileButton">
-                            <div class="avatar" title="<?php echo htmlspecialchars($admin['nama']); ?>">
-                                <span><?php echo strtoupper(substr($admin['nama'], 0, 1)); ?></span>
+                            <div class="avatar" title="<?php echo htmlspecialchars($admin['nama_lengkap']); ?>">
+                                <span><?php echo strtoupper(substr($admin['nama_lengkap'], 0, 1)); ?></span>
                             </div>
                         </button>
                         <div class="dropdown-menu" id="profileMenu">
                             <div class="dropdown-header">
                                 <div class="user-info">
-                                    <div class="avatar" title="<?php echo htmlspecialchars($admin['nama']); ?>">
-                                        <span><?php echo strtoupper(substr($admin['nama'], 0, 1)); ?></span>
+                                    <div class="avatar" title="<?php echo htmlspecialchars($admin['nama_lengkap']); ?>">
+                                        <span><?php echo strtoupper(substr($admin['nama_lengkap'], 0, 1)); ?></span>
                                     </div>
                                     <div class="user-details">
-                                        <span class="user-name"><?php echo htmlspecialchars($admin['nama']); ?></span>
+                                        <span class="user-name"><?php echo htmlspecialchars($admin['nama_lengkap']); ?></span>
                                         <span class="user-email"><?php echo htmlspecialchars($admin['email']); ?></span>
                                     </div>
                                 </div>
@@ -155,10 +155,10 @@ $stmt->close();
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Nama</th>
+                                    <th>Nama Lengkap</th>
                                     <th>Username</th>
                                     <th>Email</th>
-                                    <th>Kategori</th>
+                                    <th>Role</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -166,10 +166,10 @@ $stmt->close();
                                 <?php foreach ($users as $user): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($user['id']); ?></td>
-                                    <td><?php echo htmlspecialchars($user['nama']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['nama_lengkap']); ?></td>
                                     <td><?php echo htmlspecialchars($user['username']); ?></td>
                                     <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                    <td><?php echo htmlspecialchars($user['kategori']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['role']); ?></td>
                                     <td>
                                         <div class="action-buttons">
                                             <a href="edit-akun-pengguna.php?id=<?php echo urlencode($user['id']); ?>" class="btn-detail">Edit</a>

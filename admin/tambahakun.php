@@ -8,15 +8,15 @@ if (!isset($_SESSION['admin_id'])) {
 $error = '';
 $success = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama = $_POST['nama'] ?? '';
+    $nama_lengkap = $_POST['nama_lengkap'] ?? '';
     $username = $_POST['username'] ?? '';
     $email = $_POST['email'] ?? '';
-    $kategori = $_POST['kategori'] ?? '';
+    $role = $_POST['role'] ?? '';
     $password = $_POST['password'] ?? '';
-    if ($nama && $username && $email && $kategori && $password) {
+    if ($nama_lengkap && $username && $email && $role && $password) {
         $hash = password_hash($password, PASSWORD_BCRYPT);
-        $stmt = $conn->prepare("INSERT INTO users (username, nama, kategori, email, password) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param('sssss', $username, $nama, $kategori, $email, $hash);
+        $stmt = $conn->prepare("INSERT INTO users (username, nama_lengkap, role, email, password) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param('sssss', $username, $nama_lengkap, $role, $email, $hash);
         if ($stmt->execute()) {
             $success = 'Akun berhasil ditambahkan!';
         } else {
@@ -92,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <form class="form-grid" method="POST">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="nama">Nama<span class="required">*</span></label>
-                            <input type="text" id="nama" name="nama" required>
+                            <label for="nama_lengkap">Nama Lengkap<span class="required">*</span></label>
+                            <input type="text" id="nama_lengkap" name="nama_lengkap" required>
                         </div>
                         <div class="form-group">
                             <label for="username">Username<span class="required">*</span></label>
@@ -114,11 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="kategori">Kategori<span class="required">*</span></label>
-                            <select id="kategori" name="kategori" class="custom-select" required>
-                                <option value="" disabled hidden selected>Pilih Kategori</option>
-                                <option value="User">User</option>
-                                <option value="Admin">Admin</option>
+                            <label for="role">Role<span class="required">*</span></label>
+                            <select id="role" name="role" class="custom-select" required>
+                                <option value="" disabled hidden selected>Pilih Role</option>
+                                <option value="petugas">Petugas</option>
+                                <option value="admin">Admin</option>
                             </select>
                         </div>
                         <div class="form-group"></div>

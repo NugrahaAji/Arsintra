@@ -23,13 +23,13 @@ if (!$user) {
     exit();
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama = $_POST['nama'] ?? '';
+    $nama_lengkap = $_POST['nama_lengkap'] ?? '';
     $username = $_POST['username'] ?? '';
     $email = $_POST['email'] ?? '';
-    $kategori = $_POST['kategori'] ?? '';
-    if ($nama && $username && $email && $kategori) {
-        $stmt2 = $conn->prepare("UPDATE users SET username=?, nama=?, email=?, kategori=? WHERE id=?");
-        $stmt2->bind_param('ssssi', $username, $nama, $email, $kategori, $id);
+    $role = $_POST['role'] ?? '';
+    if ($nama_lengkap && $username && $email && $role) {
+        $stmt2 = $conn->prepare("UPDATE users SET username=?, nama_lengkap=?, email=?, role=? WHERE id=?");
+        $stmt2->bind_param('ssssi', $username, $nama_lengkap, $email, $role, $id);
         if ($stmt2->execute()) {
             $success = 'Akun berhasil diupdate!';
         } else {
@@ -99,8 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <form class="form-grid" method="POST">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="nama">Nama<span class="required">*</span></label>
-                            <input type="text" id="nama" name="nama" value="<?= htmlspecialchars($user['nama']) ?>" required>
+                            <label for="nama_lengkap">Nama Lengkap<span class="required">*</span></label>
+                            <input type="text" id="nama_lengkap" name="nama_lengkap" value="<?= htmlspecialchars($user['nama_lengkap']) ?>" required>
                         </div>
                         <div class="form-group">
                             <label for="username">Username<span class="required">*</span></label>
@@ -113,10 +113,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="kategori">Kategori<span class="required">*</span></label>
-                            <select id="kategori" name="kategori" class="custom-select" required>
-                                <option value="User" <?= $user['kategori'] === 'User' ? 'selected' : '' ?>>User</option>
-                                <option value="Admin" <?= $user['kategori'] === 'Admin' ? 'selected' : '' ?>>Admin</option>
+                            <label for="role">Role<span class="required">*</span></label>
+                            <select id="role" name="role" class="custom-select" required>
+                                <option value="petugas" <?= $user['role'] === 'petugas' ? 'selected' : '' ?>>Petugas</option>
+                                <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
                             </select>
                         </div>
                     </div>
