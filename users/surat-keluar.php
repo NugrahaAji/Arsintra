@@ -9,7 +9,6 @@ $page = $_GET['page'] ?? 1;
 $per_page = 10;
 $offset = ($page - 1) * $per_page;
 
-// Get total records for pagination
 $total_query = "SELECT COUNT(*) as total FROM surat_keluar";
 if ($search) {
     $total_query .= " WHERE nomor_surat LIKE ? OR nama_surat LIKE ? OR tujuan_surat LIKE ?";
@@ -23,7 +22,6 @@ $stmt->execute();
 $total_records = $stmt->get_result()->fetch_assoc()['total'];
 $total_pages = ceil($total_records / $per_page);
 
-// Get records for current page
 $query = "SELECT * FROM surat_keluar";
 if ($search) {
     $query .= " WHERE nomor_surat LIKE ? OR nama_surat LIKE ? OR tujuan_surat LIKE ?";
@@ -50,7 +48,6 @@ $result = $stmt->get_result();
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h1>Arsintra</h1>
@@ -142,7 +139,6 @@ $result = $stmt->get_result();
                     </div>
                 <?php endif; ?>
 
-                <!-- Table -->
                 <div class="table-container">
                     <div class="table-responsive">
                         <table class="data-table">
@@ -196,7 +192,6 @@ $result = $stmt->get_result();
                     </div>
                 </div>
 
-                <!-- Pagination -->
                 <?php if ($total_pages > 1): ?>
                 <div class="pagination">
                     <?php if ($page > 1): ?>

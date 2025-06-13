@@ -12,7 +12,6 @@ if (!isset($_GET['id'])) {
 $id = $_GET['id'];
 
 try {
-    // Get file path before deleting
     $stmt = $conn->prepare("SELECT file_path FROM surat_keluar WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -26,7 +25,6 @@ try {
     $row = $result->fetch_assoc();
     $file_path = $row['file_path'];
 
-    // Delete from database
     $stmt = $conn->prepare("DELETE FROM surat_keluar WHERE id = ?");
     $stmt->bind_param("i", $id);
     
@@ -34,7 +32,6 @@ try {
         throw new Exception("Gagal menghapus surat dari database");
     }
 
-    // Delete file if exists
     if (!empty($file_path) && file_exists("../$file_path")) {
         unlink("../$file_path");
     }

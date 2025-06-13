@@ -12,13 +12,11 @@ if (!isset($_GET['id']) || !isset($_GET['type'])) {
 $id = $_GET['id'];
 $type = $_GET['type'];
 
-// Validate type
 if (!in_array($type, ['masuk', 'keluar'])) {
     header('Location: dashboard.php');
     exit();
 }
 
-// Get file path from database
 $table = $type === 'masuk' ? 'surat_masuk' : 'surat_keluar';
 $query = "SELECT file_path, nama_surat FROM $table WHERE id = ?";
 $stmt = $conn->prepare($query);
@@ -35,16 +33,13 @@ $row = $result->fetch_assoc();
 $file_path = $row['file_path'];
 $file_name = $row['nama_surat'];
 
-// Check if file exists
 if (!file_exists("../$file_path")) {
     header('Location: dashboard.php');
     exit();
 }
 
-// Get file extension
 $extension = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
 
-// Set appropriate content type based on file extension
 switch ($extension) {
     case 'pdf':
         header('Content-Type: application/pdf');
@@ -68,6 +63,5 @@ switch ($extension) {
         break;
 }
 
-// Output file
 readfile("../$file_path");
 exit(); 

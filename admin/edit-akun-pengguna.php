@@ -12,7 +12,6 @@ if (!isset($_GET['id'])) {
     exit();
 }
 $id = intval($_GET['id']);
-// Ambil data user
 $stmt = $conn->prepare("SELECT * FROM users WHERE id=? LIMIT 1");
 $stmt->bind_param('i', $id);
 $stmt->execute();

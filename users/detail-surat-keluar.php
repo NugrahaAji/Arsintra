@@ -109,6 +109,20 @@ if (!$surat) {
                         <div>
                         <h2><?php echo htmlspecialchars($surat['nama_surat']); ?></h2>
                             <?php
+                            // Tampilkan status surat keluar dengan badge warna
+                            $status = $surat['status'];
+                            $badge = '';
+                            $label = '';
+                            if ($status === 'draft') {
+                                $badge = 'style="background:#fff6e0;color:#e6a700;border:1px solid #e6a700;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;"';
+                                $label = '<span style="font-size:18px;">&#9888;</span> Draft';
+                            } elseif ($status === 'terkirim') {
+                                $badge = 'style="background:#d4f8e8;color:#1a7f37;border:1px solid #1a7f37;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;"';
+                                $label = '<span style="font-size:18px;">&#10003;</span> Terkirim';
+                            }
+                            ?>
+                            <span <?php echo $badge; ?>><?php echo $label; ?></span>
+                            <?php
                             $file_path = $surat['file_path'];
                             $is_image = false;
                             if ($file_path) {

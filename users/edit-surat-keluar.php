@@ -29,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
     $status = $_POST['status'] ?? 'draft';
 
-    // Handle file upload
     $file_path = $surat['file_path'];
     if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] === UPLOAD_ERR_OK) {
         $upload_dir = '../uploads/surat_keluar/';
@@ -37,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mkdir($upload_dir, 0777, true);
         }
 
-        // Delete old file if exists
         if ($file_path && file_exists('../' . $file_path)) {
             unlink('../' . $file_path);
         }

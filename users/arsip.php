@@ -4,7 +4,6 @@ require_once '../config/session.php';
 
 requireLogin();
 
-// Fetch archived letters
 $stmt = $conn->prepare("
     SELECT sm.*, u.nama_lengkap as created_by_name, 'masuk' as tipe, sm.tanggal_masuk as tanggal_arsip 
     FROM surat_masuk sm 
@@ -14,7 +13,6 @@ $stmt = $conn->prepare("
 $stmt->execute();
 $surat_masuk = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// Surat keluar: tampilkan semua tanpa filter status
 $stmt = $conn->prepare("
     SELECT sk.*, u.nama_lengkap as created_by_name, 'keluar' as tipe, sk.tanggal_keluar as tanggal_arsip 
     FROM surat_keluar sk 
@@ -23,10 +21,8 @@ $stmt = $conn->prepare("
 $stmt->execute();
 $surat_keluar = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// Gabungkan dan urutkan berdasarkan tanggal arsip terbaru
 date_default_timezone_set('Asia/Jakarta');
 $arsip = array_merge($surat_masuk, $surat_keluar);
-// Urutkan berdasarkan tanggal_arsip DESC
 usort($arsip, function($a, $b) {
     return strtotime($b['tanggal_arsip']) - strtotime($a['tanggal_arsip']);
 });
@@ -123,7 +119,7 @@ usort($arsip, function($a, $b) {
                     <?php echo $surat['tipe']==='masuk'?'Surat Masuk':'Surat Keluar'; ?>
                 </span>
             </div>
-            <h3 style="font-weight:600;min-height:40px;">
+            <h3 style="font-weight:600;min-height:40px;display:flex;align-items:center;gap:10px;">
                 <?php echo htmlspecialchars($surat['nama_surat']); ?>
             </h3>
             <p style="color:#666;font-size:15px;margin-bottom:10px;">
@@ -136,9 +132,9 @@ usort($arsip, function($a, $b) {
             $is_image = in_array($file_ext, ['jpg','jpeg','png']);
             ?>
             <?php if ($is_image && file_exists($file_path)): ?>
-                <img src="<?php echo htmlspecialchars($img_src); ?>" alt="Scan Surat" class="surat-image" style="width:100%;max-height:180px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
+                <img src="<?php echo htmlspecialchars($img_src); ?>" alt="Scan Surat" class="surat-image" style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
             <?php else: ?>
-                <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image" style="width:100%;max-height:120px;object-fit:contain;border-radius:6px;margin-bottom:1rem;" />
+                <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image" style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
             <?php endif; ?>
             <div class="button-group-arsip" style="display:flex;gap:16px;align-items:center;">
                 <a href="download-surat.php?id=<?php echo $surat['id']; ?>&type=<?php echo $surat['tipe']; ?>" style="font-weight: 400; gap: 10px; display: flex; align-items: center;" class="btn btn-primary" title="Download Scan Surat">
@@ -156,7 +152,7 @@ usort($arsip, function($a, $b) {
         <?php endforeach; ?>
     </div>
     <script>
-    // Filter arsip
+  
     const filterBtns = document.querySelectorAll('.arsip-filter-btn');
     const cards = document.querySelectorAll('.arsip-card');
     filterBtns.forEach(btn => {

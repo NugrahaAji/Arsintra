@@ -7,14 +7,12 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-// Ambil data admin yang sedang login
 $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->bind_param('i', $_SESSION['admin_id']);
 $stmt->execute();
 $admin = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-// Handle pencarian
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $where = '';
 $params = [];
@@ -27,7 +25,6 @@ if ($search) {
     $types = 'sss';
 }
 
-// Query untuk mengambil data users
 $sql = "SELECT * FROM users ORDER BY id DESC";
 if ($where) {
     $sql = "SELECT * FROM users $where ORDER BY id DESC";
@@ -194,7 +191,6 @@ $stmt->close();
     </div>
 
     <script>
-    // Toggle profile dropdown
     const profileButton = document.getElementById('profileButton');
     const profileMenu = document.getElementById('profileMenu');
 
@@ -203,7 +199,6 @@ $stmt->close();
         profileMenu.classList.toggle('show');
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
         if (!profileButton.contains(e.target) && !profileMenu.contains(e.target)) {
             profileMenu.classList.remove('show');

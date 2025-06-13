@@ -29,6 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? '';
     $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
     $status = $_POST['status'] ?? 'menunggu';
+    $alasan_ditolak = $_POST['alasan_ditolak'] ?? '';
+
+    // Jika status ditolak, gunakan alasan_ditolak sebagai deskripsi_surat
+    if ($status === 'ditolak' && !empty($alasan_ditolak)) {
+        $deskripsi_surat = $alasan_ditolak;
+    }
 
     // Handle file upload
     $file_path = $surat['file_path'];
@@ -227,6 +233,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label for="deskripsi_surat">Deskripsi Surat *</label>
                         <textarea id="deskripsi_surat" name="deskripsi_surat" required><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
                     </div>
+                    <div class="form-group full-width" id="alasanDitolakGroup" style="display:<?php echo ($surat['status']==='ditolak') ? 'block' : 'none'; ?>;">
+                        <label for="alasan_ditolak">Alasan Penolakan *</label>
+                        <textarea id="alasan_ditolak" name="alasan_ditolak" rows="3"><?php echo ($surat['status']==='ditolak') ? htmlspecialchars($surat['deskripsi_surat']) : ''; ?></textarea>
+                    </div>
                     <div class="form-group full-width">
                         <label for="status">Status</label>
                         <select id="status" name="status">
@@ -252,5 +262,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 </div>
+<script>
+const statusSelect = document.getElementById('status');
+const alasanGroup = document.getElementById('alasanDitolakGroup');
+statusSelect.addEventListener('change', function() {
+    if (this.value === 'ditolak') {
+        alasanGroup.style.display = 'block';
+        document.getElementById('alasan_ditolak').required = true;
+    } else {
+        alasanGroup.style.display = 'none';
+        document.getElementById('alasan_ditolak').required = false;
+    }
+});
+</script>
 </body>
 </html>

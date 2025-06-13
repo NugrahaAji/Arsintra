@@ -6,7 +6,6 @@ requireLogin();
 
 $id = $_GET['id'] ?? 0;
 
-// Get surat data
 $stmt = $conn->prepare("
     SELECT sm.*, u.nama_lengkap as created_by_name 
     FROM surat_masuk sm 
@@ -115,6 +114,22 @@ if (!$surat) {
                     <div>
                         <h2><?php echo htmlspecialchars($surat['nama_surat']); ?></h2>
                         <?php
+                        $status = $surat['status'];
+                        $badge = '';
+                        $label = '';
+                        if ($status === 'menunggu') {
+                            $badge = 'style="background:#fff6e0;color:#e6a700;border:1px solid #e6a700;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;"';
+                            $label = '<span style="font-size:18px;">&#9888;</span> Menunggu Tindakan';
+                        } elseif ($status === 'selesai') {
+                            $badge = 'style="background:#d4f8e8;color:#1a7f37;border:1px solid #1a7f37;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;"';
+                            $label = '<span style="font-size:18px;">&#10003;</span> Selesai Arsip';
+                        } elseif ($status === 'ditolak') {
+                            $badge = 'style="background:#ffe0e0;color:#d32f2f;border:1px solid #d32f2f;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;"';
+                            $label = '<span style="font-size:18px;">&#10005;</span> Ditolak';
+                        }
+                        ?>
+                        <span <?php echo $badge; ?>><?php echo $label; ?></span>
+                        <?php
                         $file_path = $surat['file_path'];
                         $is_image = false;
                         if ($file_path) {
@@ -130,7 +145,7 @@ if (!$surat) {
                         <?php endif; ?>
                     </div>
                     <div>
-                        <div style="display:flex;gap:16px;margin-bottom:16px;" style="margin-bottom:20px;">
+                        <div style="display:flex;gap:16px;margin-bottom:16px;">
                             <div style="flex:1;min-width:180px;">
                                 <label style="font-weight:500;">No Surat</label>
                                 <input type="text" value="<?php echo htmlspecialchars($surat['nomor_surat']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
@@ -152,6 +167,16 @@ if (!$surat) {
                         </div>
                         <div style="display:flex;gap:16px;margin-bottom:16px;">
                             <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Tanggal Surat</label>
+                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_surat'])); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                            </div>
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Tanggal Terima</label>
+                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_terima'])); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:16px;margin-bottom:16px;">
+                            <div style="flex:1;min-width:180px;">
                                 <label style="font-weight:500;">Tanggal Masuk</label>
                                 <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_masuk'])); ?>" readonly style="width:100%;margin-bottom:0.5em;">
                             </div>
@@ -162,12 +187,32 @@ if (!$surat) {
                         </div>
                         <div style="display:flex;gap:16px;margin-bottom:16px;">
                             <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Deskripsi Surat</label>
-                                <textarea readonly style="width:100%;min-height:60px;resize:vertical;"><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
+                                <label style="font-weight:500;">Pengirim</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['pengirim']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
                             </div>
                             <div style="flex:1;min-width:180px;">
                                 <label style="font-weight:500;">Jumlah Lampiran</label>
                                 <input type="text" value="<?php echo htmlspecialchars($surat['jumlah_lampiran']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:16px;margin-bottom:16px;">
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Perihal</label>
+                                <textarea readonly style="width:100%;min-height:60px;resize:vertical;"><?php echo htmlspecialchars($surat['perihal']); ?></textarea>
+                            </div>
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Deskripsi Surat</label>
+                                <textarea readonly style="width:100%;min-height:60px;resize:vertical;"><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:16px;margin-bottom:16px;">
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Dibuat Oleh</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['created_by_name']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                            </div>
+                            <div style="flex:1;min-width:180px;">
+                                <label style="font-weight:500;">Tanggal Dibuat</label>
+                                <input type="text" value="<?php echo date('d - m - Y H:i', strtotime($surat['created_at'])); ?>" readonly style="width:100%;margin-bottom:0.5em;">
                             </div>
                         </div>
                     </div>

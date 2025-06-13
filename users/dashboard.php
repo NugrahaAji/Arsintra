@@ -1,56 +1,72 @@
 <?php
-session_start();
+require_once '../config.php';
+require_once '../config/session.php';
 
-// Check if user is logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit();
-// }
+requireLogin();
 
+// Statistik
 $stats = [
     'suratMasuk' => 0,
     'suratKeluar' => 0,
     'disposisi' => 0
 ];
 
-$disposisiData = [
-    [
-        'nama' => 'Nugraha Aji',
-        'jumlah' => '4/5',
-        'catatan' => 'Barangnya sesuai dan sesuai dengan yang di deskripsi dan dalam kondisi baik.'
-    ],
-    [
-        'nama' => 'Nugroho Ija',
-        'jumlah' => '4/5',
-        'catatan' => 'Barangnya sesuai dan sesuai dengan yang di deskripsi dan dalam kondisi baik.'
-    ],
-    [
-        'nama' => 'Nugroho Ijo',
-        'jumlah' => '5/5',
-        'catatan' => 'Sempurna'
-    ]
-];
+$stmt = $conn->query("SELECT COUNT(*) as total FROM surat_masuk");
+if ($stmt) {
+    $result = $stmt->fetch_assoc();
+    $stats['suratMasuk'] = $result['total'];
+}
+$stmt = $conn->query("SELECT COUNT(*) as total FROM surat_keluar");
+if ($stmt) {
+    $result = $stmt->fetch_assoc();
+    $stats['suratKeluar'] = $result['total'];
+}
+$stmt = $conn->query("SELECT COUNT(*) as total FROM surat_masuk WHERE status = 'Ditolak'");
+if ($stmt) {
+    $result = $stmt->fetch_assoc();
+    $stats['disposisi'] = $result['total'];
+}
 
-$statusData = [
-    [
-        'no' => 'B01',
-        'nama' => 'Printer Epson E323',
-        'kategori' => 'Barang',
-        'status' => 'Selesai Arsip'
-    ],
-    [
-        'no' => 'B02',
-        'nama' => 'Printer Epson E323',
-        'kategori' => 'Barang',
-        'status' => 'Menunggu Tindakan'
-    ],
-    [
-        'no' => 'B03',
-        'nama' => 'Printer Epson E323',
-        'kategori' => 'Barang',
-        'status' => 'Ditolak'
-    ]
-];
+// Data disposisi
+$disposisiData = [];
+$stmt = $conn->query("SELECT nama_surat, deskripsi_surat as catatan FROM surat_masuk WHERE status = 'ditolak' ORDER BY tanggal_masuk DESC LIMIT 3");
+if ($stmt) {
+    while ($row = $stmt->fetch_assoc()) {
+        $disposisiData[] = [
+            'nama' => $row['nama_surat'],
+            'jumlah' => '1/1',
+            'catatan' => $row['catatan'] ?: 'Tidak ada catatan'
+        ];
+    }
+}
+
+// Data status surat masuk
+$statusData = [];
+$stmt = $conn->query("SELECT id, nama_surat, kategori, status FROM surat_masuk ORDER BY tanggal_masuk DESC LIMIT 3");
+if ($stmt) {
+    while ($row = $stmt->fetch_assoc()) {
+        $statusData[] = [
+            'no' => 'SM' . str_pad($row['id'], 3, '0', STR_PAD_LEFT),
+            'nama' => $row['nama_surat'],
+            'kategori' => $row['kategori'],
+            'status' => ucfirst($row['status'])
+        ];
+    }
+}
+
+// Data status surat keluar
+$suratKeluarData = [];
+$stmt = $conn->query("SELECT id, nama_surat, kategori, status FROM surat_keluar ORDER BY tanggal_keluar DESC LIMIT 3");
+if ($stmt) {
+    while ($row = $stmt->fetch_assoc()) {
+        $suratKeluarData[] = [
+            'no' => 'SK' . str_pad($row['id'], 3, '0', STR_PAD_LEFT),
+            'nama' => $row['nama_surat'],
+            'kategori' => $row['kategori'],
+            'status' => ucfirst($row['status'])
+        ];
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -109,52 +125,36 @@ $statusData = [
 
         <div class="main-content">
             <header class="header">
-                <h1></h1>
-                <div class="header-actions">
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                    </button>
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                    <!-- <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
-                        <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
-                    </div> -->
-                    <div class="avatar"></div>
+                <h1>Dashboard</h1>
+                <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                    <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
                 </div>
             </header>
 
             <main class="dashboard">
                 <div class="welcome-message">
-                    <!--<h2>Selamat datang, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h2>-->
+                    <h2>Selamat datang, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h2>
                     <p>Kelola dokumen dan surat dengan mudah melalui dashboard ini.</p>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-card">
                         <h3>Surat Masuk</h3>
-                        <p class="stat-value"><?php echo $stats['suratMasuk']; ?></p>
+                        <div class="stat-value"><?php echo $stats['suratMasuk']; ?></div>
                     </div>
                     <div class="stat-card">
                         <h3>Surat Keluar</h3>
-                        <p class="stat-value"><?php echo $stats['suratKeluar']; ?></p>
+                        <div class="stat-value"><?php echo $stats['suratKeluar']; ?></div>
                     </div>
                     <div class="stat-card">
                         <h3>Jumlah Disposisi</h3>
-                        <p class="stat-value"><?php echo $stats['disposisi']; ?></p>
+                        <div class="stat-value"><?php echo $stats['disposisi']; ?></div>
                     </div>
                 </div>
 
                 <div class="tables-grid">
-                    <!-- Disposisi Table -->
-                    <div class="table-container disposisi-table">
-                        <div class="table-header">
-                            <h2>Disposisi</h2>
-                        </div>
+                    <div class="table-container">
+                        <div class="table-header"><h2>Disposisi Terbaru</h2></div>
                         <div class="table-responsive">
                             <table>
                                 <thead>
@@ -176,24 +176,45 @@ $statusData = [
                             </table>
                         </div>
                     </div>
-
-                    <!-- Status Surat Masuk Table -->
-                    <div class="table-container status-table">
-                        <div class="table-header">
-                            <h2>Status Surat Masuk</h2>
-                        </div>
+                    <div class="table-container">
+                        <div class="table-header"><h2>Status Surat Masuk Terbaru</h2></div>
                         <div class="table-responsive">
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>No   .</th>
+                                        <th>No</th>
                                         <th>Nama Surat</th>
-                                        <th>Kategori Surat</th>
+                                        <th>Kategori</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($statusData as $item): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($item['no']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['nama']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['kategori']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['status']); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <div class="table-header"><h2>Status Surat Keluar Terbaru</h2></div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Surat</th>
+                                        <th>Kategori</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($suratKeluarData as $item): ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($item['no']); ?></td>
                                         <td><?php echo htmlspecialchars($item['nama']); ?></td>

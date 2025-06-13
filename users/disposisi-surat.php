@@ -1,54 +1,15 @@
 <?php
 session_start();
+require_once '../config.php';
 
-// Check if user is logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit();
-// }
-
-$disposisiData = [
-    [
-        'no' => '001',
-        'nama_surat' => 'Poposal Kegiatan',
-        'perihal_surat' => 'Revisi Kontrak Kerjasama',
-        'tanggal_masuk' => '17-07-2025',
-        'tujuan_surat' => 'Kepala Bagian Umum',
-        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
-    ],
-    [
-        'no' => '002',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'perihal_surat' => 'Undangan Rapat Koordinasi',
-        'tanggal_masuk' => '16-10-2024',
-        'tujuan_surat' => 'Kepala Badan Khusus',
-        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
-    ],
-    [
-        'no' => '003',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'perihal_surat' => 'Permohonan Anggaran',
-        'tanggal_masuk' => '16-10-2024',
-        'tujuan_surat' => 'Kepala Bagian Keuanagan',
-        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
-    ],
-    [
-        'no' => '004',
-        'nama_surat' => 'Pegajuan Dana Lab',
-        'perihal_surat' => 'Persetujuan Cuti',
-        'tanggal_masuk' => '16-10-2024',
-        'tujuan_surat' => 'Kepala Bagian Umum',
-        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
-    ],
-    [
-        'no' => '005',
-        'nama_surat' => 'Pegajuan Kerja Sama',
-        'perihal_surat' => 'Pengajuan Pembelian',
-        'tanggal_masuk' => '16-10-2024',
-        'tujuan_surat' => 'Kepala Bagian Administrasi',
-        'komentar' => 'Kesalahan dalam penulisan nama dan gelar'
-    ]
-];
+$stmt = $conn->prepare("SELECT id, nomor_surat, nama_surat, perihal, tanggal_masuk, deskripsi_surat FROM surat_masuk WHERE status='ditolak' ORDER BY id DESC");
+if ($stmt === false) {
+    die('Query error: ' . $conn->error . '. Pastikan kolom yang dipakai di query ada di tabel surat_masuk.');
+}
+$stmt->execute();
+$result = $stmt->get_result();
+$disposisiData = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +22,6 @@ $disposisiData = [
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h1>Arsintra</h1>
@@ -130,9 +90,6 @@ $disposisiData = [
             <main class="page-content">
                 <div class="page-header">
                     <h1>Disposisi Surat</h1>
-                    <a href="tambah-disposisi-surat.php" class="btn-save">
-                        <span>Tambah +</span>
-                    </a>
                 </div>
 
                 <div class="table-container">
@@ -140,37 +97,26 @@ $disposisiData = [
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>No</th>
+                                    <th>No Surat</th>
                                     <th>Nama Surat</th>
                                     <th>Perihal Surat</th>
                                     <th>Tanggal Surat Masuk</th>
-                                    <th>Tujuan Surat</th>
-                                    <th>Komentar</th>
+                                    <th>Alasan Penolakan</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($disposisiData as $disposisi): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($disposisi['no']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['nomor_surat']); ?></td>
                                     <td><?php echo htmlspecialchars($disposisi['nama_surat']); ?></td>
-                                    <td><?php echo htmlspecialchars($disposisi['perihal_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['perihal']); ?></td>
                                     <td><?php echo htmlspecialchars($disposisi['tanggal_masuk']); ?></td>
-                                    <td><?php echo htmlspecialchars($disposisi['tujuan_surat']); ?></td>
-                                    <td><?php echo htmlspecialchars($disposisi['komentar']); ?></td>
+                                    <td><?php echo htmlspecialchars($disposisi['deskripsi_surat']); ?></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="detail-disposisi-surat.php?id=<?php echo urlencode($disposisi['no']); ?>" class="btn-detail">Detail</a>
-                                            <a class="btn-delete" title="Edit" href="edit-disposisi.php">
-                                                <svg class="icon" viewBox="0 0 24 24">
-                                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                                </svg>
-                                            </a>
-                                            <button class="btn-delete" title="Delete">
-                                                <svg class="icon" viewBox="0 0 24 24">
-                                                    <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
-                                                </svg>
-                                            </button>
+                                            <a href="detail-surat-masuk.php?id=<?php echo urlencode($disposisi['id']); ?>" class="btn-detail">Detail</a>
+                                            <a href="hapus-surat-masuk.php?id=<?php echo urlencode($disposisi['id']); ?>" class="btn-delete" onclick="return confirm('Yakin ingin menghapus disposisi ini?')">Hapus</a>
                                         </div>
                                     </td>
                                 </tr>
