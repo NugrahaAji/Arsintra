@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Admin | Login</title>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body>
+<body class="overflow-hidden screen-height">
     <nav class="navbar">
     <div class="navbar-inner">
       <h1 class="navbar-brand">Arsintra</h1>
@@ -73,11 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
         <form class="form" method="POST" autocomplete="off">
           <div class="form-group">
-            <label for="username">Username<span class="required">*</span></label><br />
+            <label for="username" style="font-size: 16px;">Username<span class="required">*</span></label><br />
             <input type="text" placeholder="Masukkan username" name="username" required />
           </div>
           <div class="form-group">
-            <label for="password">Kata Sandi<span class="required">*</span></label><br />
+            <label for="password" style="font-size: 16px;">Kata Sandi<span class="required">*</span></label><br />
             <input type="password" placeholder="Masukkan kata sandi" name="password" required />
           </div>
           <div class="button-group">
