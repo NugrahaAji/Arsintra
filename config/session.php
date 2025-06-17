@@ -11,6 +11,12 @@ function requireLogin() {
         exit();
     }
 }
+function adminRequireLogin() {
+    if (!isLoggedIn()) {
+        header("Location: adminlogin.php");
+        exit();
+    }
+}
 
 function getUserRole() {
     return $_SESSION['user_role'] ?? null;
@@ -19,4 +25,4 @@ function getUserRole() {
 function isAdmin() {
     return getUserRole() === 'admin';
 }
-?> 
+?>

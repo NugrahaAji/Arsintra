@@ -5,17 +5,17 @@ require_once '../config/session.php';
 requireLogin();
 
 $stmt = $conn->prepare("
-    SELECT sm.*, u.nama_lengkap as created_by_name, 'masuk' as tipe, sm.tanggal_masuk as tanggal_arsip 
-    FROM surat_masuk sm 
-    LEFT JOIN users u ON sm.created_by = u.id 
+    SELECT sm.*, u.nama_lengkap as created_by_name, 'masuk' as tipe, sm.tanggal_masuk as tanggal_arsip
+    FROM surat_masuk sm
+    LEFT JOIN users u ON sm.created_by = u.id
     WHERE sm.status = 'selesai'
 ");
 $stmt->execute();
 $surat_masuk = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 $stmt = $conn->prepare("
-    SELECT sk.*, u.nama_lengkap as created_by_name, 'keluar' as tipe, sk.tanggal_keluar as tanggal_arsip 
-    FROM surat_keluar sk 
+    SELECT sk.*, u.nama_lengkap as created_by_name, 'keluar' as tipe, sk.tanggal_keluar as tanggal_arsip
+    FROM surat_keluar sk
     LEFT JOIN users u ON sk.created_by = u.id
 ");
 $stmt->execute();
@@ -85,18 +85,48 @@ usort($arsip, function($a, $b) {
             <header class="header">
                 <h1></h1>
                 <div class="header-actions">
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                    </button>
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
-                        <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                    <div class="search-container">
+                        <form action="" method="GET" class="search-form">
+                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
+                            <button type="submit" class="icon-button">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="profile-dropdown">
+                        <button class="icon-button" id="profileButton">
+                            <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                                <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                            </div>
+                        </button>
+                        <div class="dropdown-menu" id="profileMenu">
+                            <div class="dropdown-header">
+                                <div class="user-info">
+                                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                                        <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                                    </div>
+                                    <div class="user-details">
+                                        <span class="user-name"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                                        <span class="user-email"><?php echo htmlspecialchars($_SESSION['email']); ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['admin_id']; ?>" class="dropdown-item">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Edit Profil
+                            </a>
+                            <a href="logout.php" class="dropdown-item">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Keluar
+                            </a>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -128,7 +158,7 @@ usort($arsip, function($a, $b) {
             <?php
             // Ambil path lengkap langsung dari database
             $pathDariDB = !empty($surat['file_path']) ? $surat['file_path'] : '';
-                    
+
             // Cek apakah path tersebut adalah gambar dan filenya ada
             $file_ext = strtolower(pathinfo($pathDariDB, PATHINFO_EXTENSION));
             $is_image = in_array($file_ext, ['jpg', 'jpeg', 'png', 'gif']);
@@ -140,13 +170,13 @@ usort($arsip, function($a, $b) {
                 <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image" style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
             <?php endif; ?>
             <div class="button-group-arsip" style="display:flex;gap:16px;align-items:center;">
-                <a href="download-surat.php?id=<?php echo $surat['id']; ?>&type=<?php echo $surat['tipe']; ?>" style="font-weight: 400; gap: 10px; display: flex; align-items: center;" class="btn btn-primary" title="Download Scan Surat">
+                <a href="download-surat.php?id=<?php echo $surat['id']; ?>&type=<?php echo $surat['tipe']; ?>" style="font-weight: 400; gap: 10px; display: flex; align-items: center; border-radius: 8px;" class="btn btn-primary" title="Download Scan Surat">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
                     </svg>Simpan
                 </a>
-                <a href="<?php echo $surat['tipe'] === 'masuk' ? 'detail-surat-masuk.php?id=' . $surat['id'] : 'detail-surat-keluar.php?id=' . $surat['id']; ?>" style="color: #da0700; gap: 10px; display: flex; align-items: center;" class="btn btn-secondary">
-                    <svg class="icon" viewBox="0 0 24 24">
+                <a href="<?php echo $surat['tipe'] === 'masuk' ? 'detail-surat-masuk.php?id=' . $surat['id'] : 'detail-surat-keluar.php?id=' . $surat['id']; ?>" class="btn-detail" style="display:flex; align-items:center;font-size:16px;padding:12px 20px;">
+                    <svg class="icon" style="margin-right:8px;" viewBox="0 0 24 24">
                         <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                     </svg>Detail
                 </a>
@@ -155,7 +185,7 @@ usort($arsip, function($a, $b) {
         <?php endforeach; ?>
     </div>
     <script>
-  
+
     const filterBtns = document.querySelectorAll('.arsip-filter-btn');
     const cards = document.querySelectorAll('.arsip-card');
     filterBtns.forEach(btn => {
@@ -189,6 +219,19 @@ usort($arsip, function($a, $b) {
   </div>
 </div>
 <script>
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!profileButton.contains(e.target) && !profileMenu.contains(e.target)) {
+            profileMenu.classList.remove('show');
+        }
+    });
   const logoutBtn = document.querySelector('.sidebar-item[href="./logout.php"]');
   const modal = document.getElementById('logoutModal');
   const cancelBtn = document.getElementById('cancelLogout');

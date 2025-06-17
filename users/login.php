@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nama_lengkap'];
             $_SESSION['user_role'] = $user['role'];
-            
+
             header("Location: dashboard.php");
             exit();
         } else {
@@ -44,17 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Arsintra - Login</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
+<body class="overflow-hidden screen-height">
     <nav class="navbar">
         <div class="navbar-inner">
             <h1 class="navbar-brand">Arsintra</h1>
 
-            <ul class="nav-links">
-                <li class="nav-item"><a href="register.php">Daftar</a></li>
-                <li>
-                    <a href="login.php" class="btn-login">Masuk</a>
-                </li>
-            </ul>
         </div>
     </nav>
     <section class="full-screen-section">

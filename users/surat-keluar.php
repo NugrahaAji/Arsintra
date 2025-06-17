@@ -93,22 +93,52 @@ $result = $stmt->get_result();
         </div>
 
         <div class="main-content">
-            
-            <header class="header">
+
+<header class="header">
                 <h1></h1>
                 <div class="header-actions">
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                    </button>
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
-                        <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                    <div class="search-container">
+                        <form action="" method="GET" class="search-form">
+                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
+                            <button type="submit" class="icon-button">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="profile-dropdown">
+                        <button class="icon-button" id="profileButton">
+                            <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                                <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                            </div>
+                        </button>
+                        <div class="dropdown-menu" id="profileMenu">
+                            <div class="dropdown-header">
+                                <div class="user-info">
+                                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                                        <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                                    </div>
+                                    <div class="user-details">
+                                        <span class="user-name"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                                        <span class="user-email"><?php echo htmlspecialchars($_SESSION['email']); ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['admin_id']; ?>" class="dropdown-item">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Edit Profil
+                            </a>
+                            <a href="logout.php" class="dropdown-item">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Keluar
+                            </a>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -116,8 +146,9 @@ $result = $stmt->get_result();
             <main class="page-content">
                 <div class="page-header">
                     <h1>Surat keluar</h1>
-                    <a href="./tambah-surat-keluar.php" class="btn-save">
-                        <span>Tambah +</span>
+                    <a href="./tambah-surat-keluar.php" class="btn-back">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M18 12.998h-5v5a1 1 0 0 1-2 0v-5H6a1 1 0 0 1 0-2h5v-5a1 1 0 0 1 2 0v5h5a1 1 0 0 1 0 2"/></svg>
+                        Tambah
                     </a>
                 </div>
 
@@ -154,9 +185,9 @@ $result = $stmt->get_result();
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
+                                <?php
                                 $no = $offset + 1;
-                                while ($row = $result->fetch_assoc()): 
+                                while ($row = $result->fetch_assoc()):
                                 ?>
                                 <tr>
                                     <td><?php echo $no++; ?></td>
@@ -167,21 +198,15 @@ $result = $stmt->get_result();
                                     <td><?php echo htmlspecialchars($row['kategori']); ?></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="detail-surat-keluar.php?id=<?php echo $row['id']; ?>" class="btn-detail">Detail</a>    
+                                            <a href="detail-surat-keluar.php?id=<?php echo $row['id']; ?>" class="btn-detail">Detail</a>
                                             <a href="download-surat.php?id=<?php echo $row['id']; ?>&type=keluar" class="btn-icon" title="Download">
-                                                <svg class="icon" viewBox="0 0 24 24">
-                                                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M4 16.004V17a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1M12 4.5v11m3.5-3.5L12 15.5L8.5 12"/></svg>
                                             </a>
                                             <a href="./edit-surat-keluar.php?id=<?php echo $row['id']; ?>" class="btn-icon" title="Edit">
-                                                <svg class="icon" viewBox="0 0 24 24">
-                                                    <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M4 21h16M5.666 13.187A2.28 2.28 0 0 0 5 14.797V18h3.223c.604 0 1.183-.24 1.61-.668l9.5-9.505a2.28 2.28 0 0 0 0-3.22l-.938-.94a2.277 2.277 0 0 0-3.222.001z"/></svg>
                                             </a>
                                             <button onclick="confirmDelete(<?php echo $row['id']; ?>)" class="btn-icon" title="Hapus">
-                                                <svg class="icon" viewBox="0 0 24 24">
-                                                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="#da0700" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="m14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21q.512.078 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48 48 0 0 0-3.478-.397m-12 .562q.51-.088 1.022-.165m0 0a48 48 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a52 52 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a49 49 0 0 0-7.5 0"/></svg>
                                             </button>
                                         </div>
                                     </td>
@@ -197,13 +222,13 @@ $result = $stmt->get_result();
                     <?php if ($page > 1): ?>
                         <a href="?page=<?php echo $page-1; ?>&search=<?php echo urlencode($search); ?>" class="page-link">&laquo; Sebelumnya</a>
                     <?php endif; ?>
-                    
+
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                         <a href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>" class="page-link <?php echo $i == $page ? 'active' : ''; ?>">
                             <?php echo $i; ?>
                         </a>
                     <?php endfor; ?>
-                    
+
                     <?php if ($page < $total_pages): ?>
                         <a href="?page=<?php echo $page+1; ?>&search=<?php echo urlencode($search); ?>" class="page-link">Selanjutnya &raquo;</a>
                     <?php endif; ?>
@@ -225,6 +250,7 @@ $result = $stmt->get_result();
     </div>
 
     <script>
+
         function confirmDelete(id) {
             const modal = document.getElementById('deleteModal');
             const confirmBtn = document.getElementById('confirmDelete');

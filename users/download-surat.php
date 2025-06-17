@@ -48,4 +48,4 @@ header('Pragma: no-cache');
 header('Expires: 0');
 
 readfile("../$file_path");
-exit(); 
+exit();

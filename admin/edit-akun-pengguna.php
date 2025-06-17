@@ -3,29 +3,35 @@ session_start();
 require_once '../config.php';
 $error = '';
 $success = '';
+
 if (!isset($_SESSION['admin_id'])) {
     header('Location: adminlogin.php');
     exit();
 }
+
 if (!isset($_GET['id'])) {
     header('Location: admindashboard.php');
     exit();
 }
+
 $id = intval($_GET['id']);
 $stmt = $conn->prepare("SELECT * FROM users WHERE id=? LIMIT 1");
 $stmt->bind_param('i', $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
+
 if (!$user) {
     header('Location: admindashboard.php');
     exit();
 }
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_lengkap = $_POST['nama_lengkap'] ?? '';
     $username = $_POST['username'] ?? '';
     $email = $_POST['email'] ?? '';
     $role = $_POST['role'] ?? '';
+
     if ($nama_lengkap && $username && $email && $role) {
         $stmt2 = $conn->prepare("UPDATE users SET username=?, nama_lengkap=?, email=?, role=? WHERE id=?");
         $stmt2->bind_param('ssssi', $username, $nama_lengkap, $email, $role, $id);
@@ -64,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </a>
             <a href="adminlogout.php" class="sidebar-item">
                 <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 0 013-3h4a3 0 013 3v1"></path>
                 </svg>
                 <span>Keluar</span>
             </a>
@@ -128,14 +134,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </div>
 <div id="logoutModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <h3 class="modal-confirm">Yakin ingin keluar?</h3>
-    <p>Anda akan keluar dari sistem.</p>
-    <div class="modal-actions">
-      <button id="cancelLogout" class="btn-cancel">Batal</button>
-      <a href="adminlogout.php" class="btn-logout">Keluar</a>
+    <div class="modal-content">
+        <h3 class="modal-confirm">Yakin ingin keluar?</h3>
+        <p>Anda akan keluar dari sistem.</p>
+        <div class="modal-actions">
+            <button id="cancelLogout" class="btn-cancel">Batal</button>
+            <a href="./adminlogout.php" class="btn-logout">Keluar</a>
+        </div>
     </div>
-  </div>
 </div>
 <script>
   const logoutBtn = document.querySelector('.sidebar-item[href="adminlogout.php"]');
@@ -157,5 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   });
 </script>
+
 </body>
 </html>

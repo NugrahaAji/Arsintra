@@ -61,7 +61,7 @@ $stmt->close();
                     </svg>
                     <span>Beranda</span>
                 </a>
-                <a href="adminlogout.php" class="sidebar-item">
+                <a href="adminlogout.php" class="sidebar-item" id="sidebarLogoutBtn">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
@@ -109,7 +109,7 @@ $stmt->close();
                                 </svg>
                                 Edit Profil
                             </a>
-                            <a href="adminlogout.php" class="dropdown-item">
+                            <a href="adminlogout.php" class="dropdown-item" id="dropdownLogoutBtn">
                                 <svg class="icon" viewBox="0 0 24 24">
                                     <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                                 </svg>
@@ -172,12 +172,7 @@ $stmt->close();
                                         <div class="action-buttons">
                                             <a href="edit-akun-pengguna.php?id=<?php echo urlencode($user['id']); ?>" class="btn-detail">Edit</a>
                                             <button class="btn-delete" title="Delete" onclick="if(confirm('Yakin ingin menghapus akun ini?')) window.location.href='hapus-akun.php?id=<?php echo urlencode($user['id']); ?>'">
-                                                <svg class="icon" viewBox="0 0 24 24">
-                                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                                                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="m14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21q.512.078 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48 48 0 0 0-3.478-.397m-12 .562q.51-.088 1.022-.165m0 0a48 48 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a52 52 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a49 49 0 0 0-7.5 0"/></svg>
                                             </button>
                                         </div>
                                     </td>
@@ -188,6 +183,16 @@ $stmt->close();
                     </div>
                 </div>
             </main>
+        </div>
+        <div id="logoutModal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h3 class="modal-confirm">Yakin ingin keluar?</h3>
+                <p>Anda akan keluar dari sistem.</p>
+                <div class="modal-actions">
+                    <button id="cancelLogout" class="btn-cancel">Batal</button>
+                    <a href="./adminlogout.php" class="btn-logout">Keluar</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -203,6 +208,32 @@ $stmt->close();
     document.addEventListener('click', function(e) {
         if (!profileButton.contains(e.target) && !profileMenu.contains(e.target)) {
             profileMenu.classList.remove('show');
+        }
+    });
+
+    const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
+    const dropdownLogoutBtn = document.getElementById('dropdownLogoutBtn');
+    const modal = document.getElementById('logoutModal');
+    const cancelBtn = document.getElementById('cancelLogout');
+
+    sidebarLogoutBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        modal.classList.remove('hidden');
+    });
+
+    dropdownLogoutBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        modal.classList.remove('hidden');
+        profileMenu.classList.remove('show');
+    });
+
+    cancelBtn.addEventListener('click', function () {
+        modal.classList.add('hidden');
+    });
+
+    window.addEventListener('click', function (e) {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
         }
     });
     </script>

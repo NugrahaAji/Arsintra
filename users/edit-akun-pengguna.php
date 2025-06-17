@@ -1,15 +1,44 @@
 <?php
 session_start();
 require_once '../config.php';
-
-$stmt = $conn->prepare("SELECT id, nomor_surat, nama_surat, perihal, tanggal_masuk, deskripsi_surat FROM surat_masuk WHERE status='ditolak' ORDER BY id DESC");
-if ($stmt === false) {
-    die('Query error: ' . $conn->error . '. Pastikan kolom yang dipakai di query ada di tabel surat_masuk.');
+$error = '';
+$success = '';
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: adminlogin.php');
+    exit();
 }
+if (!isset($_GET['id'])) {
+    header('Location: admindashboard.php');
+    exit();
+}
+$id = intval($_GET['id']);
+$stmt = $conn->prepare("SELECT * FROM users WHERE id=? LIMIT 1");
+$stmt->bind_param('i', $id);
 $stmt->execute();
 $result = $stmt->get_result();
-$disposisiData = $result->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+$user = $result->fetch_assoc();
+if (!$user) {
+    header('Location: admindashboard.php');
+    exit();
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nama_lengkap = $_POST['nama_lengkap'] ?? '';
+    $username = $_POST['username'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $role = $_POST['role'] ?? '';
+    if ($nama_lengkap && $username && $email && $role) {
+        $stmt2 = $conn->prepare("UPDATE users SET username=?, nama_lengkap=?, email=?, role=? WHERE id=?");
+        $stmt2->bind_param('ssssi', $username, $nama_lengkap, $email, $role, $id);
+        if ($stmt2->execute()) {
+            $success = 'Akun berhasil diupdate!';
+        } else {
+            $error = 'Gagal update akun. Email mungkin sudah terdaftar.';
+        }
+        $stmt2->close();
+    } else {
+        $error = 'Semua field wajib diisi!';
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -17,17 +46,17 @@ $stmt->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disposisi Surat - Arsintra</title>
+    <title>Edit Akun - Arsintra</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h1>Arsintra</h1>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="./dashboard.php" class="sidebar-item">
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>Arsintra</h1>
+        </div>
+        <nav class="sidebar-nav">
+                <a href="./dashboard.php" class="sidebar-item active">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
@@ -45,7 +74,7 @@ $stmt->close();
                     </svg>
                     <span>Surat Keluar</span>
                 </a>
-                <a href="./disposisi-surat.php" class="sidebar-item active">
+                <a href="./disposisi-surat.php" class="sidebar-item">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
                     </svg>
@@ -64,10 +93,9 @@ $stmt->close();
                     <span>Keluar</span>
                 </a>
             </nav>
-        </div>
-
-        <div class="main-content">
-            <header class="header">
+    </div>
+    <div class="main-content">
+        <header class="header">
                 <h1></h1>
                 <div class="header-actions">
                     <div class="search-container">
@@ -115,49 +143,64 @@ $stmt->close();
                     </div>
                 </div>
             </header>
+        <main class="page-content">
 
-            <main class="page-content">
-                <div class="page-header">
-                    <h1>Disposisi Surat</h1>
+            <div class="page-header">
+                <h1>Edit Akun</h1>
+                <div class="header-actions">
+                    <a href="dashboard.php" class="btn-back">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M19 12H5m7-7l-7 7 7 7"></path>
+                        </svg>
+                        Kembali
+                    </a>
                 </div>
-
-                <div class="table-container">
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>No Surat</th>
-                                    <th>Nama Surat</th>
-                                    <th>Perihal Surat</th>
-                                    <th>Tanggal Surat Masuk</th>
-                                    <th>Alasan Penolakan</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($disposisiData as $disposisi): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($disposisi['nomor_surat']); ?></td>
-                                    <td><?php echo htmlspecialchars($disposisi['nama_surat']); ?></td>
-                                    <td><?php echo htmlspecialchars($disposisi['perihal']); ?></td>
-                                    <td><?php echo htmlspecialchars($disposisi['tanggal_masuk']); ?></td>
-                                    <td><?php echo htmlspecialchars($disposisi['deskripsi_surat']); ?></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <a href="detail-surat-masuk.php?id=<?php echo urlencode($disposisi['id']); ?>" class="btn-detail">Detail</a>
-                                            <a href="hapus-surat-masuk.php?id=<?php echo urlencode($disposisi['id']); ?>" class="btn-delete" onclick="return confirm('Yakin ingin menghapus disposisi ini?')">Hapus</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+            </div>
+            <?php if ($success): ?>
+            <div class="success-message">
+                <?php echo htmlspecialchars($success); ?>
+                <a href="admindashboard.php">Kembali ke daftar akun</a>
+            </div>
+            <?php endif; ?>
+            <?php if ($error): ?>
+            <div class="error-message">
+                <?php echo htmlspecialchars($error); ?>
+            </div>
+            <?php endif; ?>
+            <div class="form-container-page">
+                <form class="form-grid" method="POST">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nama_lengkap">Nama Lengkap<span class="required">*</span></label>
+                            <input type="text" id="nama_lengkap" name="nama_lengkap" value="<?= htmlspecialchars($user['nama_lengkap']) ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username<span class="required">*</span></label>
+                            <input type="text" id="username" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
+                        </div>
                     </div>
-                </div>
-            </main>
-        </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email<span class="required">*</span></label>
+                            <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role<span class="required">*</span></label>
+                            <select id="role" name="role" class="custom-select" required>
+                                <option value="petugas" <?= $user['role'] === 'petugas' ? 'selected' : '' ?>>Petugas</option>
+                                <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </main>
     </div>
-    <div id="logoutModal" class="modal-overlay hidden">
+</div>
+<div id="logoutModal" class="modal-overlay hidden">
   <div class="modal-content">
     <h3 class="modal-confirm">Yakin ingin keluar?</h3>
     <p>Anda akan keluar dari sistem.</p>
@@ -200,8 +243,5 @@ $stmt->close();
     }
   });
 </script>
-
-
-
 </body>
 </html>

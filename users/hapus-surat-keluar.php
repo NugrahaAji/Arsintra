@@ -16,7 +16,7 @@ try {
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows === 0) {
         header('Location: surat-keluar.php?error=Surat tidak ditemukan');
         exit();
@@ -27,7 +27,7 @@ try {
 
     $stmt = $conn->prepare("DELETE FROM surat_keluar WHERE id = ?");
     $stmt->bind_param("i", $id);
-    
+
     if (!$stmt->execute()) {
         throw new Exception("Gagal menghapus surat dari database");
     }
@@ -42,4 +42,4 @@ try {
     error_log("Error in hapus-surat-keluar.php: " . $e->getMessage());
     header('Location: surat-keluar.php?error=' . urlencode($e->getMessage()));
     exit();
-} 
+}

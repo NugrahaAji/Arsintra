@@ -7,9 +7,9 @@ requireLogin();
 $id = $_GET['id'] ?? 0;
 
 $stmt = $conn->prepare("
-    SELECT sm.*, u.nama_lengkap as created_by_name 
-    FROM surat_masuk sm 
-    LEFT JOIN users u ON sm.created_by = u.id 
+    SELECT sm.*, u.nama_lengkap as created_by_name
+    FROM surat_masuk sm
+    LEFT JOIN users u ON sm.created_by = u.id
     WHERE sm.id = ?
 ");
 $stmt->bind_param("i", $id);
@@ -33,7 +33,7 @@ if (!$surat) {
 </head>
 <body>
     <div class="container">
-       
+
         <div class="sidebar">
             <div class="sidebar-header">
                 <h1>Arsintra</h1>
@@ -82,18 +82,48 @@ if (!$surat) {
             <header class="header">
                 <h1></h1>
                 <div class="header-actions">
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                    </button>
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
-                        <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                    <div class="search-container">
+                        <form action="" method="GET" class="search-form">
+                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
+                            <button type="submit" class="icon-button">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="profile-dropdown">
+                        <button class="icon-button" id="profileButton">
+                            <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                                <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                            </div>
+                        </button>
+                        <div class="dropdown-menu" id="profileMenu">
+                            <div class="dropdown-header">
+                                <div class="user-info">
+                                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                                        <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                                    </div>
+                                    <div class="user-details">
+                                        <span class="user-name"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                                        <span class="user-email"><?php echo htmlspecialchars($_SESSION['email']); ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['admin_id']; ?>" class="dropdown-item">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Edit Profil
+                            </a>
+                            <a href="logout.php" class="dropdown-item">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Keluar
+                            </a>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -110,25 +140,27 @@ if (!$surat) {
                         </a>
                     </div>
                 </div>
-                <div style="background:#fafafa;padding:32px 24px 24px 24px;border-radius:18px;box-shadow:0 2px 16px #0001;max-width:1100px;margin:auto;display:flex;flex-direction:column;gap:32px;">
-                    <div>
-                        <h2><?php echo htmlspecialchars($surat['nama_surat']); ?></h2>
-                        <?php
-                        $status = $surat['status'];
-                        $badge = '';
-                        $label = '';
-                        if ($status === 'menunggu') {
-                            $badge = 'style="background:#fff6e0;color:#e6a700;border:1px solid #e6a700;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;"';
-                            $label = '<span style="font-size:18px;">&#9888;</span> Menunggu Tindakan';
-                        } elseif ($status === 'selesai') {
-                            $badge = 'style="background:#d4f8e8;color:#1a7f37;border:1px solid #1a7f37;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;"';
-                            $label = '<span style="font-size:18px;">&#10003;</span> Selesai Arsip';
-                        } elseif ($status === 'ditolak') {
-                            $badge = 'style="background:#ffe0e0;color:#d32f2f;border:1px solid #d32f2f;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;"';
-                            $label = '<span style="font-size:18px;">&#10005;</span> Ditolak';
-                        }
-                        ?>
-                        <span <?php echo $badge; ?>><?php echo $label; ?></span>
+                <div style="padding:32px 24px 24px 24px;border-radius:18px;box-shadow:0 2px 16px #0001;max-width:1100px;margin:auto;display:flex;flex-direction:column;gap:32px;">
+                     <div>
+                        <div class="block" style="display:flex; align-items: start;">
+                            <h2 style="display:inline-block; margin-right:10px;"><?php echo htmlspecialchars($surat['nama_surat']); ?></h2>
+                            <?php
+                            $status = $surat['status'];
+                            $badge = '';
+                            $label = '';
+                            if ($status === 'menunggu') {
+                                $badge = 'style="background:#fff6e0;color:#e6a700;border:1px solid #e6a700;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;vertical-align:middle;"'; // Added vertical-align
+                                $label = '<span style="font-size:18px;">&#9888;</span> Menunggu Tindakan';
+                            } elseif ($status === 'selesai') {
+                                $badge = 'style="background:#d4f8e8;color:#1a7f37;border:1px solid #1a7f37;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;vertical-align:middle;"';
+                                $label = '<span style="font-size:18px;">&#10003;</span> Selesai Arsip';
+                            } elseif ($status === 'ditolak') {
+                                $badge = 'style="background:#ffe0e0;color:#d32f2f;border:1px solid #d32f2f;padding:2px 12px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;vertical-align:middle;"';
+                                $label = '<span style="font-size:18px;">&#10005;</span> Ditolak';
+                            }
+                            ?>
+                            <span <?php echo $badge; ?>><?php echo $label; ?></span>
+                        </div>
                         <?php
                         $file_path = $surat['file_path'];
                         $is_image = false;
@@ -144,75 +176,75 @@ if (!$surat) {
                             <div style="color:#888;font-style:italic;">Tidak ada file</div>
                         <?php endif; ?>
                     </div>
-                    <div>
-                        <div style="display:flex;gap:16px;margin-bottom:16px;">
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">No Surat</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['nomor_surat']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                    <div class="form-grid">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label >No Surat</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['nomor_surat']); ?>" readonly>
                             </div>
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Asal Surat</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['asal_surat']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:16px;margin-bottom:16px;">
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Nama Surat</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['nama_surat']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
-                            </div>
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Kategori</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['kategori']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                            <div class="form-group">
+                                <label >Asal Surat</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['asal_surat']); ?>" readonly>
                             </div>
                         </div>
-                        <div style="display:flex;gap:16px;margin-bottom:16px;">
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Tanggal Surat</label>
-                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_surat'])); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label >Nama Surat</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['nama_surat']); ?>" readonly>
                             </div>
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Tanggal Terima</label>
-                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_terima'])); ?>" readonly style="width:100%;margin-bottom:0.5em;">
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:16px;margin-bottom:16px;">
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Tanggal Masuk</label>
-                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_masuk'])); ?>" readonly style="width:100%;margin-bottom:0.5em;">
-                            </div>
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Petugas Arsip</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['petugas_arsip']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                            <div class="form-group">
+                                <label >Kategori</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['kategori']); ?>" readonly>
                             </div>
                         </div>
-                        <div style="display:flex;gap:16px;margin-bottom:16px;">
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Pengirim</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['pengirim']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label >Tanggal Surat</label>
+                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_surat'])); ?>" readonly>
                             </div>
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Jumlah Lampiran</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['jumlah_lampiran']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                            <div class="form-group">
+                                <label >Tanggal Terima</label>
+                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_terima'])); ?>" readonly>
                             </div>
                         </div>
-                        <div style="display:flex;gap:16px;margin-bottom:16px;">
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Perihal</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label >Tanggal Masuk</label>
+                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_masuk'])); ?>" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label >Petugas Arsip</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['petugas_arsip']); ?>" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label >Pengirim</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['pengirim']); ?>" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label >Jumlah Lampiran</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['jumlah_lampiran']); ?>" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label >Perihal</label>
                                 <textarea readonly style="width:100%;min-height:60px;resize:vertical;"><?php echo htmlspecialchars($surat['perihal']); ?></textarea>
                             </div>
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Deskripsi Surat</label>
+                            <div class="form-group">
+                                <label >Deskripsi Surat</label>
                                 <textarea readonly style="width:100%;min-height:60px;resize:vertical;"><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
                             </div>
                         </div>
-                        <div style="display:flex;gap:16px;margin-bottom:16px;">
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Dibuat Oleh</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['created_by_name']); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label >Dibuat Oleh</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['created_by_name']); ?>" readonly>
                             </div>
-                            <div style="flex:1;min-width:180px;">
-                                <label style="font-weight:500;">Tanggal Dibuat</label>
-                                <input type="text" value="<?php echo date('d - m - Y H:i', strtotime($surat['created_at'])); ?>" readonly style="width:100%;margin-bottom:0.5em;">
+                            <div class="form-group">
+                                <label >Tanggal Dibuat</label>
+                                <input type="text" value="<?php echo date('d - m - Y H:i', strtotime($surat['created_at'])); ?>" readonly>
                             </div>
                         </div>
                     </div>
@@ -231,6 +263,19 @@ if (!$surat) {
   </div>
 </div>
 <script>
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!profileButton.contains(e.target) && !profileMenu.contains(e.target)) {
+            profileMenu.classList.remove('show');
+        }
+    });
   const logoutBtn = document.querySelector('.sidebar-item[href="./logout.php"]');
   const modal = document.getElementById('logoutModal');
   const cancelBtn = document.getElementById('cancelLogout');

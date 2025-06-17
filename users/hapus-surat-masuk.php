@@ -23,4 +23,4 @@ if ($surat) {
 }
 
 header('Location: surat-masuk.php');
-exit(); 
+exit();

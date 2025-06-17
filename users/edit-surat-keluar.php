@@ -55,20 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user_id = (int)$_SESSION['user_id'];
 
             $stmt = $conn->prepare("UPDATE surat_keluar SET nomor_surat = ?, nama_surat = ?, tanggal_keluar = ?, di_keluarkan = ?, tujuan_surat = ?, kategori = ?, deskripsi_surat = ?, file_path = ? WHERE id = ?");
-            
+
             if (!$stmt) {
                 throw new Exception("Prepare failed: " . $conn->error);
             }
 
-            $stmt->bind_param("ssssssssi", 
-                $nomor_surat, 
-                $nama_surat, 
-                $tanggal_keluar, 
-                $di_keluarkan, 
-                $tujuan_surat, 
-                $kategori, 
-                $deskripsi_surat, 
-                $file_path, 
+            $stmt->bind_param("ssssssssi",
+                $nomor_surat,
+                $nama_surat,
+                $tanggal_keluar,
+                $di_keluarkan,
+                $tujuan_surat,
+                $kategori,
+                $deskripsi_surat,
+                $file_path,
                 $id
             );
 
@@ -141,25 +141,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="main-content">
-            
-            <header class="header">
+
+<header class="header">
                 <h1></h1>
                 <div class="header-actions">
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                    </button>
-                    <button class="icon-button">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
-                        <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                    <div class="search-container">
+                        <form action="" method="GET" class="search-form">
+                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
+                            <button type="submit" class="icon-button">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="profile-dropdown">
+                        <button class="icon-button" id="profileButton">
+                            <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                                <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                            </div>
+                        </button>
+                        <div class="dropdown-menu" id="profileMenu">
+                            <div class="dropdown-header">
+                                <div class="user-info">
+                                    <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
+                                        <span><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></span>
+                                    </div>
+                                    <div class="user-details">
+                                        <span class="user-name"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+                                        <span class="user-email"><?php echo htmlspecialchars($_SESSION['email']); ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['admin_id']; ?>" class="dropdown-item">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Edit Profil
+                            </a>
+                            <a href="logout.php" class="dropdown-item">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Keluar
+                            </a>
+                        </div>
                     </div>
                 </div>
             </header>
+
 
             <main class="page-content">
                 <div class="page-header">
@@ -248,10 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <textarea id="deskripsi_surat" name="deskripsi_surat" required><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
                         </div>
                         <div class="button-group" style="display: flex; justify-content: flex-end;">
-                            <button type="submit" class="btn btn-primary" style="width: fit-content; min-width: 120px;">
-                                <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; margin-right:8px; vertical-align:middle;">
-                                    <path d="M5 13l4 4L19 7"></path>
-                                </svg>
+                            <button type="submit" class="btn-save">
                                 Simpan
                             </button>
                         </div>
@@ -270,5 +298,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 </div>
+<script>
+        const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!profileButton.contains(e.target) && !profileMenu.contains(e.target)) {
+            profileMenu.classList.remove('show');
+        }
+    });
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
+
+    profileButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!profileButton.contains(e.target) && !profileMenu.contains(e.target)) {
+            profileMenu.classList.remove('show');
+        }
+    });
+</script>
 </body>
 </html>

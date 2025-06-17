@@ -20,7 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             $success = 'Akun berhasil ditambahkan!';
         } else {
-            $error = 'Gagal menambah akun. Email mungkin sudah terdaftar.';
+            // Check for duplicate entry error specifically for email (assuming email is unique)
+            if ($conn->errno == 1062) { // MySQL error code for duplicate entry
+                $error = 'Gagal menambah akun. Email atau Username mungkin sudah terdaftar.';
+            } else {
+                $error = 'Gagal menambah akun. Terjadi kesalahan tak terduga.';
+            }
         }
         $stmt->close();
     } else {
@@ -39,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 <div class="container">
-   
+
     <div class="sidebar">
         <div class="sidebar-header">
             <h1>Arsintra</h1>
@@ -51,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </svg>
                 <span>Beranda</span>
             </a>
-            <a href="./adminlogout.php" class="sidebar-item">
+            <a href="./adminlogout.php" class="sidebar-item" id="sidebarLogoutBtn">
                 <svg class="icon" viewBox="0 0 24 24">
                     <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                 </svg>
@@ -132,35 +137,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </main>
     </div>
 </div>
+
 <div id="logoutModal" class="modal-overlay hidden">
-  <div class="modal-content">
-    <h3 class="modal-confirm">Yakin ingin keluar?</h3>
-    <p>Anda akan keluar dari sistem.</p>
-    <div class="modal-actions">
-      <button id="cancelLogout" class="btn-cancel">Batal</button>
-      <a href="./adminlogout.php" class="btn-logout">Keluar</a>
+    <div class="modal-content">
+        <h3 class="modal-confirm">Yakin ingin keluar?</h3>
+        <p>Anda akan keluar dari sistem.</p>
+        <div class="modal-actions">
+            <button id="cancelLogout" class="btn-cancel">Batal</button>
+            <a href="./adminlogout.php" class="btn-logout">Keluar</a>
+        </div>
     </div>
-  </div>
 </div>
 <script>
-  const logoutBtn = document.querySelector('.sidebar-item[href="./adminlogout.php"]');
-  const modal = document.getElementById('logoutModal');
-  const cancelBtn = document.getElementById('cancelLogout');
 
-  logoutBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    modal.classList.remove('hidden');
-  });
+    const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
+    const modal = document.getElementById('logoutModal');
+    const cancelBtn = document.getElementById('cancelLogout');
 
-  cancelBtn.addEventListener('click', function () {
-    modal.classList.add('hidden');
-  });
-
-  window.addEventListener('click', function (e) {
-    if (e.target === modal) {
-      modal.classList.add('hidden');
+    if (sidebarLogoutBtn) {
+        sidebarLogoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            modal.classList.remove('hidden');
+        });
     }
-  });
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+            modal.classList.add('hidden');
+        });
+    }
+
+    if (modal) {
+        window.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    }
 </script>
 
 </body>

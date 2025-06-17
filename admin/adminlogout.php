@@ -1,6 +1,7 @@
 <?php
-session_start();
-session_unset();
+require_once '../config/session.php';
+
 session_destroy();
 header('Location: adminlogin.php?');
 exit();
+?>

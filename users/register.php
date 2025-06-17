@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO users (username, password, nama_lengkap, email, role) VALUES (?, ?, ?, ?, 'petugas')");
             $stmt->bind_param("ssss", $username, $hashed_password, $nama_lengkap, $email);
-            
+
             try {
                 if ($stmt->execute()) {
                     $success = "Registrasi berhasil! Silakan login.";
@@ -58,18 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Arsintra - Daftar</title>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body>
+<body class="overflow-hidden screen-height">
     <nav class="navbar">
     <div class="navbar-inner">
       <h1 class="navbar-brand">Arsintra</h1>
-
-      <ul class="nav-links">
-        <li><a href="register.php" class="btn-login">Daftar</a></li>
-        <li class="nav-item">
-          <a href="login.php">Masuk</a>
-        </li>
-      </ul>
-
     </div>
   </nav>
   <section class="full-screen-section">
