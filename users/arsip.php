@@ -126,12 +126,15 @@ usort($arsip, function($a, $b) {
                 <?php echo date('d F Y', strtotime($surat['tanggal_arsip'])); ?>
             </p>
             <?php
-            $file_path = !empty($surat['file_path']) ? '../' . $surat['file_path'] : '';
-            $img_src = !empty($surat['file_path']) ? $surat['file_path'] : '';
-            $file_ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
-            $is_image = in_array($file_ext, ['jpg','jpeg','png']);
+            // Ambil path lengkap langsung dari database
+            $pathDariDB = !empty($surat['file_path']) ? $surat['file_path'] : '';
+                    
+            // Cek apakah path tersebut adalah gambar dan filenya ada
+            $file_ext = strtolower(pathinfo($pathDariDB, PATHINFO_EXTENSION));
+            $is_image = in_array($file_ext, ['jpg', 'jpeg', 'png', 'gif']);
+            $fileExists = !empty($pathDariDB) && file_exists($pathDariDB);
             ?>
-            <?php if ($is_image && file_exists($file_path)): ?>
+            <?php if ($is_image && $fileExists): ?>
                 <img src="<?php echo htmlspecialchars($img_src); ?>" alt="Scan Surat" class="surat-image" style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
             <?php else: ?>
                 <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image" style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
