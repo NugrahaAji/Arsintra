@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Arsintra - Daftar</title>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="overflow-hidden screen-height">
+<body>
     <nav class="navbar">
     <div class="navbar-inner">
       <h1 class="navbar-brand">Arsintra</h1>
@@ -66,17 +66,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </nav>
   <section class="full-screen-section">
     <div class="background-image">
-      <img src="../asset/image/login-bg.png" alt="Login Background" style="width: 100%; height: 1050px; object-fit: cover;" />
+      <img src="../asset/image/login-bg.png" alt="Login Background" style="width: 100%; height: 100%; object-fit: cover;" />
     </div>
 
-    <div class="form-container" style="margin-top: 70px; height: 1000px;">
-      <div class="form-inner" style="padding-top: 50px;">
+    <div class="form-container" style="margin-top: 30px; min-height: 100vh; overflow-y: auto;">
+      <div class="form-inner" style="padding: 50px 0;">
         <div>
           <h1 class="heading-bold">Buat Akunmu!</h1>
         </div>
 
         <?php if ($error): ?>
-        <div class="error-message">
+        <div class="error-message" style="margin-top: 50px;">
           <?php echo htmlspecialchars($error); ?>
         </div>
         <?php endif; ?>

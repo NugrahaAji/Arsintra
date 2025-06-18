@@ -2,6 +2,6 @@
 require_once '../config/session.php';
 
 session_destroy();
-header('Location: adminlogin.php?');
+header('Location: ../index.php');
 exit();
 ?>

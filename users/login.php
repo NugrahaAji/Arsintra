@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Arsintra - Login</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="overflow-hidden screen-height">
+<body>
     <nav class="navbar">
         <div class="navbar-inner">
             <h1 class="navbar-brand">Arsintra</h1>

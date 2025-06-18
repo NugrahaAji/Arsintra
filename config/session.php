@@ -2,15 +2,16 @@
 session_start();
 
 function isLoggedIn() {
-    return isset($_SESSION['user_id']);
+    return isset($_SESSION['user_id']) || isset($_SESSION['admin_id']);
 }
 
 function requireLogin() {
     if (!isLoggedIn()) {
-        header("Location: login.php");
+        header("Location: ../index.php");
         exit();
     }
 }
+
 function adminRequireLogin() {
     if (!isLoggedIn()) {
         header("Location: adminlogin.php");
@@ -24,5 +25,11 @@ function getUserRole() {
 
 function isAdmin() {
     return getUserRole() === 'admin';
+}
+
+function logout() {
+    session_destroy();
+    header("Location: ../index.php");
+    exit();
 }
 ?>

@@ -1,9 +1,10 @@
 <?php
 session_start();
 
-// If user is already logged in, redirect to dashboard
-if (isset($_SESSION['user_id'])) {
-    header('Location: dashboard.php');
+// Clear any existing session data to ensure clean access
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: index.php');
     exit();
 }
 ?>
@@ -24,7 +25,7 @@ if (isset($_SESSION['user_id'])) {
   </nav>
   <section class="full-screen-section">
     <div class="background-image">
-      <img src="/Arsintra/asset/image/login-bg.png" alt="Login Background" />
+      <img src="./asset/image/login-bg.png" alt="Login Background" />
     </div>
     <div class="form-container" style="margin-top: 50px;">
       <div class="form-inner">
