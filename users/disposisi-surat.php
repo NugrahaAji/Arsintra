@@ -1,11 +1,49 @@
 <?php
-session_start();
 require_once '../config.php';
+require_once '../config/session.php';
 
-$stmt = $conn->prepare("SELECT id, nomor_surat, nama_surat, perihal, tanggal_masuk, deskripsi_surat FROM surat_masuk WHERE status='ditolak' ORDER BY id DESC");
+requireLogin();
+
+// 1. Ambil nilai pencarian dari URL dengan aman.
+$search = $_GET['search'] ?? '';
+
+// 2. Siapkan query SQL dasar.
+$sql = "SELECT id, nomor_surat, nama_surat, perihal, tanggal_masuk, deskripsi_surat FROM surat_masuk";
+
+// 3. Siapkan kondisi dan parameter.
+//    Kondisi 'ditolak' adalah wajib untuk halaman ini.
+$conditions = ["status = 'ditolak'"];
+$params = [];
+$types = '';
+
+// 4. Jika ada input pencarian, tambahkan kondisi tambahan.
+if (!empty($search)) {
+    // Menambahkan klausa pencarian untuk beberapa kolom
+    $conditions[] = "(nomor_surat LIKE ? OR nama_surat LIKE ? OR perihal LIKE ?)";
+    $search_param = "%" . $search . "%";
+    // Menambahkan parameter sebanyak 3 kali untuk 3 placeholder (?)
+    $params = [$search_param, $search_param, $search_param];
+    $types = 'sss';
+}
+
+// 5. Gabungkan semua kondisi dengan 'AND'.
+$sql .= " WHERE " . implode(' AND ', $conditions);
+
+// 6. Tambahkan pengurutan.
+$sql .= " ORDER BY id DESC";
+
+// 7. Prepare dan execute query.
+$stmt = $conn->prepare($sql);
+
 if ($stmt === false) {
     die('Query error: ' . $conn->error . '. Pastikan kolom yang dipakai di query ada di tabel surat_masuk.');
 }
+
+// Jika ada parameter (artinya ada pencarian), bind parameternya.
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+
 $stmt->execute();
 $result = $stmt->get_result();
 $disposisiData = $result->fetch_all(MYSQLI_ASSOC);
@@ -72,7 +110,7 @@ $stmt->close();
                 <div class="header-actions">
                     <div class="search-container">
                         <form action="" method="GET" class="search-form">
-                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
+                            <input type="text" name="search" placeholder="Cari surat..." value="<?php echo htmlspecialchars($search); ?>">
                             <button type="submit" class="icon-button">
                                 <svg class="icon" viewBox="0 0 24 24">
                                     <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>

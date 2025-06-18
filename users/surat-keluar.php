@@ -99,7 +99,7 @@ $result = $stmt->get_result();
                 <div class="header-actions">
                     <div class="search-container">
                         <form action="" method="GET" class="search-form">
-                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
+                            <input type="text" name="search" placeholder="Cari surat..." value="<?php echo htmlspecialchars($search); ?>">
                             <button type="submit" class="icon-button">
                                 <svg class="icon" viewBox="0 0 24 24">
                                     <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>

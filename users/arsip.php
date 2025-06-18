@@ -4,20 +4,48 @@ require_once '../config/session.php';
 
 requireLogin();
 
-$stmt = $conn->prepare("
+// 1. Ambil nilai pencarian dengan aman. 
+// Jika tidak ada pencarian, nilainya string kosong ''.
+$search = $_GET['search'] ?? '';
+
+// Siapkan parameter untuk query (untuk keamanan dari SQL Injection)
+$search_param = "%" . $search . "%";
+
+// --- Query untuk Surat Masuk ---
+$sql_masuk = "
     SELECT sm.*, u.nama_lengkap as created_by_name, 'masuk' as tipe, sm.tanggal_masuk as tanggal_arsip
     FROM surat_masuk sm
     LEFT JOIN users u ON sm.created_by = u.id
     WHERE sm.status = 'selesai'
-");
+";
+// Jika ada keyword pencarian, tambahkan kondisi WHERE
+if (!empty($search)) {
+    $sql_masuk .= " AND (sm.nama_surat LIKE ? OR sm.nomor_surat LIKE ?)";
+}
+$stmt = $conn->prepare($sql_masuk);
+// Jika ada keyword pencarian, bind parameternya
+if (!empty($search)) {
+    $stmt->bind_param("ss", $search_param, $search_param);
+}
 $stmt->execute();
 $surat_masuk = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-$stmt = $conn->prepare("
+
+// --- Query untuk Surat Keluar ---
+$sql_keluar = "
     SELECT sk.*, u.nama_lengkap as created_by_name, 'keluar' as tipe, sk.tanggal_keluar as tanggal_arsip
     FROM surat_keluar sk
     LEFT JOIN users u ON sk.created_by = u.id
-");
+";
+// Jika ada keyword pencarian, tambahkan kondisi WHERE
+if (!empty($search)) {
+    $sql_keluar .= " WHERE (sk.nama_surat LIKE ? OR sk.nomor_surat LIKE ?)";
+}
+$stmt = $conn->prepare($sql_keluar);
+// Jika ada keyword pencarian, bind parameternya
+if (!empty($search)) {
+    $stmt->bind_param("ss", $search_param, $search_param);
+}
 $stmt->execute();
 $surat_keluar = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
@@ -87,7 +115,7 @@ usort($arsip, function($a, $b) {
                 <div class="header-actions">
                     <div class="search-container">
                         <form action="" method="GET" class="search-form">
-                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
+                            <input type="text" name="search" placeholder="Cari surat..." value="<?php echo htmlspecialchars($search); ?>">
                             <button type="submit" class="icon-button">
                                 <svg class="icon" viewBox="0 0 24 24">
                                     <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -156,19 +184,27 @@ usort($arsip, function($a, $b) {
                 <?php echo date('d F Y', strtotime($surat['tanggal_arsip'])); ?>
             </p>
             <?php
-            // Ambil path lengkap langsung dari database
-            $pathDariDB = !empty($surat['file_path']) ? $surat['file_path'] : '';
+              // 1. Ambil path dari database
+              $pathFromDB = !empty($surat['file_path']) ? $surat['file_path'] : '';
 
-            // Cek apakah path tersebut adalah gambar dan filenya ada
-            $file_ext = strtolower(pathinfo($pathDariDB, PATHINFO_EXTENSION));
-            $is_image = in_array($file_ext, ['jpg', 'jpeg', 'png', 'gif']);
-            $fileExists = !empty($pathDariDB) && file_exists($pathDariDB);
-            ?>
-            <?php if ($is_image && $fileExists): ?>
-                <img src="<?php echo htmlspecialchars($img_src); ?>" alt="Scan Surat" class="surat-image" style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
-            <?php else: ?>
-                <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image" style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
-            <?php endif; ?>
+              // 2. Buat path yang benar untuk server (file_exists) dan browser (src)
+              //    Karena arsip.php ada di dalam folder 'users', kita perlu '../' untuk naik satu level
+              $correctPath = '';
+              if (!empty($pathFromDB)) {
+                  $correctPath = '../' . $pathFromDB;
+              }
+
+              // 3. Cek apakah file adalah gambar & ada di server menggunakan path yang benar
+              $file_ext = strtolower(pathinfo($pathFromDB, PATHINFO_EXTENSION));
+              $is_image = in_array($file_ext, ['jpg', 'jpeg', 'png', 'gif']);
+              $fileExists = !empty($correctPath) && file_exists($correctPath);
+              ?>
+
+              <?php if ($is_image && $fileExists): ?>
+                  <img src="<?php echo htmlspecialchars($correctPath); ?>" alt="Scan Surat" class="surat-image" style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
+              <?php else: ?>
+                  <img src="../asset/image/surat-preview.png" alt="Surat" class="surat-image" style="width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:1rem;" />
+              <?php endif; ?>
             <div class="button-group-arsip" style="display:flex;gap:16px;align-items:center;">
                 <a href="download-surat.php?id=<?php echo $surat['id']; ?>&type=<?php echo $surat['tipe']; ?>" style="font-weight: 400; gap: 10px; display: flex; align-items: center; border-radius: 8px;" class="btn btn-primary" title="Download Scan Surat">
                     <svg class="icon" viewBox="0 0 24 24">

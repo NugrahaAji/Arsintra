@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tujuan_surat = $_POST['tujuan_surat'] ?? '';
     $kategori = $_POST['kategori'] ?? '';
     $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
-    $status = 'draft';
+    $status = 'terkirim';
 
     // Handle file upload
     $file_path = '';

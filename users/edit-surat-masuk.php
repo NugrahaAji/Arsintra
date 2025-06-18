@@ -39,27 +39,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle file upload
     $file_path = $surat['file_path'];
     if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] === UPLOAD_ERR_OK) {
+        
         $upload_dir = '../uploads/surat_masuk/';
-        if (!file_exists($upload_dir)) {
+        if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
 
-        // Delete old file if exists
-        if ($file_path && file_exists('../' . $file_path)) {
-            unlink('../' . $file_path);
+        // Cek apakah direktori bisa ditulisi (writable)
+        if (!is_writable($upload_dir)) {
+            $error = "Error: Direktori upload tidak bisa ditulisi. Periksa izin folder (permissions).";
+        } else {
+            // Hapus file lama jika ada
+            if ($file_path && file_exists('../' . $file_path)) {
+                unlink('../' . $file_path);
+            }
+
+            $file_name = time() . '_' . basename($_FILES['file_surat']['name']);
+            $target_path = $upload_dir . $file_name;
+
+            // Pindahkan file yang baru diupload
+            if (move_uploaded_file($_FILES['file_surat']['tmp_name'], $target_path)) {
+                $file_path = 'uploads/surat_masuk/' . $file_name; // Update path dengan file baru
+                $success = "File baru berhasil diupload."; // Pesan sukses sementara
+            } else {
+                $error = "Error: Gagal memindahkan file yang diupload. Kemungkinan masalah izin folder.";
+            }
         }
-
-        $file_name = time() . '_' . basename($_FILES['file_surat']['name']);
-        $target_path = $upload_dir . $file_name;
-
-        if (move_uploaded_file($_FILES['file_surat']['tmp_name'], $target_path)) {
-            $file_path = 'uploads/surat_masuk/' . $file_name;
+    } elseif (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] !== UPLOAD_ERR_NO_FILE) {
+        // Menangkap error lain dari proses upload (misal: file terlalu besar)
+        switch ($_FILES['file_surat']['error']) {
+            case UPLOAD_ERR_INI_SIZE:
+                $error = "Error: Ukuran file melebihi batas upload server (upload_max_filesize).";
+                break;
+            case UPLOAD_ERR_FORM_SIZE:
+                $error = "Error: Ukuran file melebihi batas yang ditentukan di form.";
+                break;
+            default:
+                $error = "Error upload file yang tidak diketahui.";
+                break;
         }
     }
 
-    if (empty($nomor_surat) || empty($asal_surat) || empty($nama_surat) || empty($kategori) || empty($tanggal_masuk) || empty($petugas_arsip) || empty($jumlah_lampiran) || empty($deskripsi_surat)) {
-        $error = "Semua field harus diisi";
+    // Validasi input
+    $semua_valid = true;
+    if (empty($nomor_surat) || empty($asal_surat) || empty($nama_surat) || empty($kategori) || empty($tanggal_masuk) || empty($petugas_arsip) || empty($jumlah_lampiran)) {
+        $semua_valid = false;
+    }
+
+    // Deskripsi hanya wajib jika status bukan 'ditolak'
+    if ($status !== 'ditolak' && empty($deskripsi_surat)) {
+        $semua_valid = false;
+    }
+
+    // Alasan ditolak hanya wajib jika status 'ditolak'
+    if ($status === 'ditolak' && empty($alasan_ditolak)) {
+        $semua_valid = false;
+    }
+
+    if (!$semua_valid) { // Jika ada yang tidak valid
+        $error = "Semua field dengan tanda * harus diisi";
     } else {
+        // Lanjutkan dengan proses UPDATE ke database
         $stmt = $conn->prepare("UPDATE surat_masuk SET nomor_surat = ?, asal_surat = ?, nama_surat = ?, kategori = ?, tanggal_masuk = ?, petugas_arsip = ?, jumlah_lampiran = ?, deskripsi_surat = ?, file_path = ?, status = ? WHERE id = ?");
         $stmt->bind_param("ssssssssssi", $nomor_surat, $asal_surat, $nama_surat, $kategori, $tanggal_masuk, $petugas_arsip, $jumlah_lampiran, $deskripsi_surat, $file_path, $status, $id);
 
@@ -135,16 +175,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <header class="header">
                 <h1></h1>
                 <div class="header-actions">
-                    <div class="search-container">
-                        <form action="" method="GET" class="search-form">
-                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
-                            <button type="submit" class="icon-button">
-                                <svg class="icon" viewBox="0 0 24 24">
-                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
                     <div class="profile-dropdown">
                         <button class="icon-button" id="profileButton">
                             <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
@@ -269,8 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
-                        <select id="status" name="status" style="height:50px; font-size:16px; border: 1px solid #d1d5db; padding: 0.75rem; border-radius: 0.375rem;
-">
+                        <select id="status" name="status" style="height:50px; font-size:16px; border: 1px solid #d1d5db; padding: 0.75rem; border-radius: 0.375rem;">
                             <option value="menunggu" <?php echo $surat['status'] === 'menunggu' ? 'selected' : ''; ?>>Menunggu Tindakan</option>
                             <option value="selesai" <?php echo $surat['status'] === 'selesai' ? 'selected' : ''; ?>>Selesai Arsip</option>
                             <option value="ditolak" <?php echo $surat['status'] === 'ditolak' ? 'selected' : ''; ?>>Ditolak</option>
@@ -279,6 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="button-group" style="display: flex; justify-content: flex-end;">
                         <button type="submit" class="btn-save   ">Simpan</button>
                     </div>
+                </div>
                 </form>
             </main>
         </div>

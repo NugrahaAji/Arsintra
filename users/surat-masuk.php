@@ -4,11 +4,36 @@ require_once '../config/session.php';
 
 requireLogin();
 
-$stmt = $conn->prepare("
+// 1. Ambil nilai pencarian dari URL dengan aman.
+//    Jika tidak ada, $search akan menjadi string kosong.
+$search = $_GET['search'] ?? '';
+
+// 2. Siapkan query SQL dasar.
+$sql = "
     SELECT id, nomor_surat, nama_surat, kategori, tanggal_masuk, asal_surat, status, file_path
     FROM surat_masuk
-    ORDER BY tanggal_masuk DESC
-");
+";
+
+// Siapkan parameter untuk pencarian yang aman
+$search_param = "%" . $search . "%";
+
+// 3. Jika ada input pencarian, tambahkan kondisi WHERE.
+if (!empty($search)) {
+    // Mencari berdasarkan nomor surat, nama surat, atau asal surat.
+    $sql .= " WHERE (nomor_surat LIKE ? OR nama_surat LIKE ? OR asal_surat LIKE ?)";
+}
+
+// 4. Tambahkan pengurutan data.
+$sql .= " ORDER BY tanggal_masuk DESC";
+
+// 5. Prepare dan execute query.
+$stmt = $conn->prepare($sql);
+
+// Jika ada input pencarian, bind parameternya untuk mencegah SQL Injection.
+if (!empty($search)) {
+    $stmt->bind_param("sss", $search_param, $search_param, $search_param);
+}
+
 $stmt->execute();
 $result = $stmt->get_result();
 $surat_masuk = $result->fetch_all(MYSQLI_ASSOC);
@@ -77,7 +102,7 @@ $surat_masuk = $result->fetch_all(MYSQLI_ASSOC);
                 <div class="header-actions">
                     <div class="search-container">
                         <form action="" method="GET" class="search-form">
-                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
+                            <input type="text" name="search" placeholder="Cari surat..." value="<?php echo htmlspecialchars($search); ?>">
                             <button type="submit" class="icon-button">
                                 <svg class="icon" viewBox="0 0 24 24">
                                     <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>

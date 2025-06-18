@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $success = "Surat keluar berhasil diperbarui";
-            header("Location: surat-keluar.php?success=1");
+            header("Location: surat-keluar.php?success=2");
             exit();
         } catch (Exception $e) {
             error_log("Error in edit-surat-keluar.php: " . $e->getMessage());
@@ -145,16 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <header class="header">
                 <h1></h1>
                 <div class="header-actions">
-                    <div class="search-container">
-                        <form action="" method="GET" class="search-form">
-                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
-                            <button type="submit" class="icon-button">
-                                <svg class="icon" viewBox="0 0 24 24">
-                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
                     <div class="profile-dropdown">
                         <button class="icon-button" id="profileButton">
                             <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">

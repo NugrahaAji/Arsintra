@@ -8,39 +8,51 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Set zona waktu ke Waktu Indonesia Barat untuk tanggal hari ini
+    date_default_timezone_set('Asia/Jakarta');
+
+    // --- Mengambil data dari form ---
     $nomor_surat = $_POST['nomor_surat'] ?? '';
     $asal_surat = $_POST['asal_surat'] ?? '';
     $nama_surat = $_POST['nama_surat'] ?? '';
     $kategori = $_POST['kategori'] ?? '';
-    $tanggal_masuk = $_POST['tanggal_masuk'] ?? '';
+    $tanggal_masuk = $_POST['tanggal_masuk'] ?? ''; // Ini adalah tanggal yang tertera di fisik surat
     $petugas_arsip = $_POST['petugas_arsip'] ?? '';
     $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? 0;
     $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
-    $status = 'Belum Disposisi';
 
-    // Validasi input
+    // --- Menetapkan nilai berdasarkan aturan baru ---
+
+    // Aturan 1: Tanggal Surat disamakan dengan Tanggal Masuk
+    $tanggal_surat = $tanggal_masuk;
+
+    // Aturan 2: Tanggal Terima adalah tanggal hari ini (saat data diinput)
+    $tanggal_terima = date('Y-m-d');
+
+    // Aturan 3: Perihal diisi dengan Kategori
+    $perihal = $kategori;
+
+    // Kolom 'pengirim' disamakan dengan asal_surat
+    $pengirim = $asal_surat; 
+
+    $status = 'menunggu';
+
+    // Validasi input (hanya untuk field yang diisi manual)
     if (empty($nomor_surat) || empty($asal_surat) || empty($nama_surat) || empty($kategori) || empty($tanggal_masuk) || empty($petugas_arsip)) {
-        $error = 'Semua field harus diisi';
+        $error = 'Semua field dengan tanda * harus diisi';
     } else {
         // Handle file upload
         $file_path = '';
         if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] === UPLOAD_ERR_OK) {
             $upload_dir = '../uploads/surat_masuk/';
-
-            // Create directory if it doesn't exist
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
-
             $file_name = $_FILES['file_surat']['name'];
             $file_tmp = $_FILES['file_surat']['tmp_name'];
-            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-
-            // Generate unique filename
-            $new_file_name = uniqid() . '_' . $file_name;
+            $new_file_name = uniqid() . '_' . basename($file_name);
             $file_path = 'uploads/surat_masuk/' . $new_file_name;
 
-            // Move uploaded file
             if (!move_uploaded_file($file_tmp, $upload_dir . $new_file_name)) {
                 $error = 'Gagal mengupload file';
             }
@@ -48,14 +60,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($error)) {
             try {
-                $stmt = $conn->prepare("INSERT INTO surat_masuk (nomor_surat, asal_surat, nama_surat, kategori, tanggal_masuk, petugas_arsip, jumlah_lampiran, file_path, deskripsi_surat, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                // Query INSERT tetap sama seperti yang terakhir kita buat
+                $stmt = $conn->prepare(
+                    "INSERT INTO surat_masuk (nomor_surat, asal_surat, nama_surat, kategori, tanggal_masuk, petugas_arsip, jumlah_lampiran, deskripsi_surat, status, created_by, file_path, tanggal_surat, tanggal_terima, pengirim, perihal) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                );
 
                 if ($stmt === false) {
                     throw new Exception("Error preparing statement: " . $conn->error);
                 }
 
-                $user_id = $_SESSION['user_id'];
-                $stmt->bind_param("ssssssisssi", $nomor_surat, $asal_surat, $nama_surat, $kategori, $tanggal_masuk, $petugas_arsip, $jumlah_lampiran, $file_path, $deskripsi_surat, $status, $user_id);
+                $user_id = $_SESSION['user_id'] ?? null; // Pastikan user_id ada di session
+                
+                $stmt->bind_param(
+                    "ssssssisssissss", 
+                    $nomor_surat, $asal_surat, $nama_surat, $kategori, $tanggal_masuk, 
+                    $petugas_arsip, $jumlah_lampiran, $deskripsi_surat, $status, $user_id, 
+                    $file_path, $tanggal_surat, $tanggal_terima, $pengirim, $perihal
+                );
 
                 if (!$stmt->execute()) {
                     throw new Exception("Error executing statement: " . $stmt->error);
@@ -65,12 +87,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             } catch (Exception $e) {
                 $error = 'Error: ' . $e->getMessage();
-                // Log error for debugging
                 error_log("Error in tambah-surat-masuk.php: " . $e->getMessage());
             }
         }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -134,16 +156,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <header class="header">
                 <h1></h1>
                 <div class="header-actions">
-                    <div class="search-container">
-                        <form action="" method="GET" class="search-form">
-                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
-                            <button type="submit" class="icon-button">
-                                <svg class="icon" viewBox="0 0 24 24">
-                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
                     <div class="profile-dropdown">
                         <button class="icon-button" id="profileButton">
                             <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
