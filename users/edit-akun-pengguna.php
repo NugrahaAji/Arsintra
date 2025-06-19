@@ -25,14 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_lengkap = $_POST['nama_lengkap'] ?? '';
     $username = $_POST['username'] ?? '';
     $email = $_POST['email'] ?? '';
-    $role = $_POST['role'] ?? '';
-    if ($nama_lengkap && $username && $email && $role) {
-        $stmt2 = $conn->prepare("UPDATE users SET username=?, nama_lengkap=?, email=?, role=? WHERE id=?");
-        $stmt2->bind_param('ssssi', $username, $nama_lengkap, $email, $role, $id);
+    if ($nama_lengkap && $username && $email) {
+        $stmt2 = $conn->prepare("UPDATE users SET username=?, nama_lengkap=?, email=? WHERE id=?");
+        $stmt2->bind_param('sssi', $username, $nama_lengkap, $email, $id);
         if ($stmt2->execute()) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['nama_lengkap'];
-            $_SESSION['user_role'] = $user['role'];
             $_SESSION['email'] = $user['email'];
             $success = 'Akun berhasil diupdate!';
         } else {
@@ -177,13 +175,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="form-group">
                             <label for="email">Email<span class="required">*</span></label>
                             <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="role">Role<span class="required">*</span></label>
-                            <select id="role" name="role" class="custom-select" required>
-                                <option value="petugas" <?= $user['role'] === 'petugas' ? 'selected' : '' ?>>Petugas</option>
-                                <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
-                            </select>
                         </div>
                     </div>
                     <div class="form-actions">
