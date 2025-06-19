@@ -156,7 +156,7 @@ if (!$surat) {
                                 if ($file_path && $is_image): ?>
                                     <img src="../<?php echo htmlspecialchars($file_path); ?>" alt="Foto Surat" style="max-width:700px;max-height:500px;border-radius:8px;border:1px solid #ddd;box-shadow:0 2px 8px #0001;">
                                 <?php elseif ($file_path): ?>
-                                    <a href="../<?php echo htmlspecialchars($file_path); ?>" target="_blank" class="btn btn-primary" style="margin-top:16px;display:inline-block;">Download File</a>
+                                    <a href="../<?php echo htmlspecialchars($file_path); ?>" target="_blank" class="btn-save" style="margin-top:16px;display:inline-block;">Download File</a>
                                 <?php else: ?>
                                     <div style="color:#888;font-style:italic;">Tidak ada file</div>
                                 <?php endif; ?>
