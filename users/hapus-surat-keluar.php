@@ -36,7 +36,7 @@ try {
         unlink("../$file_path");
     }
 
-    header('Location: surat-keluar.php?success=2');
+    header('Location: surat-keluar.php?success=3');
     exit();
 } catch (Exception $e) {
     error_log("Error in hapus-surat-keluar.php: " . $e->getMessage());

@@ -126,7 +126,7 @@ $result = $stmt->get_result();
                                 </div>
                             </div>
                             <div class="dropdown-divider"></div>
-                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['admin_id']; ?>" class="dropdown-item">
+                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['user_id']; ?>" class="dropdown-item">
                                 <svg class="icon" viewBox="0 0 24 24">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                 </svg>
@@ -157,7 +157,17 @@ $result = $stmt->get_result();
                         <svg class="icon" viewBox="0 0 24 24" style="width:20px; height:20px; margin-right:8px; vertical-align:middle;">
                             <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <?php echo $_GET['success'] == 1 ? 'Surat keluar berhasil ditambahkan' : 'Surat keluar berhasil diperbarui'; ?>
+                        <?php
+                        $pesan = $_GET['success'] ?? '';
+                        $successMessage = '';
+                        if ($pesan === '1') {
+                            echo "Surat keluar berhasil ditambahkan!";
+                        } elseif ($pesan === '2') {
+                            echo  "Surat keluar berhasil diperbarui!";
+                        } elseif ($pesan === '3') {
+                            echo "Surat keluar berhasil dihapus!";
+                        }
+                        ?>
                     </div>
                 <?php endif; ?>
 
@@ -205,9 +215,9 @@ $result = $stmt->get_result();
                                             <a href="./edit-surat-keluar.php?id=<?php echo $row['id']; ?>" class="btn-icon" title="Edit">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M4 21h16M5.666 13.187A2.28 2.28 0 0 0 5 14.797V18h3.223c.604 0 1.183-.24 1.61-.668l9.5-9.505a2.28 2.28 0 0 0 0-3.22l-.938-.94a2.277 2.277 0 0 0-3.222.001z"/></svg>
                                             </a>
-                                            <button onclick="confirmDelete(<?php echo $row['id']; ?>)" class="btn-icon" title="Hapus">
+                                            <a href="hapus-surat-keluar.php?id=<?php echo $row['id']; ?>" class="btn-icon" title="Hapus">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="#da0700" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="m14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21q.512.078 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48 48 0 0 0-3.478-.397m-12 .562q.51-.088 1.022-.165m0 0a48 48 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a52 52 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a49 49 0 0 0-7.5 0"/></svg>
-                                            </button>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -238,37 +248,79 @@ $result = $stmt->get_result();
         </div>
     </div>
 
-    <div id="deleteModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <h3 class="modal-confirm">Yakin ingin menghapus surat ini?</h3>
-            <p>Data yang dihapus tidak dapat dikembalikan.</p>
-            <div class="modal-actions">
-                <button id="cancelDelete" class="btn-cancel">Batal</button>
-                <a href="#" id="confirmDelete" class="btn-delete">Hapus</a>
-            </div>
-        </div>
-    </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-    <script>
+    // --- 1. LOGIKA UNTUK DROPDOWN PROFIL ---
+    const profileButton = document.getElementById('profileButton');
+    const profileMenu = document.getElementById('profileMenu');
 
-        function confirmDelete(id) {
-            const modal = document.getElementById('deleteModal');
-            const confirmBtn = document.getElementById('confirmDelete');
-            const cancelBtn = document.getElementById('cancelDelete');
+    if (profileButton && profileMenu) {
+        profileButton.addEventListener('click', function(e) {
+            // Mencegah event 'click' menyebar ke elemen lain
+            e.stopPropagation();
+            // Menampilkan atau menyembunyikan menu
+            profileMenu.classList.toggle('show');
+        });
 
-            modal.classList.remove('hidden');
-            confirmBtn.href = `./hapus-surat-keluar.php?id=${id}`;
-
-            cancelBtn.onclick = function() {
-                modal.classList.add('hidden');
+        // Menutup menu jika user klik di luar area dropdown
+        document.addEventListener('click', function(e) {
+            if (!profileButton.contains(e.target) && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove('show');
             }
+        });
+    }
 
-            window.onclick = function(e) {
-                if (e.target === modal) {
-                    modal.classList.add('hidden');
-                }
-            }
+    // --- 2. LOGIKA UMUM UNTUK SEMUA MODAL (DELETE & LOGOUT) ---
+    const deleteModal = document.getElementById('deleteModal');
+    const logoutModal = document.getElementById('logoutModal');
+
+    // Fungsi umum untuk menutup SEMUA modal yang sedang aktif
+    function closeModal() {
+        if (deleteModal) deleteModal.classList.add('hidden');
+        if (logoutModal) logoutModal.classList.add('hidden');
+    }
+
+    // Tambahkan event listener ke semua tombol "Batal" di dalam modal
+    document.querySelectorAll('.btn-cancel').forEach(btn => {
+        btn.addEventListener('click', closeModal);
+    });
+
+    // Tambahkan event listener untuk menutup modal jika klik di area latar belakang
+    window.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            closeModal();
         }
-    </script>
+    });
+
+    // --- 3. LOGIKA UNTUK TOMBOL LOGOUT ---
+    const logoutBtn = document.querySelector('.sidebar-item[href="./logout.php"]');
+    if (logoutBtn && logoutModal) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // Mencegah pindah halaman langsung
+            logoutModal.classList.remove('hidden'); // Tampilkan modal logout
+        });
+    }
+});
+
+
+// --- 4. FUNGSI BARU YANG REUSABLE UNTUK KONFIRMASI HAPUS ---
+// Fungsi ini dibuat di luar DOMContentLoaded agar bisa diakses oleh 'onclick' di HTML
+function confirmDelete(id, type) {
+    const modal = document.getElementById('deleteModal');
+    const confirmBtn = document.getElementById('confirmDelete');
+    
+    if (!modal || !confirmBtn) {
+        console.error('Modal atau tombol konfirmasi hapus tidak ditemukan!');
+        return;
+    }
+
+    // Set URL hapus secara dinamis berdasarkan tipe
+    confirmBtn.href = `./hapus-${type}.php?id=${id}`;
+    
+    // Tampilkan modal konfirmasi hapus
+    modal.classList.remove('hidden');
+}
+</script>
 </body>
 </html>

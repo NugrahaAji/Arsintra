@@ -137,7 +137,7 @@ $stmt->close();
                                 </div>
                             </div>
                             <div class="dropdown-divider"></div>
-                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['admin_id']; ?>" class="dropdown-item">
+                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['user_id']; ?>" class="dropdown-item">
                                 <svg class="icon" viewBox="0 0 24 24">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                 </svg>
@@ -183,9 +183,9 @@ $stmt->close();
                                     <td>
                                         <div class="action-buttons">
                                             <a href="detail-surat-masuk.php?id=<?php echo urlencode($disposisi['id']); ?>" class="btn-detail">Detail</a>
-                                            <button class="btn-delete" title="Delete" onclick="if(confirm('Yakin ingin menghapus akun ini?')) window.location.href="hapus-surat-masuk.php?id=<?php echo urlencode($disposisi['id']); ?>>
+                                            <a href="hapus-surat-masuk.php?id=<?php echo $disposisi['id']; ?>" class="btn-delete" title="Delete">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="m14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21q.512.078 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48 48 0 0 0-3.478-.397m-12 .562q.51-.088 1.022-.165m0 0a48 48 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a52 52 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a49 49 0 0 0-7.5 0"/></svg>
-                                            </button>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>

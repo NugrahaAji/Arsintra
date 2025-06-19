@@ -3,12 +3,12 @@ session_start();
 require_once '../config.php';
 $error = '';
 $success = '';
-if (!isset($_SESSION['admin_id'])) {
-    header('Location: adminlogin.php');
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
     exit();
 }
 if (!isset($_GET['id'])) {
-    header('Location: admindashboard.php');
+    header('Location: dashboard.php');
     exit();
 }
 $id = intval($_GET['id']);
@@ -18,7 +18,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 if (!$user) {
-    header('Location: admindashboard.php');
+    header('Location: dashboard.php');
     exit();
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -98,16 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <header class="header">
                 <h1></h1>
                 <div class="header-actions">
-                    <div class="search-container">
-                        <form action="" method="GET" class="search-form">
-                            <input type="text" name="search" placeholder="Cari akun..." value="<?php echo htmlspecialchars($search); ?>">
-                            <button type="submit" class="icon-button">
-                                <svg class="icon" viewBox="0 0 24 24">
-                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
                     <div class="profile-dropdown">
                         <button class="icon-button" id="profileButton">
                             <div class="avatar" title="<?php echo htmlspecialchars($_SESSION['user_name']); ?>">
@@ -127,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </div>
                             <div class="dropdown-divider"></div>
-                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['admin_id']; ?>" class="dropdown-item">
+                            <a href="edit-akun-pengguna.php?id=<?php echo $_SESSION['user_id']; ?>" class="dropdown-item">
                                 <svg class="icon" viewBox="0 0 24 24">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7m-1.5-9.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                 </svg>
