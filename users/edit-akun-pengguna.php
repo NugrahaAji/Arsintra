@@ -30,6 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt2 = $conn->prepare("UPDATE users SET username=?, nama_lengkap=?, email=?, role=? WHERE id=?");
         $stmt2->bind_param('ssssi', $username, $nama_lengkap, $email, $role, $id);
         if ($stmt2->execute()) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['nama_lengkap'];
+            $_SESSION['user_role'] = $user['role'];
+            $_SESSION['email'] = $user['email'];
             $success = 'Akun berhasil diupdate!';
         } else {
             $error = 'Gagal update akun. Email mungkin sudah terdaftar.';
@@ -149,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if ($success): ?>
             <div class="success-message">
                 <?php echo htmlspecialchars($success); ?>
-                <a href="admindashboard.php">Kembali ke daftar akun</a>
+                <a href="dashboard.php">Kembali ke dashboard</a>
             </div>
             <?php endif; ?>
             <?php if ($error): ?>

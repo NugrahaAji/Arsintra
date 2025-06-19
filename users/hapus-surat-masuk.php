@@ -11,10 +11,11 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $surat = $result->fetch_assoc();
+$file_path = $surat['file_path'];
 
 if ($surat) {
-    if ($surat['file_path'] && file_exists('../' . $surat['file_path'])) {
-        unlink('../' . $surat['file_path']);
+    if ($surat['file_path'] && file_exists('../$file_path')) {
+        unlink("../$file_path");
     }
 
     $stmt = $conn->prepare("DELETE FROM surat_masuk WHERE id = ?");

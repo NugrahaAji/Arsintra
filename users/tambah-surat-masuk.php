@@ -4,95 +4,96 @@ require_once '../config/session.php';
 
 requireLogin();
 
+// Inisialisasi variabel untuk pesan dan form
 $error = '';
 $success = '';
 
+// Variabel untuk menampung data form jika terjadi error (agar tidak hilang)
+$formData = [
+    'nomor_surat' => '',
+    'asal_surat' => '',
+    'nama_surat' => '',
+    'kategori' => '',
+    'tanggal_masuk' => '',
+    'petugas_arsip' => '',
+    'jumlah_lampiran' => '',
+    'deskripsi_surat' => ''
+];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Set zona waktu ke Waktu Indonesia Barat untuk tanggal hari ini
     date_default_timezone_set('Asia/Jakarta');
 
-    // --- Mengambil data dari form ---
-    $nomor_surat = $_POST['nomor_surat'] ?? '';
-    $asal_surat = $_POST['asal_surat'] ?? '';
-    $nama_surat = $_POST['nama_surat'] ?? '';
-    $kategori = $_POST['kategori'] ?? '';
-    $tanggal_masuk = $_POST['tanggal_masuk'] ?? ''; // Ini adalah tanggal yang tertera di fisik surat
-    $petugas_arsip = $_POST['petugas_arsip'] ?? '';
-    $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? 0;
-    $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
-
-    // --- Menetapkan nilai berdasarkan aturan baru ---
-
-    // Aturan 1: Tanggal Surat disamakan dengan Tanggal Masuk
-    $tanggal_surat = $tanggal_masuk;
-
-    // Aturan 2: Tanggal Terima adalah tanggal hari ini (saat data diinput)
-    $tanggal_terima = date('Y-m-d');
-
-    // Aturan 3: Perihal diisi dengan Kategori
-    $perihal = $kategori;
-
-    // Kolom 'pengirim' disamakan dengan asal_surat
-    $pengirim = $asal_surat; 
-
-    $status = 'menunggu';
-
-    // Validasi input (hanya untuk field yang diisi manual)
-    if (empty($nomor_surat) || empty($asal_surat) || empty($nama_surat) || empty($kategori) || empty($tanggal_masuk) || empty($petugas_arsip)) {
-        $error = 'Semua field dengan tanda * harus diisi';
+    // Ambil semua data dari form dan simpan ke formData untuk pre-fill jika error
+    $formData = [
+        'nomor_surat' => $_POST['nomor_surat'] ?? '',
+        'asal_surat' => $_POST['asal_surat'] ?? '',
+        'nama_surat' => $_POST['nama_surat'] ?? '',
+        'kategori' => $_POST['kategori'] ?? '',
+        'tanggal_masuk' => $_POST['tanggal_masuk'] ?? '',
+        'petugas_arsip' => $_POST['petugas_arsip'] ?? '',
+        'jumlah_lampiran' => $_POST['jumlah_lampiran'] ?? '',
+        'deskripsi_surat' => $_POST['deskripsi_surat'] ?? ''
+    ];
+    
+    // Validasi data teks
+    if (empty($formData['nomor_surat']) || empty($formData['asal_surat']) || empty($formData['nama_surat']) || empty($formData['kategori']) || empty($formData['tanggal_masuk']) || empty($formData['petugas_arsip'])) {
+        $error = 'Semua field dengan tanda * harus diisi.';
+    
+    // Validasi file upload
+    } elseif (!isset($_FILES['file_surat']) || $_FILES['file_surat']['error'] !== UPLOAD_ERR_OK) {
+        $error = 'File surat wajib di-upload dan tidak boleh ada error.';
+    
     } else {
-        // Handle file upload
+        // --- Jika validasi lolos, lanjutkan ---
+
         $file_path = '';
         if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] === UPLOAD_ERR_OK) {
             $upload_dir = '../uploads/surat_masuk/';
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
-            $file_name = $_FILES['file_surat']['name'];
-            $file_tmp = $_FILES['file_surat']['tmp_name'];
-            $new_file_name = uniqid() . '_' . basename($file_name);
-            $file_path = 'uploads/surat_masuk/' . $new_file_name;
-
-            if (!move_uploaded_file($file_tmp, $upload_dir . $new_file_name)) {
-                $error = 'Gagal mengupload file';
+            $file_name = time() . '_' . basename($_FILES['file_surat']['name']);
+            $target_path = $upload_dir . $file_name;
+            if (move_uploaded_file($_FILES['file_surat']['tmp_name'], $target_path)) {
+                $file_path = 'uploads/surat_masuk/' . $file_name;
             }
         }
 
+        // --- Simpan ke Database HANYA JIKA tidak ada error sama sekali ---
         if (empty($error)) {
             try {
-                // Query INSERT tetap sama seperti yang terakhir kita buat
+                $tanggal_surat = $formData['tanggal_masuk'];
+                $tanggal_terima = date('Y-m-d');
+                $perihal = $formData['kategori'];
+                $pengirim = $formData['asal_surat']; 
+                $status = 'menunggu';
+                $user_id = $_SESSION['user_id'] ?? null;
+
                 $stmt = $conn->prepare(
                     "INSERT INTO surat_masuk (nomor_surat, asal_surat, nama_surat, kategori, tanggal_masuk, petugas_arsip, jumlah_lampiran, deskripsi_surat, status, created_by, file_path, tanggal_surat, tanggal_terima, pengirim, perihal) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 );
 
-                if ($stmt === false) {
-                    throw new Exception("Error preparing statement: " . $conn->error);
-                }
-
-                $user_id = $_SESSION['user_id'] ?? null; // Pastikan user_id ada di session
-                
                 $stmt->bind_param(
-                    "ssssssisssissss", 
-                    $nomor_surat, $asal_surat, $nama_surat, $kategori, $tanggal_masuk, 
-                    $petugas_arsip, $jumlah_lampiran, $deskripsi_surat, $status, $user_id, 
+                    "sssssssssisssss", 
+                    $formData['nomor_surat'], $formData['asal_surat'], $formData['nama_surat'], $formData['kategori'], $formData['tanggal_masuk'], 
+                    $formData['petugas_arsip'], $formData['jumlah_lampiran'], $formData['deskripsi_surat'], $status, $user_id, 
                     $file_path, $tanggal_surat, $tanggal_terima, $pengirim, $perihal
                 );
 
                 if (!$stmt->execute()) {
-                    throw new Exception("Error executing statement: " . $stmt->error);
+                    throw new Exception("Error saat menyimpan ke database: " . $stmt->error);
                 }
 
-                header('Location: surat-masuk.php?success=1');
+                header('Location: surat-masuk.php?pesan=tambah_sukses');
                 exit();
+
             } catch (Exception $e) {
-                $error = 'Error: ' . $e->getMessage();
-                error_log("Error in tambah-surat-masuk.php: " . $e->getMessage());
+                $error = $e->getMessage();
             }
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
