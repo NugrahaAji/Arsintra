@@ -4,7 +4,7 @@
 Sistem ARSINTRA dipilih karena mampu mempermudah proses administrasi dan pengelolaan arsip surat masuk dan keluar yang sebelumnya dilakukan secara manual, dengan sistem berbasis web menggunakan PHP dan MySQL yang memungkinkan pencatatan surat, pengelompokan data, pencarian arsip, serta manajemen pengguna dilakukan secara cepat, akurat, dan efisien, sekaligus mengurangi human error dan menyediakan akses data yang terstruktur dan mudah diakses kapan saja untuk mendukung kinerja instansi secara optimal.
 
 
-# B. Penjelasan dan Relasi Database
+# B. Penjelasan Alur dan Relasi Database
 # 1. Entitas dan Atribut
 a. Users
 
