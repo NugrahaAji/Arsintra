@@ -9,10 +9,7 @@ requireLogin();
 $search = $_GET['search'] ?? '';
 
 // 2. Siapkan query SQL dasar.
-$sql = "
-    SELECT id, nomor_surat, nama_surat, kategori, tanggal_masuk, asal_surat,keterangan_surat, status, file_path
-    FROM surat_masuk
-";
+$sql = "SELECT id, nomor_surat, nama_surat, kategori, tanggal_masuk, asal_surat,keterangan_surat, status, file_path FROM surat_masuk";
 
 // Siapkan parameter untuk pencarian yang aman
 $search_param = "%" . $search . "%";
