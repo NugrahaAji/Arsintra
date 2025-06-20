@@ -171,7 +171,7 @@ if (!$surat) {
                             </div>
                             <div class="form-group">
                                 <label >Tanggal Keluar</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['tanggal_keluar']); ?>" readonly>
+                                <input type="text" value="<?php echo date('d - m - Y', strtotime($surat['tanggal_keluar'])); ?>" readonly>
                             </div>
                         </div>
                         <div class="form-row">
@@ -180,8 +180,8 @@ if (!$surat) {
                                 <input type="text" value="<?php echo htmlspecialchars($surat['tujuan_surat']); ?>" readonly>
                             </div>
                             <div class="form-group">
-                                <label >Tanggal Keluar</label>
-                                <input type="text" value="<?php echo htmlspecialchars($surat['di_keluarkan']); ?>" readonly>
+                                <label >yang mengeluarkan</label>
+                                <input type="text" value="<?php echo htmlspecialchars($surat['di_keluarkan']) ; ?>" readonly>
                             </div>
                         </div>
                         <div class="form-row">
