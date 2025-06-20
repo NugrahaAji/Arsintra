@@ -27,13 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tanggal_masuk = $_POST['tanggal_masuk'] ?? '';
     $petugas_arsip = $_POST['petugas_arsip'] ?? '';
     $jumlah_lampiran = $_POST['jumlah_lampiran'] ?? '';
-    $deskripsi_surat = $_POST['deskripsi_surat'] ?? '';
+    $keterangan_surat = $_POST['keterangan_surat'] ?? '';
     $status = $_POST['status'] ?? 'menunggu';
     $alasan_ditolak = $_POST['alasan_ditolak'] ?? '';
 
-    // Jika status ditolak, gunakan alasan_ditolak sebagai deskripsi_surat
     if ($status === 'ditolak' && !empty($alasan_ditolak)) {
-        $deskripsi_surat = $alasan_ditolak;
+        $keterangan_surat = $alasan_ditolak;
     }
 
     // Handle file upload
@@ -86,8 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $semua_valid = false;
     }
 
-    // Deskripsi hanya wajib jika status bukan 'ditolak'
-    if ($status !== 'ditolak' && empty($deskripsi_surat)) {
+    if ($status !== 'ditolak' && empty($keterangan_surat)) {
         $semua_valid = false;
     }
 
@@ -100,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Semua field dengan tanda * harus diisi";
     } else {
         // Lanjutkan dengan proses UPDATE ke database
-        $stmt = $conn->prepare("UPDATE surat_masuk SET nomor_surat = ?, asal_surat = ?, nama_surat = ?, kategori = ?, tanggal_masuk = ?, petugas_arsip = ?, jumlah_lampiran = ?, deskripsi_surat = ?, file_path = ?, status = ? WHERE id = ?");
-        $stmt->bind_param("ssssssssssi", $nomor_surat, $asal_surat, $nama_surat, $kategori, $tanggal_masuk, $petugas_arsip, $jumlah_lampiran, $deskripsi_surat, $file_path, $status, $id);
+        $stmt = $conn->prepare("UPDATE surat_masuk SET nomor_surat = ?, asal_surat = ?, nama_surat = ?, kategori = ?, tanggal_masuk = ?, petugas_arsip = ?, jumlah_lampiran = ?, keterangan_surat = ?, file_path = ?, status = ? WHERE id = ?");
+        $stmt->bind_param("ssssssssssi", $nomor_surat, $asal_surat, $nama_surat, $kategori, $tanggal_masuk, $petugas_arsip, $jumlah_lampiran, $keterangan_surat, $file_path, $status, $id);
 
         if ($stmt->execute()) {
             $success = "Surat masuk berhasil diperbarui";
@@ -290,12 +288,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     <div class="form-group full-width">
-                        <label for="deskripsi_surat">Deskripsi Surat *</label>
-                        <textarea id="deskripsi_surat" name="deskripsi_surat" required><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
+                        <label for="keterangan_surat">Keterangan Surat *</label>
+                        <textarea id="keterangan_surat" name="keterangan_surat" required><?php echo htmlspecialchars($surat['keterangan_surat']); ?></textarea>
                     </div>
                     <div class="form-group full-width" id="alasanDitolakGroup" style="display:<?php echo ($surat['status']==='ditolak') ? 'block' : 'none'; ?>;">
                         <label for="alasan_ditolak">Alasan Penolakan *</label>
-                        <textarea id="alasan_ditolak" name="alasan_ditolak" rows="3"><?php echo ($surat['status']==='ditolak') ? htmlspecialchars($surat['deskripsi_surat']) : ''; ?></textarea>
+                        <textarea id="alasan_ditolak" name="alasan_ditolak" rows="3"><?php echo ($surat['status']==='ditolak') ? htmlspecialchars($surat['keterangan_surat']) : ''; ?></textarea>
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>

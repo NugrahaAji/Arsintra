@@ -1,7 +1,16 @@
 <?php
 session_start();
+require_once 'config.php';
+require_once 'config/session.php';
 
-// Clear any existing session data to ensure clean access
+if (isLoggedIn() && $_SESSION['user_role'] = "admin") {
+    header("Location: admin/admindashboard.php");
+    exit();
+}
+if (isLoggedIn() && $_SESSION['user_role'] = "users") {
+    header("Location: users/dashboard.php");
+    exit();
+}
 if (isset($_GET['logout'])) {
     session_destroy();
     header('Location: index.php');

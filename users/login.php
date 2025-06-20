@@ -2,7 +2,8 @@
 require_once '../config.php';
 require_once '../config/session.php';
 
-if (isLoggedIn()) {
+if (isLoggedIn() && $_SESSION['user_role'] = 'admin') {
+    $_SESSION['user_name'] = $_SESSION['admin_username'];
     header("Location: dashboard.php");
     exit();
 }

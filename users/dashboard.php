@@ -27,7 +27,7 @@ if ($stmt) {
 }
 
 $disposisiData = [];
-$stmt = $conn->query("SELECT nama_surat, deskripsi_surat as catatan FROM surat_masuk WHERE status = 'ditolak' ORDER BY tanggal_masuk DESC LIMIT 3");
+$stmt = $conn->query("SELECT nama_surat, keterangan_surat as catatan FROM surat_masuk WHERE status = 'ditolak' ORDER BY tanggal_masuk DESC LIMIT 3");
 if ($stmt) {
     while ($row = $stmt->fetch_assoc()) {
         $disposisiData[] = [

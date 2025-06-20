@@ -1,7 +1,12 @@
 <?php
 session_start();
 require_once '../config.php';
+require_once '../config/session.php';
 
+if (isLoggedIn()) {
+    header("Location: admindashboard.php");
+    exit();
+}
 $error = '';
 $logout_success = isset($_GET['logout']) && $_GET['logout'] == 1;
 if (isset($_SESSION['admin_id'])) {

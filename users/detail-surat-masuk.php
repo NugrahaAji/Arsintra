@@ -223,8 +223,8 @@ if (!$surat) {
                                 <textarea readonly style="width:100%;min-height:60px;resize:vertical;"><?php echo htmlspecialchars($surat['perihal']); ?></textarea>
                             </div>
                             <div class="form-group">
-                                <label >Deskripsi Surat</label>
-                                <textarea readonly style="width:100%;min-height:60px;resize:vertical;"><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></textarea>
+                                <label >Keterangan Surat</label>
+                                <textarea readonly style="width:100%;min-height:60px;resize:vertical;"><?php echo htmlspecialchars($surat['keterangan_surat']); ?></textarea>
                             </div>
                         </div>
                         <div class="form-row">
