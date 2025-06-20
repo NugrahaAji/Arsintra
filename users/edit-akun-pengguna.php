@@ -29,10 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt2 = $conn->prepare("UPDATE users SET username=?, nama_lengkap=?, email=? WHERE id=?");
         $stmt2->bind_param('sssi', $username, $nama_lengkap, $email, $id);
         if ($stmt2->execute()) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['nama_lengkap'];
-            $_SESSION['email'] = $user['email'];
+            $_SESSION['user_name'] = $nama_lengkap; 
+            $_SESSION['email'] = $email;
             $success = 'Akun berhasil diupdate!';
+
+            $user['nama_lengkap'] = $nama_lengkap;
+            $user['username'] = $username;
+            $user['email'] = $email;
         } else {
             $error = 'Gagal update akun. Email mungkin sudah terdaftar.';
         }
