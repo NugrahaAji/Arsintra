@@ -10,7 +10,7 @@ $search = $_GET['search'] ?? '';
 
 // 2. Siapkan query SQL dasar.
 $sql = "
-    SELECT id, nomor_surat, nama_surat, kategori, tanggal_masuk, asal_surat, status, file_path
+    SELECT id, nomor_surat, nama_surat, kategori, tanggal_masuk, asal_surat, status, file_path, deskripsi_surat
     FROM surat_masuk
 ";
 
@@ -167,6 +167,7 @@ $surat_masuk = $result->fetch_all(MYSQLI_ASSOC);
                                     <th>Kategori Surat</th>
                                     <th>Tanggal Masuk</th>
                                     <th>Asal Surat</th>
+                                    <th>Deskripsi</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -179,6 +180,7 @@ $surat_masuk = $result->fetch_all(MYSQLI_ASSOC);
                                     <td><?php echo htmlspecialchars($surat['kategori']); ?></td>
                                     <td><?php echo date('d-m-Y', strtotime($surat['tanggal_masuk'])); ?></td>
                                     <td><?php echo htmlspecialchars($surat['asal_surat']); ?></td>
+                                    <td><?php echo htmlspecialchars($surat['deskripsi_surat']); ?></td>
                                     <td>
                                         <?php
                                         $status = $surat['status'];
